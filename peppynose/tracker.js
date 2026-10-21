@@ -103,7 +103,7 @@ const PN_TRACKER_IMAGES = { ready: false, path: '/assets/tracker/week', ext: '.w
     $('r-share').href = 'https://wa.me/?text=' + encodeURIComponent(text);
     renderChecks(w); renderTodo(w);
     form.hidden = true; res.hidden = false;
-    if (store) track('tracker_used', { input_mode: m, week: w });
+    if (store) track('tracker_used', {});   // V4.1: no pregnancy data in analytics
     return true;
   };
 
@@ -159,13 +159,13 @@ const PN_TRACKER_IMAGES = { ready: false, path: '/assets/tracker/week', ext: '.w
     const text = fmt(S.v4_card_text, { w: cur.w, meet: meetLine(cur.left), url: D.url });
     const file = typeof File === 'function' ? new File([blob], name, { type: 'image/png' }) : null;
     if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], text }); track('share_card_created', { method: 'web_share', week: cur.w }); } catch (e) { /* user closed the share sheet */ }
+      try { await navigator.share({ files: [file], text }); track('share_card_created', { method: 'web_share' }); } catch (e) { /* user closed the share sheet */ }
       return;
     }
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     $('r-card-msg').textContent = S.v4_card_saved;
-    track('share_card_created', { method: 'download_whatsapp', week: cur.w });
+    track('share_card_created', { method: 'download_whatsapp' });
     window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
   });
 

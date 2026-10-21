@@ -874,3 +874,14 @@ html[lang="ta"] h1, html[lang="ta"] h2, html[lang="hi"] h1, html[lang="hi"] h2, 
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; }
 }
 @media (prefers-reduced-motion: reduce) { .pn-progress, .pn-fly { display: none; } }
+
+/* V4.1 fix TC-32: no sideways scroll on small phones with large text (130%) */
+@media (max-width: 480px) {
+  .stage, .promise2 { grid-template-columns: minmax(0, 1fr); }
+  .agegrid-p { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stage > *, .promise2 > *, .agegrid-p > a, .sec-head > *, .mini > div { min-width: 0; max-width: 100%; }
+  .promise2 > div { padding: 24px 16px; }
+  .agegrid-p a { padding: 22px 10px; }
+  .mini .buy { flex-wrap: wrap; }
+  .stage-txt h3, .stage-txt p, .sec-head h2, .sec-head p, .promise2 h3, .promise2 p, .agegrid-p b, .agegrid-p small, .eyebrow { overflow-wrap: anywhere; }
+}

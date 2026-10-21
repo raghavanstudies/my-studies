@@ -9,6 +9,7 @@
   const GA = /^G-[A-Z0-9]{4,}$/.test(C.ga4 || '') && C.ga4 !== 'G-XXXXXXXXXX' ? C.ga4 : '';
   const CL = /^[a-z0-9]{6,}$/i.test(C.clarity || '') && C.clarity !== 'CLARITY_PROJECT_ID' ? C.clarity : '';
   const lang = (document.documentElement.lang || 'en').slice(0, 2);
+  const NO_CL = /pregnancy-tracker/.test(location.pathname);   // V4.1: never load Microsoft Clarity on the tracker pages (EN/TA/HI)
   const get = () => { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
   const set = v => { try { localStorage.setItem(KEY, v); } catch (e) {} };
   const T = {
@@ -33,7 +34,7 @@
       document.head.appendChild(s);
       gtag('js', new Date()); gtag('config', GA, { anonymize_ip: true, site_language: lang });
     }
-    if (CL) {
+    if (CL && !NO_CL) {
       (function (c, l, a, r, i, t, y) { c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
         t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i; y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
       })(window, document, 'clarity', 'script', CL);
@@ -41,7 +42,7 @@
     }
     (window.pnEvents || []).forEach(e => e.sent || send(e));      // events from this page view before Accept
   };
-  const send = e => { e.sent = true; if (GA) gtag('event', e.name, e.params); if (CL && window.clarity) window.clarity('event', e.name); };
+  const send = e => { e.sent = true; if (GA) gtag('event', e.name, e.params); if (CL && !NO_CL && window.clarity) window.clarity('event', e.name); };
 
   // ---- Public helper: window.pnTrack('event_name', {params}) ----
   window.pnEvents = window.pnEvents || [];
