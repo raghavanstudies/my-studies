@@ -32,4 +32,9 @@ async function open(page, path) {
   return { res, errors };
 }
 
-module.exports = { PAGES, POLICY_PAGES, SITE, AMAZON_ASINS, REMOVED_ASINS, FLIPKART_PIDS, blockExternal, open };
+// V3 "Scan to buy" chooser pages (buy/<slug>.html in each language)
+const BUY_SLUGS = ['baby-on-board-sign', 'mom-on-board-sign', 'teether-gift-set', 'teether-fish-bird', 'teether-car-cloud',
+  'knee-pads-blue-smiley', 'knee-pads-yellow-smiley', 'knee-pads-mint-dotted', 'knee-pads-gray-dotted', 'knee-pads-black-dotted',
+  'wooden-kitchen-set', 'foam-mat', 'lcd-tablet-blue'];
+
+module.exports = { PAGES, BUY_SLUGS, POLICY_PAGES, SITE, AMAZON_ASINS, REMOVED_ASINS, FLIPKART_PIDS, blockExternal, open };

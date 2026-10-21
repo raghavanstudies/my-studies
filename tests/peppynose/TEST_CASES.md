@@ -1,8 +1,8 @@
 # Peppynose website: test cases
 
-Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
+Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 21 October 2026 (website V2), 307 passed, 0 failed** (69 skipped by design: tests that apply to only one screen size). Run twice in a row, both green.
+**Last run: 21 October 2026 (website V3), 372 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -24,7 +24,7 @@ The tests start a local web server for `peppynose/` and block all outside reques
 | ID | What is checked | Expected result |
 |---|---|---|
 | TC-SITE-01 | Page loads | Status 200, title contains "Peppynose", no script errors |
-| TC-SITE-02 | Header menu | Home, Shop, About, FAQ, Contact in order; current page underlined (the language switch is not counted as a menu link) |
+| TC-SITE-02 | Header menu | Home, Shop, About, FAQ, Pregnancy tracker, Contact in order; current page underlined (the language switch is not counted as a menu link) |
 | TC-SITE-03 | Footer | Links to Shop, About, FAQ, Contact, Shipping, Returns, Privacy, Terms, Amazon store, Flipkart, Instagram (new tab); email and address shown (404 page uses site-root links) |
 | TC-SITE-04 | Images | Every image loads after scrolling (no broken images) |
 | TC-SITE-05 | Local links and files | Every link, stylesheet and image on the page exists (status 200) |
@@ -43,7 +43,7 @@ The tests start a local web server for `peppynose/` and block all outside reques
 | TC-SEO-02 | Unique titles | All 9 pages have different titles and descriptions |
 | TC-SEO-03 | Sharing banner | images/og-banner.jpg is exactly 1200 × 630 |
 | TC-SEO-04 | robots.txt | Allows all crawlers and points to sitemap.xml |
-| TC-SEO-05 | sitemap.xml | Lists exactly 27 pages (9 pages × English, Tamil, Hindi), each with 4 language links, and each one loads |
+| TC-SEO-05 | sitemap.xml | Lists exactly 69 pages (9 pages + tracker + 13 buy pages, × English, Tamil, Hindi), each with 4 language links, and each one loads |
 | TC-SEO-06 | 404 page | Unknown address returns 404; 404 page shows "wandered off", is marked noindex, has no canonical, "Back to home" goes to the home page |
 
 ### Home page (TC-HOME)
@@ -106,6 +106,25 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V2-13 | Phone menu | Menu shows the language switch; still closes with Escape and outside tap |
 | TC-V2-14 | Privacy page | Mentions WhatsApp chat messages and says no phone number is listed (English, Tamil, Hindi) |
 
+### Website V3: logo, QR codes, buy pages, pregnancy tracker, loader (TC-V3)
+
+| ID | What is checked | Expected result |
+|---|---|---|
+| TC-V3-01 | 42 new pages (tracker + 13 buy pages × 3 languages) | Load with no script errors; every image and local file exists; no sideways scrolling at 360/390/768/1440 px; own canonical and en/ta/hi/x-default hreflang; no ₹; phone number never shown, no `tel:` link |
+| TC-V3-02 | Buy pages | Amazon/Flipkart buttons match the product list exactly in all 3 languages (Amazon-only products show one button); open in a new tab; WhatsApp button shown |
+| TC-V3-03 | "Scan to buy" QR codes | 13 on the Shop page and 4 on home, per language; each links to its buy page and uses that language's QR image; none on "coming soon" or "out of stock" products; tapping one opens the buy page |
+| TC-V3-04 | Real logo | Colourful Peppynose lettering (640 px image, alt "Peppynose") shows in the header of every page |
+| TC-V3-05 | Loader | Baby-face loader is gone within about a second, and shows only on the first page in a tab |
+| TC-V3-06 | Loader, reduced motion | Never shown when the phone asks for reduced motion |
+| TC-V3-07 | Tracker links | "Pregnancy tracker" in the menu and footer (EN/TA/HI); home has the tracker band and the store line "Shop now on Flipkart & Amazon. Our own store is coming soon."; the band's button opens the tracker, which is marked as the current page |
+| TC-V3-08 | Tracker, due date 140 days ahead | Week 20, second trimester, "20 weeks and 0 days", 140 days to go, a tip, Mom on Board suggestion; "Share my week" opens WhatsApp with no phone number |
+| TC-V3-09 | Tracker, last-period mode | 35 weeks ago gives week 35, third trimester, Baby on Board and teether suggestions; remembered after reload; "Clear my data" removes it |
+| TC-V3-10 | Tracker, bad dates | Empty date or impossible date shows a friendly error and no result |
+| TC-V3-11 | Tracker in Tamil and Hindi | Works with no script errors; share link opens WhatsApp |
+| TC-V3-12 | Phone header | On the 3 home pages at 320–430 px the language buttons sit on a second row and never cover the logo or Menu button; lettering never squashed (also checked at 768 and 1024 px) |
+| TC-V3-13 | Saved language | A visitor who chose Tamil and scans an English QR code lands on the Tamil buy page |
+| TC-V3-14 | Tracker edge cases and privacy | Due today: week 40, "Due date reached"; 5 weeks ahead: week 35; 300 days ahead: error; nothing is sent anywhere (only Google Fonts) |
+
 ## Manual test cases (need the live site or a real phone)
 
 These can't be automated from the build environment, which cannot reach www.peppynose.com, Amazon or Flipkart.
@@ -125,3 +144,7 @@ These can't be automated from the build environment, which cannot reach www.pepp
 | TC-MAN-11 | Open the Tamil and Hindi home pages on a phone | Tamil and Hindi letters look clean (no boxes or broken letters) |
 | TC-MAN-12 | Tap each of the 6 Instagram pictures | Each opens the right Instagram post in a new tab |
 | TC-MAN-13 | Choose தமிழ், close the browser, open www.peppynose.com again | Opens in Tamil; tapping EN goes back to English |
+| TC-MAN-14 | Point a phone camera at 3 QR codes on the Shop page (laptop screen) | Each opens the matching buy page in the same language |
+| TC-MAN-15 | Open www.peppynose.com in a new private window | The baby face shows briefly, then the page; the next page has no face |
+| TC-MAN-16 | Pregnancy tracker on a phone: enter a due date, tap "Share my week" | WhatsApp opens with the message, you pick who to send it to |
+| TC-MAN-17 | Look at the top-left logo on a phone with large text and in dark mode | Colourful lettering is sharp and readable; language buttons never cover it |

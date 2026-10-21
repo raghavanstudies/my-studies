@@ -12,10 +12,10 @@ for (const path of ALL_PAGES) {
       expect(errors).toEqual([]);
     });
 
-    test('TC-SITE-02 header has the 5 menu links and marks the current page', async ({ page }) => {
+    test('TC-SITE-02 header has the 6 menu links and marks the current page', async ({ page }) => {
       await open(page, path);
       const links = page.locator('header nav > a');
-      await expect(links).toHaveText(['Home', 'Shop', 'About', 'FAQ', 'Contact']);
+      await expect(links).toHaveText(['Home', 'Shop', 'About', 'FAQ', 'Pregnancy tracker', 'Contact']);
       if (!POLICY_PAGES.includes(path) && path !== '404.html') {
         await expect(page.locator(`header nav > a[href="${path}"]`)).toHaveAttribute('aria-current', 'page');
       }

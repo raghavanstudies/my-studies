@@ -32,16 +32,19 @@
   <script src="lang.js"></script>
 </head>
 <body>
+<div id="pn-loader" aria-hidden="true"><svg viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="pl-draw pl-head" pathLength="1" stroke="#0083CF" stroke-width="4" d="M60 19c23-1 41 17 41 41 1 24-17 42-41 42-25 1-42-18-41-42 0-23 18-41 41-41z"/><path class="pl-draw pl-ear" pathLength="1" stroke="#0083CF" stroke-width="3.5" d="M19.5 54c-7-1-8 13 1 13M100.5 54c7-1 8 13-1 13"/><path class="pl-draw pl-hair" pathLength="1" stroke="#45B033" stroke-width="3.5" d="M57 19c-4-8 3-14 9-10 4 3 1 9-4 7"/><ellipse class="pl-eye" cx="45" cy="56" rx="3.6" ry="4.6" fill="#2E2A33"/><ellipse class="pl-eye" cx="75" cy="56" rx="3.6" ry="4.6" fill="#2E2A33"/><circle class="pl-cheek" cx="35" cy="69" r="6.5" fill="#F0579B"/><circle class="pl-cheek" cx="85" cy="69" r="6.5" fill="#F0579B"/><path class="pl-draw pl-smile" pathLength="1" stroke="#E51B00" stroke-width="4" d="M46 73c5 10 23 11 28 0"/></svg></div>
+<script>(function(){var l=document.getElementById('pn-loader');if(!l)return;var seen=false;try{seen=sessionStorage.getItem('pn_loader_seen')==='1';sessionStorage.setItem('pn_loader_seen','1')}catch(e){}if(seen||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){l.remove();return}var done=false;function hide(){if(done)return;done=true;l.classList.add('pn-out');setTimeout(function(){l.remove()},220)}document.addEventListener('DOMContentLoaded',hide);setTimeout(hide,600)})();</script>
   <header>
     <div class="wrap bar">
-      <a class="brand" href="index.html"><img src="logo-mark.png" alt="">Peppynose<sup>™</sup></a>
+      <a class="brand" href="index.html"><img class="brand-mark" src="logo-mark.png" alt="" width="42" height="42"><img class="brand-word" src="images/logo-wordmark.webp" alt="Peppynose" width="640" height="131"></a>
       <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
       <nav class="nav" id="nav">
           <a href="index.html">Home</a>
           <a href="products.html">Shop</a>
           <a href="about.html" aria-current="page">About</a>
           <a href="faq.html">FAQ</a>
-          <a href="contact.html">Contact</a>
+          <a href="pregnancy-tracker.html">Pregnancy tracker</a>
+<a href="contact.html">Contact</a>
       </nav>
     </div>
   </header>
@@ -80,7 +83,7 @@
         <div><img src="images/logo-footer.webp" alt="Peppynose logo" width="266" height="200" loading="lazy"></div>
         <div>
           <h4>Explore</h4>
-          <ul><li><a href="products.html">Shop all products</a></li><li><a href="about.html">About us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul>
+          <ul><li><a href="products.html">Shop all products</a></li><li><a href="about.html">About us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="pregnancy-tracker.html">Pregnancy tracker</a></li></ul>
         </div>
         <div>
           <h4>Policies</h4>

@@ -591,3 +591,164 @@ html[lang="ta"] h1, html[lang="ta"] h2, html[lang="hi"] h1, html[lang="hi"] h2, 
 .lang-hint a { color: #1d2b4f; font-weight: 700; }
 .lang-hint button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: 0; background: none; font-size: 1rem; color: #1d2b4f; cursor: pointer; }
 .lang-hint[lang="ta"] { font-family: "Noto Sans Tamil", sans-serif; } .lang-hint[lang="hi"] { font-family: "Noto Sans Devanagari", sans-serif; }
+
+/* ===================== Peppynose V3 additions (append to the END of /styles.css, after the V2 "H2" block) ===================== */
+
+/* V3-1. FIX 1 (audit TC-17): mobile header, the language switch never covers the logo. Tested CSS from audit v4 header_fix.css, unchanged. */
+@media (max-width: 760px) {
+  .bar > .brand { flex-shrink: 0; white-space: nowrap; }
+  .bar > .lang-switch { min-width: 0; }
+  .nav { top: 100%; }   /* the mobile menu opens under the header even when the header is taller */
+}
+@media (max-width: 430px) {
+  .bar { display: grid; grid-template-columns: auto 1fr auto;
+         grid-template-areas: "brand . menu" "lang lang lang";
+         height: auto; min-height: 76px; row-gap: 6px; padding-top: 10px; padding-bottom: 8px; align-items: center; }
+  .bar > .brand { grid-area: brand; }
+  .bar > .menu-btn { grid-area: menu; }
+  .bar > .lang-switch { grid-area: lang; justify-self: center; margin: 0; }
+}
+
+/* V3-3. Header logo: the real Peppynose parrot mark + the real wordmark image (images/logo-wordmark.webp, 640x131, cut from the official logo). */
+.brand { gap: 10px; line-height: 0; }
+.bar > .brand { flex-shrink: 0; }
+.brand img.brand-mark { width: 42px; height: 42px; flex: none; }
+.brand img.brand-word { width: auto; max-width: none; height: 34px; flex: none; display: block; }
+@media (max-width: 760px) {
+  .brand { gap: 8px; }
+  .brand img.brand-mark { width: 36px; height: 36px; }
+  .brand img.brand-word { height: 28px; }
+}
+@media (max-width: 430px) {
+  .brand { gap: 6px; }
+  .brand img.brand-mark { width: 32px; height: 32px; }
+  .brand img.brand-word { height: 26px; }
+}
+/* Between 431px and 560px the logo + EN/தமிழ்/हिंदी pill + Menu do not fit on one row in Tamil, so use the same two-row
+   layout as FIX 1 there too (home pages only; other pages have no .lang-switch in .bar). */
+@media (min-width: 431px) and (max-width: 560px) {
+  .bar:has(> .lang-switch) { display: grid; grid-template-columns: auto 1fr auto;
+         grid-template-areas: "brand . menu" "lang lang lang";
+         height: auto; min-height: 76px; row-gap: 6px; padding-top: 10px; padding-bottom: 8px; align-items: center; }
+  .bar:has(> .lang-switch) > .brand { grid-area: brand; }
+  .bar:has(> .lang-switch) > .menu-btn { grid-area: menu; }
+  .bar:has(> .lang-switch) > .lang-switch { grid-area: lang; justify-self: center; margin: 0; }
+}
+
+/* V3-3b. Tablet header. The real wordmark (166 px) is wider than the old text logo and the nav gains "Pregnancy tracker",
+   so between 761 px and 1023 px (Tamil: up to 1239 px, its nav labels are much longer) the header uses the same Menu button
+   as phones. This also removes the V2 Tamil overflow at 768 px. Wide screens keep the full desktop nav. */
+@media (min-width: 761px) and (max-width: 1023px) {
+  html:not([lang="ta"]) .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; background: var(--cream); border-bottom: 1px solid var(--line); }
+  html:not([lang="ta"]) .nav a { padding: 14px 20px; width: 100%; }
+  html:not([lang="ta"]) .nav.open { display: flex; }
+  html:not([lang="ta"]) .menu-btn { display: block; order: 4; padding: 8px 11px; }
+  html:not([lang="ta"]) .bar { gap: 8px; }
+  html:not([lang="ta"]) .bar > .lang-switch { margin-left: auto; min-width: 0; }
+  html:not([lang="ta"]) .nav .lang-switch.in-menu { display: flex; margin: 10px 20px 14px; width: fit-content; order: 0; align-self: flex-start; }
+  html:not([lang="ta"]) .nav .lang-switch.in-menu a { width: auto; padding: 6px 12px; }
+}
+@media (min-width: 761px) and (max-width: 1239px) {
+  html[lang="ta"] .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; background: var(--cream); border-bottom: 1px solid var(--line); }
+  html[lang="ta"] .nav a { padding: 14px 20px; width: 100%; }
+  html[lang="ta"] .nav.open { display: flex; }
+  html[lang="ta"] .menu-btn { display: block; order: 4; padding: 8px 11px; }
+  html[lang="ta"] .bar { gap: 8px; }
+  html[lang="ta"] .bar > .lang-switch { margin-left: auto; min-width: 0; }
+  html[lang="ta"] .nav .lang-switch.in-menu { display: flex; margin: 10px 20px 14px; width: fit-content; order: 0; align-self: flex-start; }
+  html[lang="ta"] .nav .lang-switch.in-menu a { width: auto; padding: 6px 12px; }
+}
+@media (min-width: 1240px) { html[lang="ta"] .nav { gap: 22px; } }
+
+/* V3-2. Store message line in the "Shop Peppynose online" band (home pages) */
+.band2 .store-line { color: #f6efe9; font-weight: 700; margin: -10px 0 22px; display: flex; gap: 8px; align-items: baseline; }
+.band2 .store-line::before { content: "🛍️"; }
+
+/* V3-4. Product QR codes ("Scan to buy") on products cards and home best-seller cards */
+.pn-qr { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; align-self: flex-start;
+         text-decoration: none; color: var(--muted); font-size: .82rem; font-weight: 700; line-height: 1.25; }
+.pn-qr img { width: 106px; height: 106px; flex: none; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.pn-qr:hover span { color: var(--ink); text-decoration: underline; }
+@media (max-width: 760px) { .pn-qr img { width: 84px; height: 84px; } }
+
+/* V3-4b. Buy chooser pages (/buy/<slug>.html, /ta/buy/, /hi/buy/) */
+.buy-head .bar { justify-content: flex-start; }
+.buy-page { padding: 36px 0 56px; }
+.buy-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 40px; align-items: center; max-width: 980px; }
+.buy-ph { margin: 0; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; }
+.buy-ph img { width: 100%; height: 100%; object-fit: contain; padding: 18px; }
+.buy-box h1 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: 0 0 8px; }
+.buy-box .buy-desc { color: var(--muted); margin: 0 0 18px; }
+.buy-pack { margin: 0 0 18px; }
+.buy-pack h2 { font-family: "DM Sans", "Noto Sans Tamil", "Noto Sans Devanagari", sans-serif; font-size: .95rem; font-weight: 700; margin: 0 0 8px; color: var(--ink); }
+.buy-big { display: grid; gap: 10px; }
+.buy-big .btn { flex-direction: column; gap: 2px; padding: 16px 20px; min-height: 64px; font-size: 1.1rem; line-height: 1.2; width: 100%; text-align: center; }
+.buy-big .btn small { font-size: .8rem; font-weight: 500; opacity: .85; }
+.buy-note { font-size: .85rem; color: var(--muted); margin: 6px 0 16px; }
+.buy-foot { border-top: 1px solid var(--line); padding: 20px 0 96px; font-size: .85rem; color: var(--muted); }
+.buy-foot .wrap { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; }
+.buy-foot a { color: inherit; }
+@media (max-width: 760px) {
+  .buy-page { padding: 20px 0 40px; }
+  .buy-wrap { grid-template-columns: 1fr; gap: 20px; }
+  .buy-ph { max-width: 300px; width: 100%; margin: 0 auto; }
+}
+
+/* V3-5. Pregnancy tracker: home teaser + tracker page */
+.tracker-teaser { padding: 56px 0 0; }
+.tracker-teaser .tt { display: grid; grid-template-columns: auto 1fr auto; gap: 20px 28px; align-items: center; background: var(--peach-soft);
+                      border-radius: var(--radius); padding: 28px 32px; }
+.tracker-teaser .tt-ic { font-size: 2.6rem; line-height: 1; }
+.tracker-teaser h2 { font-size: clamp(1.5rem, 2.8vw, 2.1rem); margin: 0 0 6px; }
+.tracker-teaser p { margin: 0; color: var(--muted); }
+@media (max-width: 760px) { .tracker-teaser .tt { grid-template-columns: 1fr; padding: 24px 22px; } .tracker-teaser .tt-ic { display: none; } .tracker-teaser .btn { width: 100%; } }
+
+.trk { padding: 8px 0 72px; }
+.trk .wrap { max-width: 720px; }
+.trk-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 26px 28px; margin-bottom: 18px; }
+.trk fieldset { border: 0; padding: 0; margin: 0 0 16px; }
+.trk legend { font-weight: 700; margin-bottom: 8px; }
+.trk .opt-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.trk .opt-row label { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; min-height: 44px; cursor: pointer; }
+.trk .opt-row label:has(input:checked) { border-color: var(--ink); background: var(--sand); }
+.trk .date-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.trk .date-row label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; flex: 1 1 220px; }
+.trk input[type="date"] { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; min-height: 48px; background: var(--white); color: var(--ink); width: 100%; }
+.trk .btn { border: 0; cursor: pointer; font: inherit; font-weight: 700; }
+.trk .btn.go { background: var(--ink); color: var(--cream); min-height: 48px; }
+.trk .err { color: #b3261e; font-weight: 700; margin: 10px 0 0; min-height: 1.2em; }
+.trk-week { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.trk-week .big { font-family: Fraunces, "Noto Serif Tamil", "Noto Serif Devanagari", serif; font-size: clamp(2.4rem, 7vw, 3.4rem); line-height: 1.1; }
+.trk-week .tri { background: var(--mint); color: #1d2b4f; border-radius: 999px; padding: 4px 12px; font-weight: 700; font-size: .85rem; }
+.trk-sub { color: var(--muted); margin: 6px 0 0; }
+.trk-bar { height: 14px; border-radius: 999px; background: var(--sand); overflow: hidden; margin: 18px 0 6px; }
+.trk-bar > span { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #F0579B, #E51B00 35%, #45B033 70%, #0083CF); transition: width .6s ease; }
+.trk-bar-l { display: flex; justify-content: space-between; font-size: .85rem; color: var(--muted); gap: 10px; }
+.trk-tip h2 { font-size: 1.15rem; margin: 0 0 6px; }
+.trk-tip p { margin: 0; font-size: 1.05rem; }
+.trk [hidden] { display: none !important; }
+.trk-nudge { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; justify-content: space-between; border: 1px dashed var(--peach); border-radius: 18px; padding: 14px 16px; margin-top: 12px; }
+.trk-nudge p { margin: 0; flex: 1 1 260px; }
+.trk-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.trk .btn.wa { background: #1f8f4e; color: #fff; }
+.trk .btn.plain { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+.trk .disclaimer { background: #fff9e6; color: #5b4a00; border: 1px solid #f3dc8b; border-radius: 14px; padding: 12px 14px; font-weight: 700; margin: 0 0 12px; }
+.trk .privacy { color: var(--muted); font-size: .88rem; margin: 0; }
+@media (prefers-color-scheme: dark) { .trk .disclaimer { background: #3a3220; color: #f7e7b0; border-color: #6b5a26; } }
+@media (max-width: 520px) { .trk-card { padding: 20px 18px; } .trk-actions .btn, .trk .btn.go { width: 100%; } }
+
+/* V3-6. Page loader: hand-drawn baby face that smiles and blinks. Max ~800 ms (fade starts by 600 ms), first page view per tab only, never blocks taps. */
+#pn-loader { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--cream);
+             pointer-events: none; opacity: 1; transition: opacity .2s ease; }
+#pn-loader.pn-out { opacity: 0; }
+#pn-loader svg { width: 112px; height: 112px; overflow: visible; }
+#pn-loader .pl-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pnDraw .26s ease-out forwards; }
+#pn-loader .pl-hair { animation-delay: .1s; }
+#pn-loader .pl-ear { animation-delay: .12s; }
+#pn-loader .pl-smile { animation: pnDraw .22s .16s ease-out forwards; }
+#pn-loader .pl-cheek { opacity: 0; animation: pnFade .2s .22s forwards; }
+#pn-loader .pl-eye { transform-box: fill-box; transform-origin: center; animation: pnBlink .7s .1s infinite; }
+@keyframes pnDraw { to { stroke-dashoffset: 0; } }
+@keyframes pnFade { to { opacity: .45; } }
+@keyframes pnBlink { 0%, 30%, 46%, 100% { transform: scaleY(1); } 38% { transform: scaleY(.1); } }
+@media (prefers-reduced-motion: reduce) { #pn-loader { display: none !important; } }

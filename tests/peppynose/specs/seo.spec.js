@@ -1,6 +1,6 @@
 // TC-SEO: search engine and link-sharing setup.
 const { test, expect } = require('@playwright/test');
-const { PAGES, SITE, open } = require('./helpers');
+const { PAGES, SITE, open, BUY_SLUGS } = require('./helpers');
 
 test('TC-SEO-01 every page has canonical, og and twitter tags pointing at its own URL', async ({ page }) => {
   for (const path of PAGES) {
@@ -48,14 +48,15 @@ test('TC-SEO-04 robots.txt allows crawling and points to the sitemap', async ({ 
   expect(body).toContain('Sitemap: https://www.peppynose.com/sitemap.xml');
 });
 
-test('TC-SEO-05 sitemap lists all 27 pages (9 × EN/TA/HI) and each one exists', async ({ request }) => {
+test('TC-SEO-05 sitemap lists all 69 pages (23 × EN/TA/HI) and each one exists', async ({ request }) => {
   const res = await request.get('/sitemap.xml');
   expect(res.status()).toBe(200);
   const xml = await res.text();
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  const expected = ['', 'ta/', 'hi/'].flatMap(d => PAGES.map(p => SITE + d + (p === 'index.html' ? '' : p)));
+  const all = [...PAGES, 'pregnancy-tracker.html', ...BUY_SLUGS.map(b => `buy/${b}.html`)];
+  const expected = ['', 'ta/', 'hi/'].flatMap(d => all.map(p => SITE + d + (p === 'index.html' ? '' : p)));
   expect(locs.sort()).toEqual(expected.sort());
-  expect((xml.match(/<xhtml:link /g) || []).length).toBe(27 * 4);
+  expect((xml.match(/<xhtml:link /g) || []).length).toBe(69 * 4);
   for (const loc of locs) {
     const local = '/' + (loc.replace(SITE, '') || 'index.html');
     expect((await request.get(local)).status(), loc).toBe(200);
