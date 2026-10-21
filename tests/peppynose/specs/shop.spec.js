@@ -61,19 +61,19 @@ test('TC-SHOP-07 each marketplace button shows its own price', async ({ page }) 
   const opt = (name, pack) => card(page, name).locator('.opt', { hasText: pack });
   const bob = 'Baby on Board & Bump on Board Sign';
   await expect(opt(bob, 'Pack of 1').locator('a.amazon')).toHaveText(/Amazon\s*₹249/);
-  await expect(opt(bob, 'Pack of 1').locator('a.flipkart')).toHaveText(/Flipkart\s*₹239/);
+  await expect(opt(bob, 'Pack of 1').locator('a.flipkart')).toHaveText(/Flipkart\s*Check price/);
   await expect(opt(bob, 'Pack of 2').locator('a.amazon')).toHaveText(/Amazon\s*₹399/);
-  await expect(opt(bob, 'Pack of 2').locator('a.flipkart')).toHaveText(/Flipkart\s*₹378/);
+  await expect(opt(bob, 'Pack of 2').locator('a.flipkart')).toHaveText(/Flipkart\s*Check price/);
   const mob = card(page, 'Mom on Board & Baby on Board Sign');
   await expect(mob.locator('a.amazon')).toHaveText(/Amazon\s*₹249/);
-  await expect(mob.locator('a.flipkart')).toHaveText(/Flipkart\s*₹239/);
-  // every Amazon button has a rupee price; Flipkart buttons without a known price say "Check price"
+  await expect(mob.locator('a.flipkart')).toHaveText(/Flipkart\s*Check price/);
+  // every Amazon button has a rupee price; every Flipkart button says "Check price" (Flipkart prices change with offers)
   const amazon = await page.$$eval('.card a.amazon', as => as.map(a => a.innerText));
   expect(amazon.length).toBe(18);
   for (const t of amazon) expect(t).toMatch(/₹\d+/);
   const flip = await page.$$eval('.card a.flipkart', as => as.map(a => a.innerText.replace(/\s+/g, ' ').trim()));
-  expect(flip.filter(t => /₹/.test(t))).toEqual(['Flipkart ₹239', 'Flipkart ₹378', 'Flipkart ₹239']);
-  expect(flip.filter(t => /Check price/.test(t)).length).toBe(flip.length - 3);
+  expect(flip.length).toBe(15);
+  for (const t of flip) expect(t).toBe('Flipkart Check price');
   // no single shared price sits next to the buttons any more
   await expect(page.locator('.opt-top b')).toHaveCount(0);
 });

@@ -75,7 +75,7 @@
           <h4>Buy online</h4>
           <ul><li><a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" target="_blank" rel="noopener">Amazon.in store</a></li><li><a href="https://www.flipkart.com/search?q=peppynose" target="_blank" rel="noopener">Flipkart</a></li></ul>
           <h4 style="margin-top:22px">Contact</h4>
-          <ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
+          <ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li><a href="https://www.instagram.com/peppynose_toystore/" target="_blank" rel="noopener">Instagram</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
         </div>
       </div>
       <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.</span></div>
@@ -84,7 +84,10 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     const b = document.querySelector('.menu-btn'), n = document.getElementById('nav');
-    b.addEventListener('click', () => b.setAttribute('aria-expanded', n.classList.toggle('open')));
+    const setMenu = open => { n.classList.toggle('open', open); b.setAttribute('aria-expanded', open); };
+    b.addEventListener('click', () => setMenu(!n.classList.contains('open')));
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && n.classList.contains('open')) { setMenu(false); b.focus(); } });
+    document.addEventListener('click', ev => { if (n.classList.contains('open') && !n.contains(ev.target) && !b.contains(ev.target)) setMenu(false); });
   </script>
 </body>
 </html>

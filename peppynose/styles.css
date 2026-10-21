@@ -500,3 +500,9 @@ body:has(.v5) footer { margin-top: 0; }
 .mini .buy.priced .btn b { font-size: .78rem; font-weight: 700; }
 .mini .buy.priced .btn { border-radius: 14px; padding: 6px 6px; }
 .buy.priced .btn b { white-space: nowrap; }
+
+/* Bigger tap targets on phones without moving anything: the padding grows the tappable area,
+   and an equal negative margin keeps each link's line (and the footer spacing) exactly as before. */
+@media (max-width: 760px) {
+  .foot a, .link-arrow { display: inline-block; padding: 10px 0; margin: -10px 0; }
+}

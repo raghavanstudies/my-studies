@@ -36,7 +36,7 @@ for (const path of POLICY_PAGES) {
     const main = page.locator('main');
     await expect(main).toContainText('Amazon.in');
     await expect(main).toContainText('Flipkart');
-    await expect(main.locator('a[href="mailto:care.peppynose@gmail.com"]')).toHaveCount(1);
+    expect(await main.locator('a[href="mailto:care.peppynose@gmail.com"]').count()).toBeGreaterThanOrEqual(1);
   });
 }
 
@@ -45,6 +45,12 @@ test('TC-CONTENT-05 returns and shipping pages say the marketplace policies appl
   await expect(page.locator('main')).toContainText('handled by Amazon.in or Flipkart under their own return and refund policies');
   await open(page, 'shipping.html');
   await expect(page.locator('main')).toContainText('Their shipping policies apply to your order');
+});
+
+test('TC-CONTENT-07 privacy page email is a mailto link', async ({ page }) => {
+  await open(page, 'privacy.html');
+  const para = page.locator('main p', { hasText: 'Emails you send us.' });
+  await expect(para.locator('a[href="mailto:care.peppynose@gmail.com"]')).toHaveText('care.peppynose@gmail.com');
 });
 
 test('TC-CONTENT-06 no leftover placeholder or removed text anywhere', async ({ page }) => {

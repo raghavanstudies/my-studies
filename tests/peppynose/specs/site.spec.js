@@ -1,8 +1,9 @@
 // TC-SITE: checks that apply to every page.
 const { test, expect } = require('@playwright/test');
 const { PAGES, POLICY_PAGES, open } = require('./helpers');
+const ALL_PAGES = [...PAGES, '404.html'];
 
-for (const path of PAGES) {
+for (const path of ALL_PAGES) {
   test.describe(path, () => {
     test('TC-SITE-01 page loads with a title and no script errors', async ({ page }) => {
       const { res, errors } = await open(page, path);
@@ -15,7 +16,7 @@ for (const path of PAGES) {
       await open(page, path);
       const links = page.locator('header nav a');
       await expect(links).toHaveText(['Home', 'Shop', 'About', 'FAQ', 'Contact']);
-      if (!POLICY_PAGES.includes(path)) {
+      if (!POLICY_PAGES.includes(path) && path !== '404.html') {
         await expect(page.locator(`header nav a[href="${path}"]`)).toHaveAttribute('aria-current', 'page');
       }
     });
@@ -23,12 +24,17 @@ for (const path of PAGES) {
     test('TC-SITE-03 footer has explore, policy, marketplace and contact links', async ({ page }) => {
       await open(page, path);
       const foot = page.locator('footer');
+      const root = path === '404.html' ? '/' : '';  // 404.html uses site-root paths
       for (const href of ['products.html', 'about.html', 'faq.html', 'contact.html', 'shipping.html', 'returns.html', 'privacy.html', 'terms.html']) {
-        await expect(foot.locator(`a[href="${href}"]`)).toHaveCount(1);
+        await expect(foot.locator(`a[href="${root}${href}"]`)).toHaveCount(1);
       }
       await expect(foot.locator('a[href^="https://www.amazon.in/stores/Peppynose"]')).toHaveCount(1);
       await expect(foot.locator('a[href^="https://www.flipkart.com/"]')).toHaveCount(1);
       await expect(foot.locator('a[href="mailto:care.peppynose@gmail.com"]')).toHaveCount(1);
+      const insta = foot.locator('a[href="https://www.instagram.com/peppynose_toystore/"]');
+      await expect(insta).toHaveText('Instagram');
+      await expect(insta).toHaveAttribute('target', '_blank');
+      await expect(insta).toHaveAttribute('rel', 'noopener');
       await expect(foot).toContainText('T-pet Road, Musiri 621211');
     });
 
@@ -91,8 +97,35 @@ test('TC-SITE-09 mobile menu opens and closes', async ({ page }, info) => {
   await btn.click();
   await expect(nav).toBeVisible();
   await expect(btn).toHaveAttribute('aria-expanded', 'true');
+  // Escape closes it and keeps aria-expanded in sync
+  await page.keyboard.press('Escape');
+  await expect(nav).toBeHidden();
+  await expect(btn).toHaveAttribute('aria-expanded', 'false');
+  // tapping outside closes it
+  await btn.click();
+  await expect(nav).toBeVisible();
+  // tap the lower part of the screen, below the open menu
+  const vp = page.viewportSize();
+  await page.mouse.click(vp.width / 2, vp.height - 40);
+  await expect(nav).toBeHidden();
+  await expect(btn).toHaveAttribute('aria-expanded', 'false');
+  // tapping the button again toggles it closed
+  await btn.click();
+  await btn.click();
+  await expect(nav).toBeHidden();
+  await expect(btn).toHaveAttribute('aria-expanded', 'false');
+  // tapping inside the menu follows the link
+  await btn.click();
   await nav.locator('a', { hasText: 'Shop' }).click();
   await expect(page).toHaveURL(/products\.html$/);
+});
+
+test('TC-SITE-11 footer and "See all" links are at least 44 px tall on phones', async ({ page }, info) => {
+  test.skip(info.project.name !== 'mobile', 'tap targets are enlarged on phones only');
+  await open(page, 'index.html');
+  const heights = await page.$$eval('.foot a, .link-arrow', as => as.map(a => a.getBoundingClientRect().height));
+  expect(heights.length).toBeGreaterThan(10);
+  for (const h of heights) expect(h).toBeGreaterThanOrEqual(44);
 });
 
 test('TC-SITE-10 desktop menu is always visible', async ({ page }, info) => {

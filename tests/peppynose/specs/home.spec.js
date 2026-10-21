@@ -58,12 +58,15 @@ test('TC-HOME-06 stage sections show products with a price on each marketplace b
   await expect(page.locator('.stage')).toHaveCount(4);
   const bob = page.locator('.mini', { hasText: 'Baby on Board & Bump on Board Sign' });
   await expect(bob.locator('a.amazon')).toContainText('₹249');
-  await expect(bob.locator('a.flipkart')).toContainText('₹239');
+  await expect(bob.locator('a.flipkart')).toContainText('Check price');
   const mob = page.locator('.mini', { hasText: 'Mom on Board & Baby on Board Sign' });
   await expect(mob.locator('a.amazon')).toContainText('₹249');
-  await expect(mob.locator('a.flipkart')).toContainText('₹239');
+  await expect(mob.locator('a.flipkart')).toContainText('Check price');
   const knee = page.locator('.mini', { hasText: 'Blue Smiley' });
   await expect(knee.locator('a.flipkart')).toContainText('Check price');
+  // no fixed Flipkart price anywhere on the home page
+  const flip = await page.$$eval('a.flipkart', as => as.map(a => a.innerText));
+  for (const t of flip) expect(t).not.toMatch(/₹/);
 });
 
 test('TC-HOME-07 best sellers show 4 products with buy buttons', async ({ page }) => {
