@@ -463,3 +463,40 @@ body:has(.v5) footer { margin-top: 0; }
   .fc3 { left: 8px; bottom: -22px; }
   .agegrid-p { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Marketplace buttons with their own price */
+.buy.priced .btn { flex-direction: column; gap: 0; line-height: 1.2; padding-top: 8px; padding-bottom: 8px; }
+.buy.priced .btn span { font-size: .72rem; font-weight: 500; opacity: .85; }
+.buy.priced .btn b { font-size: .95rem; }
+.buy.priced .btn.small b { font-size: .88rem; }
+.mini .buy.priced .btn { padding: 5px 8px; }
+.mini .buy.priced .btn b { font-size: .8rem; }
+.mini .buy { margin-top: 8px; }
+
+/* Coming soon / out of stock */
+.soon-badge { position: absolute; top: 14px; right: 14px; z-index: 1; background: var(--ink); color: var(--cream); border-radius: 999px; padding: 5px 12px; font-size: .78rem; font-weight: 700; }
+.card.unavailable .ph img { opacity: .55; filter: grayscale(.4); }
+.btn.soon, .btn.soon:hover { flex: 1; background: var(--sand); color: var(--muted); border: 1px dashed var(--line); cursor: not-allowed; transform: none; box-shadow: none; font: inherit; font-weight: 700; }
+
+/* Reviews: two cards */
+.reviews.two { grid-template-columns: repeat(2, 1fr); }
+.reviews.two .feature-review { margin: 0; max-width: none; }
+@media (max-width: 760px) { .reviews.two { grid-template-columns: 1fr; } }
+
+/* Footer with policies column */
+.foot { grid-template-columns: 1.2fr 1fr 1fr 1fr; }
+@media (max-width: 1000px) { .foot { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .foot { grid-template-columns: 1fr; } }
+
+/* Policy pages */
+.policy { padding-bottom: 24px; }
+.policy h2 { font-size: 1.5rem; margin-top: 36px; }
+.policy a { color: #c9785a; }
+.card .ph { overflow: hidden; }
+.card .ph img { position: absolute; inset: 0; }
+.card .ph .tag, .card .ph .soon-badge { z-index: 2; }
+.mini .buy.priced .btn span, .mini .buy.priced .btn b { font-family: "DM Sans", system-ui, sans-serif; margin: 0; display: block; white-space: nowrap; }
+.mini .buy.priced .btn span { font-size: .66rem; font-weight: 500; }
+.mini .buy.priced .btn b { font-size: .78rem; font-weight: 700; }
+.mini .buy.priced .btn { border-radius: 14px; padding: 6px 6px; }
+.buy.priced .btn b { white-space: nowrap; }

@@ -32,10 +32,10 @@ CATS = [
     ('car-signs', 'Car Safety Signs', 'Reversible 2-in-1 signs that tell other drivers to take extra care: "Bump on Board" during pregnancy, "Baby on Board" after.', 'bob-car', [
         ('Baby on Board & Bump on Board Sign', 'bob-1', '2-in-1 reversible, 14.5 × 14.5 cm, 300 GSM laminated board with suction cup.',
          '4.4 out of 5 on Amazon.in · 140 ratings', [('Pack of 1', '₹249', amz('B0GP6XP68R'), FK['bob1']), ('Pack of 2', '₹399', amz('B0H2QVVDRX'), FK['bob2'])]),
-        ('Mom on Board & Baby on Board Sign', 'mob', '2-in-1 reversible, "Mom on Board" for mums-to-be, 14.5 cm, with suction cup.',
+        ('Mom on Board & Baby on Board Sign', 'mob', '2-in-1 reversible, "Mom on Board" for moms-to-be, 14.5 cm, with suction cup.',
          '4.2 out of 5 on Amazon.in · 35 ratings', [('Pack of 1', '₹249', amz('B0GVZFQ2Y5'), FK['mob'])]),
         ('Baby on Board Sign — Large', 'bob-large', '2-in-1 reversible, larger 17.5 × 17.5 cm, 300 GSM laminated board.',
-         None, [('Pack of 1', '₹399', amz('B0H2QZDKN7'), None), ('Pack of 2', '₹399', amz('B0H2R147K2'), None)]),
+         None, []),
     ]),
     ('teethers', 'Teethers', 'Silicone and neem wood teether combos, BPA-free, for babies 3 months and up.', 'teether-fishbird-life', [
         ('Teether Complete Gift Set (6 pieces)', 'teether-gift', 'Silicone teether ring with 5 neem wood shapes. A lovely baby gift.',
@@ -61,17 +61,26 @@ CATS = [
         ('Wooden Kitchen Play Set', 'kitchen', 'Eco-friendly, non-toxic, 15 pieces for pretend play.', None, [('Set of 15', '₹399', amz('B0DJKLV73B'), None)]),
         ('Alphabet & Number Foam Mat', 'foam-mat', '36 interlocking foam pieces for learning through play.', None, [('36 pieces', '₹229', amz('B0DJRKW3T9'), None)]),
         ('LCD Writing Tablet — Blue', 'lcd-blue', '8.5-inch reusable LCD screen for mess-free drawing.', None, [('1 tablet', '₹199', amz('B0DK17XHX3'), None)]),
-        ('LCD Writing Tablet — Multicolour', 'lcd-pink', 'Reusable doodle board for writing and drawing.', None, [('1 tablet', '₹199', amz('B0DJKQ6NJT'), None)]),
+        ('LCD Writing Tablet — Multicolour', 'lcd-pink', 'Reusable doodle board for writing and drawing.', None, []),
     ]),
 ]
 
+# Products that cannot be bought right now: name -> (badge / button text, note shown on the card)
+STATUS = {
+    'Baby on Board Sign — Large': ('Coming soon 🔜', '17.5 × 17.5 cm, pack of 1 or 2. Not on sale yet.'),
+    'LCD Writing Tablet — Multicolour': ('Out of stock', 'Currently unavailable on Amazon.in.'),
+}
+
+# Flipkart prices (Amazon prices are in each option). Flipkart buttons without a price here say "Check price".
+FK_PRICE = {FK['bob1']: '₹239', FK['mob']: '₹239', FK['bob2']: '₹378'}
+
 # Genuine 4★/5★ reviews, verbatim from the catalogue PDF
+# (text, reviewer, date, source, product, stars)
 REVIEWS = [
-    ('Good product. Size is also good for car. Easy Visible to others.', 'Ekta Verma', '4 June 2026', 'Amazon.in', 'Baby on Board sign'),
-    ('It’s good easy to remove and attach to another car as well if needed.', 'Bhaskar', '17 October 2026', 'Amazon.in', 'Mom on Board sign'),
-    ('Suction is nice and stays intact on glass', 'Mitali Kadam', '8 June 2026', 'Amazon.in', 'Baby on Board sign'),
-    ('Overall good and value for money products', 'Pratik Kamble, Raigad', 'Flipkart', 'Flipkart', 'Baby on Board sign'),
+    ('It’s good easy to remove and attach to another car as well if needed.', 'Bhaskar', '17 October 2026', 'Amazon.in', 'Mom on Board sign', 5),
+    ('Overall good and value for money products', 'Pratik Kamble, Raigad', 'Flipkart', 'Flipkart', 'Baby on Board sign', 4),
 ]
+stars = lambda n: '★' * n + '☆' * (5 - n)
 
 BEST = [('car-signs', 0), ('knee-pads', 0), ('teethers', 0), ('play', 0)]
 BEST_IMG = {'car-signs': 'bob-1', 'knee-pads': 'knee-blue-life', 'teethers': 'teether-gift', 'play': 'kitchen'}
@@ -80,8 +89,18 @@ e = html.escape
 NAV = [('index.html', 'Home'), ('products.html', 'Shop'), ('about.html', 'About'), ('faq.html', 'FAQ'), ('contact.html', 'Contact')]
 
 
-def page(file, title, desc, body):
-    nav = '\n'.join(f'          <a href="{h}"{" aria-current=\"page\"" if h == file else ""}>{t}</a>' for h, t in NAV)
+SITE = 'https://www.peppynose.com/'
+OG_IMAGE = SITE + 'images/og-banner.jpg'
+POLICIES = [('shipping.html', 'Shipping policy'), ('returns.html', 'Returns & refunds'), ('privacy.html', 'Privacy policy'), ('terms.html', 'Terms of use')]
+
+
+def page(file, title, desc, body, root=''):
+    # root='/' for pages served from any path (404.html); '' keeps links relative everywhere else
+    nav = '\n'.join(f'          <a href="{root}{h}"{" aria-current=\"page\"" if h == file else ""}>{t}</a>' for h, t in NAV)
+    url = SITE + ('' if file == 'index.html' else file)
+    seo = ('  <meta name="robots" content="noindex">' if file == '404.html' else
+           f'  <link rel="canonical" href="{url}">\n  <meta property="og:url" content="{url}">')
+    policies = ''.join(f'<li><a href="{root}{h}">{t}</a></li>' for h, t in POLICIES)
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -89,20 +108,29 @@ def page(file, title, desc, body):
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <meta name="description" content="{e(desc)}">
+{seo}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Peppynose">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{e(desc)}">
-  <meta property="og:image" content="https://www.peppynose.com/logo.png">
-  <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta property="og:image" content="{OG_IMAGE}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{title}">
+  <meta name="twitter:description" content="{e(desc)}">
+  <meta name="twitter:image" content="{OG_IMAGE}">
+  <link rel="icon" href="{root}favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="{root}apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="{root}styles.css">
 </head>
 <body>
   <header>
     <div class="wrap bar">
-      <a class="brand" href="index.html"><img src="logo-mark.png" alt="">Peppynose<sup>™</sup></a>
+      <a class="brand" href="{root}index.html"><img src="{root}logo-mark.png" alt="">Peppynose<sup>™</sup></a>
       <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
       <nav class="nav" id="nav">
 {nav}
@@ -117,10 +145,14 @@ def page(file, title, desc, body):
   <footer>
     <div class="wrap">
       <div class="foot">
-        <div><img src="logo.png" alt="Peppynose logo"></div>
+        <div><img src="{root}logo.png" alt="Peppynose logo"></div>
         <div>
           <h4>Explore</h4>
-          <ul><li><a href="products.html">Shop all products</a></li><li><a href="about.html">About us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul>
+          <ul><li><a href="{root}products.html">Shop all products</a></li><li><a href="{root}about.html">About us</a></li><li><a href="{root}faq.html">FAQ</a></li><li><a href="{root}contact.html">Contact</a></li></ul>
+        </div>
+        <div>
+          <h4>Policies</h4>
+          <ul>{policies}</ul>
         </div>
         <div>
           <h4>Buy online</h4>
@@ -129,7 +161,7 @@ def page(file, title, desc, body):
           <ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
         </div>
       </div>
-      <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices shown are from Amazon.in and may change. Lifestyle photos: Pexels.</span></div>
+      <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.</span></div>
     </div>
   </footer>
   <script>
@@ -142,14 +174,14 @@ def page(file, title, desc, body):
 '''
 
 
-def buy_buttons(a, f, small=True):
+def buy_buttons(a, f, small=True, ap=None):
     s = ' small' if small else ''
     out = []
     if a:
-        out.append(f'<a class="btn amazon{s}" href="{a}" target="_blank" rel="noopener">Amazon</a>')
+        out.append(f'<a class="btn amazon{s}" href="{a}" target="_blank" rel="noopener"><span>Amazon</span><b>{ap or "Check price"}</b></a>')
     if f:
-        out.append(f'<a class="btn flipkart{s}" href="{f}" target="_blank" rel="noopener">Flipkart</a>')
-    return '<div class="buy">' + ''.join(out) + '</div>'
+        out.append(f'<a class="btn flipkart{s}" href="{f}" target="_blank" rel="noopener"><span>Flipkart</span><b>{FK_PRICE.get(f, "Check price")}</b></a>')
+    return '<div class="buy priced">' + ''.join(out) + '</div>'
 
 
 AGES = [('all', 'All'), ('pregnancy', 'Pregnancy'), ('newborn', 'Newborn'), ('months3', '3 months+'), ('crawling', 'Knee pads · 1–3 yrs'), ('kids', 'Toys · 1–3 yrs')]
@@ -161,11 +193,17 @@ def product_card(cat_title, p, img=None, cover=False, ages=''):
     name, image, desc, rating, opts = p
     img = img or image
     rating_html = f'<div class="rating"><span class="stars">★</span> {e(rating)}</div>' if rating else ''
-    opt_html = '\n'.join(
-        f'<div class="opt"><div class="opt-top"><span>{label}</span><b>{price}</b></div>{buy_buttons(a, f)}</div>'
-        for label, price, a, f in opts)
-    return f'''          <article class="card" data-ages="{ages}">
-            <div class="ph{' cover' if cover else ''}"><span class="tag">{e(cat_title)}</span><img src="images/{img}.webp" alt="Peppynose {e(name)}" loading="lazy"></div>
+    status = STATUS.get(name)
+    if status:
+        opt_html = f'<div class="opt"><div class="opt-top"><span>{e(status[1])}</span></div><div class="buy"><button class="btn small soon" disabled>{e(status[0])}</button></div></div>'
+        badge = f'<span class="soon-badge">{e(status[0])}</span>'
+    else:
+        opt_html = '\n'.join(
+            f'<div class="opt"><div class="opt-top"><span>{label}</span></div>{buy_buttons(a, f, ap=price)}</div>'
+            for label, price, a, f in opts)
+        badge = ''
+    return f'''          <article class="card{' unavailable' if status else ''}" data-ages="{ages}">
+            <div class="ph{' cover' if cover else ''}"><span class="tag">{e(cat_title)}</span>{badge}<img src="images/{img}.webp" alt="Peppynose {e(name)}" loading="lazy"></div>
             <div class="body"><h3>{e(name)}</h3><p>{e(desc)}</p>{rating_html}
               <div class="opts">{opt_html}</div></div>
           </article>'''
@@ -176,18 +214,16 @@ def best_card(cid, idx):
     name, image, desc, rating, opts = c[4][idx]
     img = BEST_IMG[cid]
     cover = img.endswith('-life')
-    prices = [o[1] for o in opts]
-    price = prices[0] if len(set(prices)) == 1 else f'<small>from</small> {min(prices, key=lambda s: int(s[1:]))}'
-    _, _, a, f = opts[0]
+    label, ap, a, f = opts[0]
     rating_html = f'<div class="rating"><span class="stars">★</span> {e(rating)}</div>' if rating else ''
     return f'''          <article class="card">
             <div class="ph{' cover' if cover else ''}"><span class="tag">{e(c[1])}</span><img src="images/{img}.webp" alt="Peppynose {e(name)}" loading="lazy"></div>
-            <div class="body"><h3>{e(name)}</h3><p>{e(desc)}</p>{rating_html}<div class="price">{price}</div>{buy_buttons(a, f, small=False)}</div>
+            <div class="body"><h3>{e(name)}</h3><p>{e(desc)}</p>{rating_html}<div class="price"><small>{e(label)}</small></div>{buy_buttons(a, f, small=False, ap=ap)}</div>
           </article>'''
 
 
 def review_card(r):
-    text, who, when, src, prod = r
+    text, who, when, src, prod, n = r
     when_html = '' if when == src else f' · {e(when)}'
     return f'''          <figure class="review"><span class="stars">★★★★★</span><blockquote>“{e(text)}”</blockquote>
             <figcaption class="who"><strong>{e(who)}</strong>{e(prod)}{when_html}<br><span class="src">Verified purchase · {e(src)}</span></figcaption></figure>'''
@@ -305,7 +341,7 @@ def products():
       <div class="wrap">
         <span class="eyebrow">Shop</span>
         <h1>All products</h1>
-        <p>Every Peppynose product, with a button for each pack size. Tap Amazon or Flipkart to buy. Prices are from Amazon.in.</p>
+        <p>Every Peppynose product, with a button for each pack size. Each button shows that marketplace’s price; tap Amazon or Flipkart to buy.</p>
         <div class="agebar" role="group" aria-label="Filter by age">
           <span>Shop by age:</span>
 {agebtns}
@@ -372,7 +408,7 @@ def faq():
         ]),
         ('Car safety signs', [
             ('What does 2-in-1 reversible mean?', 'One side says "Bump on Board" (or "Mom on Board") for pregnancy, and the other says "Baby on Board" for after your baby arrives. Just flip it.'),
-            ('What sizes are available?', '14.5 × 14.5 cm and a larger 17.5 × 17.5 cm, in packs of 1 or 2.'),
+            ('What sizes are available?', '14.5 × 14.5 cm, in packs of 1 or 2. A larger 17.5 × 17.5 cm size is coming soon.'),
             ('How does it attach to the car?', 'With a suction cup on the rear windshield. It can be removed and moved to another car.'),
         ]),
         ('Teethers', [
@@ -418,6 +454,90 @@ def contact():
     </section>'''
     return page('contact.html', 'Contact — Peppynose', 'Get in touch with Peppynose.', body)
 
+
+UPDATED = '21 October 2026'
+CONTACT_HTML = """<p>Peppynose<br>T-pet Road, Musiri 621211<br>Trichy, Tamil Nadu, India<br>Email: <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></p>"""
+
+
+def policy_page(file, eyebrow, title, desc, sections):
+    blocks = '\n'.join(f'      <h2>{e(h)}</h2>\n' + '\n'.join(f'      {para}' for para in paras) for h, paras in sections)
+    body = f'''    <div class="page-head">
+      <div class="wrap"><span class="eyebrow">{eyebrow}</span><h1>{title}</h1><p>Last updated: {UPDATED}</p></div>
+    </div>
+    <div class="wrap prose policy">
+{blocks}
+    </div>'''
+    return page(file, f'{title} — Peppynose', desc, body)
+
+
+MARKETPLACE_ORDERS = '<p>Peppynose™ products are sold through <a href="https://www.amazon.in" target="_blank" rel="noopener">Amazon.in</a> and <a href="https://www.flipkart.com" target="_blank" rel="noopener">Flipkart</a>. This website does not take orders or payments. When you buy a Peppynose product, the order is placed with, and fulfilled by, the marketplace you buy from.</p>'
+
+
+def shipping():
+    return policy_page('shipping.html', 'Policies', 'Shipping policy', 'How Peppynose orders are shipped: all orders are placed and delivered through Amazon.in and Flipkart.', [
+        ('How orders are shipped', [MARKETPLACE_ORDERS,
+            '<p>Shipping, delivery times and any delivery charges are set by Amazon.in or Flipkart and shown on the product page and at checkout before you pay. Their shipping policies apply to your order.</p>']),
+        ('Tracking your order', ['<p>You can track your order from your account on the marketplace you ordered from: <a href="https://www.amazon.in/gp/css/order-history" target="_blank" rel="noopener">Amazon.in orders</a> or <a href="https://www.flipkart.com/account/orders" target="_blank" rel="noopener">Flipkart orders</a>.</p>']),
+        ('Questions', ['<p>For delivery questions, please contact the marketplace first, as they handle shipping. For anything about our products, write to us:</p>', CONTACT_HTML]),
+    ])
+
+
+def returns():
+    return policy_page('returns.html', 'Policies', 'Returns &amp; refunds', 'Peppynose returns and refunds: orders are placed on Amazon.in and Flipkart, so their return and refund policies apply.', [
+        ('Returns and refunds', [MARKETPLACE_ORDERS,
+            '<p>Returns, replacements and refunds are handled by Amazon.in or Flipkart under their own return and refund policies. The return window and conditions for each product are shown on its product page on the marketplace.</p>']),
+        ('How to request a return', ['<p>Open your order on the marketplace you bought from and choose the return or replacement option: <a href="https://www.amazon.in/gp/css/order-history" target="_blank" rel="noopener">Amazon.in orders</a> or <a href="https://www.flipkart.com/account/orders" target="_blank" rel="noopener">Flipkart orders</a>. Refunds are paid by the marketplace to your original payment method, as described in its policy.</p>']),
+        ('Problem with a product?', ['<p>If something is wrong with a Peppynose product, please also let us know so we can help and improve:</p>', CONTACT_HTML]),
+    ])
+
+
+def privacy():
+    return policy_page('privacy.html', 'Policies', 'Privacy policy', 'How the Peppynose website handles your information.', [
+        ('Summary', ['<p>This website is an information site for Peppynose™ products. It has no user accounts, no shopping cart, no forms and no payments, and we do not use advertising or analytics cookies.</p>']),
+        ('Information we receive', [
+            '<p><strong>Emails you send us.</strong> If you write to care.peppynose@gmail.com, we receive your email address and message and use them only to reply to you.</p>',
+            '<p><strong>Website hosting.</strong> The site is hosted on GitHub Pages. Like any web host, GitHub may record technical information such as your IP address when you visit, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub’s privacy statement</a>.</p>',
+            '<p><strong>Fonts and photos from other services.</strong> Pages load fonts from Google Fonts and some photos from Pexels, so your browser connects to those services when a page opens.</p>']),
+        ('Buying on Amazon.in and Flipkart', ['<p>When you follow a link to Amazon.in or Flipkart, you leave this website. Your order, payment and delivery details are handled by that marketplace under its own privacy policy; we do not receive your payment details.</p>']),
+        ('Your choices', ['<p>To ask about, correct or delete any email correspondence we hold about you, contact us:</p>', CONTACT_HTML]),
+        ('Changes', ['<p>If we change this policy, we will update it on this page and change the date at the top.</p>']),
+    ])
+
+
+def terms():
+    return policy_page('terms.html', 'Policies', 'Terms of use', 'Terms for using the Peppynose website.', [
+        ('About this website', ['<p>This website gives information about Peppynose™ products. By using it, you agree to these terms.</p>']),
+        ('Orders and prices', [MARKETPLACE_ORDERS,
+            '<p>Prices, stock and offers on this website are shown for information and may change. The price and terms shown on Amazon.in or Flipkart at checkout are the ones that apply to your order.</p>']),
+        ('Product information', ['<p>We try to keep product descriptions, photos and ratings accurate. Some photos are lifestyle images, and products may vary slightly in colour or appearance. Always read the product page on the marketplace before buying, and follow the age guidance and safety instructions supplied with each product.</p>']),
+        ('Links to other websites', ['<p>This site links to Amazon.in, Flipkart and other websites. We are not responsible for their content or policies.</p>']),
+        ('Brand and content', ['<p>Peppynose™, the Peppynose logo, and the text and product photos on this website belong to Peppynose. Please do not copy them without permission. Some lifestyle photos are from Pexels and are used under the Pexels licence.</p>']),
+        ('Contact', [CONTACT_HTML]),
+    ])
+
+
+def not_found():
+    body = """    <div class="page-head" style="padding-bottom:80px">
+      <div class="wrap"><span class="eyebrow">Error 404</span><h1>Oops, this page <em>wandered off</em></h1>
+        <p>The page you’re looking for doesn’t exist or has moved.</p>
+        <div class="actions" style="justify-content:center;margin-top:28px"><a class="btn amazon" href="/">Back to home</a><a class="btn ghost" href="/products.html">Shop all products</a></div>
+      </div>
+    </div>"""
+    return page('404.html', 'Page not found — Peppynose', 'This page could not be found.', body, root='/')
+
+
+def sitemap():
+    files = ['', 'products.html', 'about.html', 'faq.html', 'contact.html'] + [h for h, _ in POLICIES]
+    urls = '\n'.join(f'  <url><loc>{SITE}{f}</loc></url>' for f in files)
+    return f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls}
+</urlset>
+'''
+
+
+ROBOTS = f"User-agent: *\nAllow: /\n\nSitemap: {SITE}sitemap.xml\n"
+
 # home_v4
 
 
@@ -446,7 +566,9 @@ ICON = {
 
 def stage_row(i, st):
     num, stage, cat, cid, img, tone, text, prods = st
-    items = '\n'.join(f'''              <div class="mini"><img src="images/{pimg}.webp" alt="" loading="lazy"><div><strong>{e(name)}</strong><span>{price}</span>{buy_buttons(a, f)}</div></div>'''
+    alt = {'car-signs': 'Pregnant mother holding her belly', 'teethers': 'Baby with a Peppynose silicone and neem wood teether',
+           'knee-pads': 'Baby crawling in Peppynose Yellow Smiley knee pads', 'play': 'Peppynose wooden kitchen play set'}[cid]
+    items = '\n'.join(f'''              <div class="mini"><img src="images/{pimg}.webp" alt="Peppynose {e(name)}" loading="lazy"><div><strong>{e(name)}</strong>{buy_buttons(a, f, ap=price)}</div></div>'''
                       for name, pimg, price, a, f in prods)
     if img.startswith('http'):
         src, fb, cover = img.split('|')[0], img.split('|')[1], ''
@@ -454,7 +576,7 @@ def stage_row(i, st):
         src, fb, cover = f'images/{img}.webp', '', '' if img.endswith('-life') else ' contain'
     onerr = f''' onerror="this.onerror=null;this.src='images/{fb}.webp';this.parentNode.classList.add('contain')"''' if fb else ''
     return f'''        <div class="stage{' flip' if i % 2 else ''}">
-          <div class="stage-ph tone-{tone}{cover}"><img src="{src}" alt="" loading="lazy"{onerr}><span class="stage-num">{num}</span></div>
+          <div class="stage-ph tone-{tone}{cover}"><img src="{src}" alt="{e(alt)}" loading="lazy"{onerr}><span class="stage-num">{num}</span></div>
           <div class="stage-txt">
             <span class="eyebrow">{e(stage)}</span>
             <h3>{e(cat)}</h3>
@@ -469,9 +591,12 @@ def stage_row(i, st):
 
 def home():
     best = '\n'.join(best_card(c, i) for c, i in BEST)
-    feat = REVIEWS[0]
-    small = '\n'.join(review_card(r) for r in REVIEWS[1:])
-    marquee_items = ['BPA-free silicone', 'Natural neem wood', 'Soft cotton knee pads', '2-in-1 reversible car signs', 'Verified 5★ reviews', 'Delivered by Amazon.in & Flipkart']
+    revs = '\n'.join(f'''        <figure class="feature-review">
+          <span class="stars" aria-label="{n} out of 5 stars">{stars(n)}</span>
+          <blockquote>“{e(t)}”</blockquote>
+          <figcaption><strong>{e(w)}</strong> · {e(p)}{'' if d == s_ else ' · ' + e(d)} · <span class="src">Verified purchase · {e(s_)}</span></figcaption>
+        </figure>''' for t, w, d, s_, p, n in REVIEWS)
+    marquee_items = ['BPA-free silicone', 'Natural neem wood', 'Soft cotton knee pads', '2-in-1 reversible car signs', 'Verified 4★ & 5★ reviews', 'Delivered by Amazon.in & Flipkart']
     mq = ''.join(f'<span>{e(t)}</span><i>✦</i>' for t in marquee_items)
     stages = '\n'.join(stage_row(i, s) for i, s in enumerate(STAGES))
     body = f'''    <div class="announce">Rated <b>4.4 out of 5</b> by 140 Amazon.in buyers · Baby on Board sign</div>
@@ -491,7 +616,7 @@ def home():
         </div>
         <div class="hero3-art">
           <img src="images/hero-family.webp" alt="A smiling Indian mother with her child as a baby, a toddler and a school-going kid">
-          <a class="fcard fc3" href="{amz('B0GVZFQ2Y5')}" target="_blank" rel="noopener"><img src="images/mob.webp" alt=""><span><b>Mom on Board sign</b>For moms-to-be · ₹249</span></a>
+          <a class="fcard fc3" href="{amz('B0GVZFQ2Y5')}" target="_blank" rel="noopener"><img src="images/mob.webp" alt="Peppynose Mom on Board sign"><span><b>Mom on Board sign</b>For moms-to-be · ₹249 on Amazon.in</span></a>
           <span class="spark s1">✦</span>
         </div>
       </div>
@@ -533,13 +658,8 @@ def home():
     <section>
       <div class="wrap">
         <div class="center-head"><span class="eyebrow">Reviews</span><h2>Loved by parents</h2><p>Genuine reviews from verified buyers, word for word.</p></div>
-        <figure class="feature-review">
-          <span class="stars">★★★★★</span>
-          <blockquote>“{e(feat[0])}”</blockquote>
-          <figcaption><strong>{e(feat[1])}</strong> · {e(feat[4])} · {e(feat[2])} · <span class="src">Verified purchase · {e(feat[3])}</span></figcaption>
-        </figure>
-        <div class="reviews three">
-{small}
+        <div class="reviews two">
+{revs}
         </div>
       </div>
     </section>
@@ -566,7 +686,7 @@ def home():
               <a class="btn flipkart" href="{FK_STORE}" target="_blank" rel="noopener">Flipkart</a>
             </div>
           </div>
-          <div class="band2-ph"><img src="https://images.pexels.com/photos/6392892/pexels-photo-6392892.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Mother and baby resting together" loading="lazy" onerror="this.onerror=null;this.src='images/teether-fishbird-life.webp'"><img src="images/knee-mint-life.webp" alt="" loading="lazy"></div>
+          <div class="band2-ph"><img src="https://images.pexels.com/photos/6392892/pexels-photo-6392892.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Mother and baby resting together" loading="lazy" onerror="this.onerror=null;this.src='images/teether-fishbird-life.webp'"><img src="images/knee-mint-life.webp" alt="Baby crawling in Peppynose Mint Dotted knee pads" loading="lazy"></div>
         </div>
       </div>
     </section>'''
@@ -588,7 +708,7 @@ PEXELS_MOM = 'https://images.pexels.com/photos/6392989/pexels-photo-6392989.jpeg
 
 
 def v5_pack_rows(opts):
-    return ''.join(f'<div class="v5-pack"><span>{label}</span><b>{price}</b>{buy_buttons(a, f)}</div>' for label, price, a, f in opts)
+    return ''.join(f'<div class="v5-pack"><span>{label}</span>{buy_buttons(a, f, ap=price)}</div>' for label, price, a, f in opts)
 
 
 def home_bold():
@@ -600,7 +720,7 @@ def home_bold():
         for i, (k, _, _, opts) in enumerate(KNEE_COLOURS))
     reviews = ''.join(
         f'<figure class="v5-rev"><span class="stars">★★★★★</span><blockquote>“{e(t)}”</blockquote><figcaption><b>{e(w)}</b> · {e(p)}<br><small>Verified purchase · {e(s)}</small></figcaption></figure>'
-        for t, w, d, s, p in REVIEWS)
+        for t, w, d, s, p, _ in REVIEWS)
     body = f'''  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
   <div class="v5">
     <section class="v5-hero">
@@ -715,6 +835,8 @@ def home_bold():
                 'Peppynose baby essentials: 2-in-1 Bump on Board / Baby on Board car signs, soft crawling knee pads, BPA-free teethers and learning toys. Shop on Amazon.in and Flipkart.', body)
 
 
-for name, fn in [('index.html', home), ('products.html', products), ('about.html', about), ('faq.html', faq), ('contact.html', contact)]:
+for name, fn in [('index.html', home), ('products.html', products), ('about.html', about), ('faq.html', faq), ('contact.html', contact),
+                 ('shipping.html', shipping), ('returns.html', returns), ('privacy.html', privacy), ('terms.html', terms),
+                 ('404.html', not_found), ('sitemap.xml', sitemap), ('robots.txt', lambda: ROBOTS)]:
     (OUT / name).write_text(fn())
 print('written to', OUT)
