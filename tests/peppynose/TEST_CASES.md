@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 21 October 2026 (website V4), 405 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 22 October 2026 (website V4.1), 411 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -147,6 +147,10 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V4-15 | Parrot loader | Three parrot/perch layers, gone within about a second, first page in a tab only, never on buy pages |
 | TC-V4-16 | Scroll animations | Progress bar, reveals and flying birds on big screens; hero photo never animated; every faded-in item is fully visible after scrolling (7 pages, EN/TA/HI); no birds on phones; nothing at all with reduced motion |
 | TC-V4-17 | Privacy page | Analytics section in all 3 languages; "Last updated: October 2026"; no phone number |
+| TC-V4-18 | V4.1: no pregnancy data in analytics | After using the tracker and "Share with family" (EN/TA/HI), the tracker_used and share_card_created events carry only language, page and share method: no week, trimester, due date or input mode |
+| TC-V4-19 | V4.1: no Clarity on tracker pages | With real IDs and "Accept", the 3 tracker pages load Google Analytics only, never Microsoft Clarity; other pages load both; tracker section keeps data-clarity-mask |
+| TC-V4-20 | V4.1: no sideways scroll with big text | Home EN/TA/HI at 320, 360, 390, 412 px with text at 100%, 115%, 130%, motion on and off: page never wider than the screen |
+| TC-V4-21 | V4.1: tablet and desktop unchanged | At 768, 1024 and 1280 px the home page layout is identical with and without the new phone-only CSS block |
 
 ## Manual test cases (need the live site or a real phone)
 

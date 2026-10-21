@@ -322,3 +322,90 @@ test('TC-V4-17 privacy page explains analytics in all 3 languages', async ({ pag
   await open(page, 'privacy.html');
   await expect(page.locator('.page-head p')).toHaveText('Last updated: October 2026');
 });
+
+test.describe('V4.1 fixes', () => {
+  test.beforeEach(async ({ page }) => { await noLoader(page); });
+
+  test('TC-V4-18 no pregnancy data in any analytics event (EN/TA/HI)', async ({ page }) => {
+    await page.addInitScript(() => { window.open = () => null; });
+    await consent(page, 'granted');
+    for (const d of Object.values(LANGS)) {
+      await open(page, d + 'pregnancy-tracker.html');
+      await page.fill('#trk-date', await day(page, 126));
+      await page.click('#trk-form button[type="submit"]');
+      await expect(page.locator('#r-week')).toContainText('22');                 // tracker itself unchanged
+      await Promise.all([page.waitForEvent('download'), page.click('#r-card')]);
+      const ev = await page.evaluate(() => window.pnEvents.map(e => [e.name, e.params]));
+      const used = ev.find(e => e[0] === 'tracker_used'), card = ev.find(e => e[0] === 'share_card_created');
+      expect(Object.keys(used[1]).sort(), d).toEqual(['language', 'page_path']);
+      expect(Object.keys(card[1]).sort(), d).toEqual(['language', 'method', 'page_path']);
+      expect(JSON.stringify(ev), d).not.toMatch(/week|trimester|due|input_mode|lmp|"22"|:22\b/);
+      await page.click('#r-clear');
+    }
+  });
+
+  test('TC-V4-19 Clarity never loads on the tracker pages; GA4 page views still do', async ({ page }) => {
+    await consent(page, 'granted');
+    const hits = watch(page);
+    for (const d of Object.values(LANGS)) {
+      hits.length = 0;
+      await openWithIds(page, d + 'pregnancy-tracker.html');
+      await expect.poll(() => hits.length).toBe(1);
+      await page.waitForTimeout(300);
+      expect(hits.filter(u => u.includes('clarity.ms')), d).toEqual([]);
+      expect(hits[0]).toContain('googletagmanager.com/gtag/js');
+      expect(await page.evaluate(() => typeof window.clarity), d).toBe('undefined');
+      await expect(page.locator('section.trk[data-clarity-mask="True"]')).toHaveCount(1);
+    }
+    hits.length = 0;
+    await openWithIds(page, 'index.html');                                         // other pages: both load
+    await expect.poll(() => hits.length).toBe(2);
+    expect(hits.some(u => u.includes('clarity.ms'))).toBe(true);
+  });
+
+  test('TC-V4-20 home has no sideways scroll on small phones with large text (EN/TA/HI, 320–412 px, 100/115/130%)', async ({ page }, info) => {
+    desktopOnly(info);
+    test.setTimeout(120000);   // 24 page loads × 3 text sizes
+    const bad = [];
+    for (const motion of ['no-preference', 'reduce']) {
+      // own tab per setting: switching to reduced motion makes motion.js reload the open page (by design)
+      const tab = motion === 'reduce' ? await page.context().newPage() : page;
+      await tab.emulateMedia({ reducedMotion: motion });
+      await noLoader(tab); await consent(tab, 'denied');
+      for (const d of Object.values(LANGS)) {
+        for (const w of [320, 360, 390, 412]) {
+          await tab.setViewportSize({ width: w, height: 800 });
+          await open(tab, d + 'index.html');
+          for (const fs of ['100%', '115%', '130%']) {
+            await tab.evaluate(fs => { document.documentElement.style.fontSize = fs; }, fs);
+            await tab.waitForTimeout(150);
+            const over = await tab.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+            if (over > 0) bad.push(`${d || 'en/'}index ${w}px ${fs} ${motion}: ${over}px`);
+          }
+        }
+      }
+    }
+    expect(bad).toEqual([]);
+  });
+
+  test('TC-V4-21 the phone-only CSS block leaves tablet and desktop unchanged', async ({ page }, info) => {
+    desktopOnly(info);
+    await consent(page, 'denied');
+    // compare the layout with and without the V4.1 block (the last rule in styles.css)
+    const snap = () => page.evaluate(() => [...document.querySelectorAll('.stage, .stage > *, .agegrid-p, .agegrid-p > a, .promise2, .promise2 > *, .sec-head > *, .mini > div, .mini .buy')]
+      .map(e => { const c = getComputedStyle(e); return [c.gridTemplateColumns, c.minWidth, c.maxWidth, c.padding, c.flexWrap, c.overflowWrap, Math.round(e.getBoundingClientRect().width)].join('|'); }));
+    for (const w of [768, 1024, 1280]) {
+      await page.setViewportSize({ width: w, height: 900 });
+      await open(page, 'index.html');
+      const withBlock = await snap();
+      const removed = await page.evaluate(() => {
+        const sh = [...document.styleSheets].find(x => (x.href || '').endsWith('/styles.css'));
+        const last = sh.cssRules[sh.cssRules.length - 1];
+        if (!(last.conditionText || '').includes('max-width: 480px')) return false;
+        sh.deleteRule(sh.cssRules.length - 1); return true;
+      });
+      expect(removed).toBe(true);
+      expect(await snap(), `${w}px`).toEqual(withBlock);
+    }
+  });
+});
