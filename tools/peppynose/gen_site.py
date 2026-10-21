@@ -72,7 +72,8 @@ STATUS = {
 }
 
 # Flipkart prices (Amazon prices are in each option). Flipkart buttons without a price here say "Check price".
-FK_PRICE = {FK['bob1']: '₹239', FK['mob']: '₹239', FK['bob2']: '₹378'}
+# Left empty on purpose: Flipkart prices change with offers, so every Flipkart button says "Check price".
+FK_PRICE = {}
 
 # Genuine 4★/5★ reviews, verbatim from the catalogue PDF
 # (text, reviewer, date, source, product, stars)
@@ -158,7 +159,7 @@ def page(file, title, desc, body, root=''):
           <h4>Buy online</h4>
           <ul><li><a href="{AMZ_STORE}" target="_blank" rel="noopener">Amazon.in store</a></li><li><a href="{FK_STORE}" target="_blank" rel="noopener">Flipkart</a></li></ul>
           <h4 style="margin-top:22px">Contact</h4>
-          <ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
+          <ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li><a href="https://www.instagram.com/peppynose_toystore/" target="_blank" rel="noopener">Instagram</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
         </div>
       </div>
       <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.</span></div>
@@ -167,7 +168,10 @@ def page(file, title, desc, body, root=''):
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     const b = document.querySelector('.menu-btn'), n = document.getElementById('nav');
-    b.addEventListener('click', () => b.setAttribute('aria-expanded', n.classList.toggle('open')));
+    const setMenu = open => {{ n.classList.toggle('open', open); b.setAttribute('aria-expanded', open); }};
+    b.addEventListener('click', () => setMenu(!n.classList.contains('open')));
+    document.addEventListener('keydown', ev => {{ if (ev.key === 'Escape' && n.classList.contains('open')) {{ setMenu(false); b.focus(); }} }});
+    document.addEventListener('click', ev => {{ if (n.classList.contains('open') && !n.contains(ev.target) && !b.contains(ev.target)) setMenu(false); }});
   </script>
 </body>
 </html>
@@ -495,7 +499,7 @@ def privacy():
     return policy_page('privacy.html', 'Policies', 'Privacy policy', 'How the Peppynose website handles your information.', [
         ('Summary', ['<p>This website is an information site for Peppynose™ products. It has no user accounts, no shopping cart, no forms and no payments, and we do not use advertising or analytics cookies.</p>']),
         ('Information we receive', [
-            '<p><strong>Emails you send us.</strong> If you write to care.peppynose@gmail.com, we receive your email address and message and use them only to reply to you.</p>',
+            '<p><strong>Emails you send us.</strong> If you write to <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a>, we receive your email address and message and use them only to reply to you.</p>',
             '<p><strong>Website hosting.</strong> The site is hosted on GitHub Pages. Like any web host, GitHub may record technical information such as your IP address when you visit, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub’s privacy statement</a>.</p>',
             '<p><strong>Fonts and photos from other services.</strong> Pages load fonts from Google Fonts and some photos from Pexels, so your browser connects to those services when a page opens.</p>']),
         ('Buying on Amazon.in and Flipkart', ['<p>When you follow a link to Amazon.in or Flipkart, you leave this website. Your order, payment and delivery details are handled by that marketplace under its own privacy policy; we do not receive your payment details.</p>']),
