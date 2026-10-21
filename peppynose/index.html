@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Peppynose — Baby &amp; kids essentials</title>
-  <meta name="description" content="Peppynose makes thoughtful baby and kids essentials: car safety signs, crawling knee pads, teethers and learning toys. Shop on Amazon.in.">
+  <meta name="description" content="Peppynose makes thoughtful baby and kids essentials: car safety signs, crawling knee pads, teethers and learning toys. Shop on Amazon.in and Flipkart.">
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,6 +55,7 @@
       border-bottom: 1px solid var(--border);
     }
     .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+    .logo sup { font-size: .5em; font-family: Inter, sans-serif; font-weight: 600; margin-left: -6px; align-self: flex-start; margin-top: 14px; }
     .logo { display: flex; align-items: center; gap: 10px; font-family: Fredoka, sans-serif; font-weight: 700; font-size: 1.5rem; text-decoration: none; }
     .logo img { width: 44px; height: 44px; }
     .nav-links { display: flex; gap: 28px; align-items: center; }
@@ -67,6 +68,8 @@
       border: 0; cursor: pointer; font-size: 1rem; transition: transform .15s, background .15s;
     }
     .btn:hover { background: var(--brand-dark); transform: translateY(-2px); }
+    .btn-flipkart { background: #2874f0; }
+    .btn-flipkart:hover { background: #1a5fd0; }
     .btn-ghost { background: transparent; color: var(--text); border: 2px solid var(--border); }
     .btn-ghost:hover { background: var(--surface-alt); }
     .nav .btn { padding: 10px 20px; color: #fff; }
@@ -119,8 +122,11 @@
     }
     .cta h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); }
     .cta p { opacity: .92; max-width: 520px; margin: 0 auto 24px; }
+    .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
     .cta .btn { background: var(--text); }
     .cta .btn:hover { background: #000; }
+    .cta .btn-flipkart { background: #2874f0; }
+    .cta .btn-flipkart:hover { background: #1a5fd0; }
 
     footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: .95rem; }
     .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
@@ -143,11 +149,11 @@
 <body>
   <header>
     <div class="container nav">
-      <a href="#" class="logo"><img src="logo-mark.png" alt="">Peppynose</a>
+      <a href="#" class="logo"><img src="logo-mark.png" alt="">Peppynose<sup>™</sup></a>
       <nav class="nav-links">
         <a href="#why">Why us</a>
         <a href="#products">Products</a>
-        <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Shop on Amazon</a>
+        <a href="#shop" class="btn">Shop now</a>
       </nav>
     </div>
   </header>
@@ -158,10 +164,10 @@
         <div>
           <span class="eyebrow">👶 For little ones &amp; growing families</span>
           <h1>Little things for <span>little ones</span>.</h1>
-          <p>Peppynose makes thoughtful everyday essentials for babies, toddlers and parents-to-be — from car safety signs to crawling knee pads, teethers and learning toys.</p>
+          <p>Peppynose™ makes thoughtful everyday essentials for babies, toddlers and parents-to-be — from car safety signs to crawling knee pads, teethers and learning toys.</p>
           <div class="hero-actions">
-            <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Shop on Amazon.in</a>
-            <a href="#products" class="btn btn-ghost">See products</a>
+            <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Shop on Amazon</a>
+            <a href="https://www.flipkart.com/search?q=peppynose" class="btn btn-flipkart" target="_blank" rel="noopener">Shop on Flipkart</a>
           </div>
         </div>
         <div class="hero-art">
@@ -193,7 +199,7 @@
           <div class="card">
             <div class="icon">📦</div>
             <h3>Easy to order</h3>
-            <p>Every Peppynose product is available on Amazon.in, with Amazon's delivery and returns.</p>
+            <p>Buy Peppynose on Amazon.in or Flipkart, with their trusted delivery and easy returns.</p>
           </div>
         </div>
       </div>
@@ -246,12 +252,15 @@
       </div>
     </section>
 
-    <section>
+    <section id="shop">
       <div class="container">
         <div class="cta">
-          <h2>Visit the Peppynose store</h2>
-          <p>See our full range, latest prices and offers on Amazon.in.</p>
-          <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Go to Amazon store</a>
+          <h2>Shop Peppynose online</h2>
+          <p>See our full range, latest prices and offers on Amazon.in and Flipkart.</p>
+          <div class="cta-actions">
+            <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Amazon store</a>
+            <a href="https://www.flipkart.com/search?q=peppynose" class="btn btn-flipkart" target="_blank" rel="noopener">Flipkart store</a>
+          </div>
         </div>
       </div>
     </section>
@@ -263,7 +272,8 @@
       <nav>
         <a href="#why">About</a>
         <a href="#products">Products</a>
-        <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" target="_blank" rel="noopener">Amazon store</a>
+        <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" target="_blank" rel="noopener">Amazon</a>
+        <a href="https://www.flipkart.com/search?q=peppynose" target="_blank" rel="noopener">Flipkart</a>
       </nav>
     </div>
   </footer>
