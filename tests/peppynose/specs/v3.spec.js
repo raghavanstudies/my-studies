@@ -33,7 +33,7 @@ test.describe('new pages in all 3 languages', () => {
         expect(over, `${p} at ${w}px`).toBeLessThanOrEqual(0);
       }
       await page.waitForFunction(() => [...document.images].every(i => i.complete), null, { timeout: 15000 });
-      expect(await page.$$eval('img', imgs => imgs.filter(i => i.naturalWidth === 0).map(i => i.getAttribute('src'))), p).toEqual([]);
+      expect(await page.$$eval('img[src]', imgs => imgs.filter(i => i.naturalWidth === 0).map(i => i.getAttribute('src'))), p).toEqual([]);
       // canonical + hreflang for every language
       const sub = p.replace(/^(ta|hi)\//, '');
       expect(await page.locator('link[rel="canonical"]').getAttribute('href')).toBe(SITE + p);
@@ -245,7 +245,10 @@ test('TC-V3-14 tracker edge cases: due today, 5 weeks ahead, 300 days ahead; not
   await open(page, 'pregnancy-tracker.html');
   const day = n => page.evaluate(n => { const t = new Date(); const d = new Date(t.getFullYear(), t.getMonth(), t.getDate() + n);
     return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-'); }, n);
-  const go = async n => { await page.fill('#trk-date', await day(n)); await page.click('#trk-form button[type="submit"]'); };
+  const go = async n => {
+    if (await page.locator('#trk-form').isHidden()) await page.click('#r-change');   // V4: the form hides once a result shows
+    await page.fill('#trk-date', await day(n)); await page.click('#trk-form button[type="submit"]');
+  };
   await go(0);
   await expect(page.locator('#r-week')).toHaveText('Week 40');
   await expect(page.locator('#r-left')).toHaveText('Due date reached');

@@ -77,10 +77,10 @@ for (const path of ALL_PAGES) {
       expect(bad).toEqual([]);
     });
 
-    test('TC-SITE-08 every image has alt text (only the decorative header logo may be empty)', async ({ page }) => {
+    test('TC-SITE-08 every image has alt text (only decorative ones may be empty: header logo, loader, flying birds)', async ({ page }) => {
       await open(page, path);
       const missing = await page.$$eval('img', imgs => imgs
-        .filter(i => !i.hasAttribute('alt') || (i.getAttribute('alt') === '' && !i.closest('.brand')))
+        .filter(i => !i.hasAttribute('alt') || (i.getAttribute('alt') === '' && !i.closest('.brand, [aria-hidden="true"]')))
         .map(i => i.getAttribute('src')));
       expect(missing).toEqual([]);
     });

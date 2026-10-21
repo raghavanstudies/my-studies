@@ -1,0 +1,121 @@
+/* ===================== Peppynose V4 additions (append to the END of /styles.css, after the V3 block) ===================== */
+
+/* V4-1. FIX (audit v5 TC-23): in Tamil, when the 4-card grid makes cards narrow, put the "Scan to buy" caption under the QR instead of cutting it off. Tested CSS from FIXLIST.txt, unchanged. */
+@media (min-width: 1001px) and (max-width: 1239px) {
+  html[lang="ta"] .pn-qr { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+/* V4-2. Pregnancy tracker: simple first screen + tabs */
+.trk-hero { display: grid; grid-template-columns: 200px 1fr; gap: 18px 26px; align-items: center; }
+.trk-hero-img { width: 200px; aspect-ratio: 1; position: relative; }
+.trk-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+.trk-ph { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center;
+          background: radial-gradient(circle at 38% 34%, #ffe9df 0, #fbd6c6 55%, #f6c0aa 100%); }
+.trk-ph span { font-family: Fraunces, "Noto Serif Tamil", "Noto Serif Devanagari", serif; font-size: 4.2rem; font-weight: 700; color: #9a4a33; line-height: 1; }
+.trk-hero .big { font-family: Fraunces, "Noto Serif Tamil", "Noto Serif Devanagari", serif; font-size: clamp(2.4rem, 7vw, 3.4rem); line-height: 1.1; display: block; }
+.trk-size { font-size: 1.15rem; margin: 6px 0 4px; }
+.trk-left { font-size: 1.25rem; font-weight: 700; color: #b3261e; margin: 0 0 14px; }
+.trk .btn.card { background: #1f8f4e; color: #fff; display: inline-flex; gap: 8px; align-items: center; min-height: 48px; }
+.trk-credit { grid-column: 1 / -1; font-size: .75rem; color: var(--muted); margin: 0; }
+.trk-msg { font-size: .9rem; color: var(--muted); margin: 8px 0 0; min-height: 1em; }
+.trk-tabs { display: flex; gap: 6px; margin: 0 0 10px; background: var(--sand); padding: 5px; border-radius: 999px; }
+.trk-tabs [role="tab"] { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; min-height: 44px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-weight: 700; color: var(--ink); cursor: pointer; padding: 8px 10px; line-height: 1.2; }
+.trk-tabs [role="tab"][aria-selected="true"] { background: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.trk-panel h2 { font-size: 1.15rem; margin: 0 0 8px; }
+.trk-checks, .trk-todo { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.trk-checks li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); }
+.trk-checks .ck-tag { font-size: .75rem; font-weight: 700; border-radius: 999px; padding: 3px 9px; background: var(--sand); white-space: nowrap; }
+.trk-checks .ck-now { border-color: #45B033; background: #f3fbf1; } .trk-checks .ck-now .ck-tag { background: #45B033; color: #fff; }
+.trk-checks .ck-past { opacity: .65; }
+.trk-todo label { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; cursor: pointer; }
+.trk-todo input { width: 22px; height: 22px; flex: none; margin: 1px 0 0; accent-color: #1f8f4e; }
+.trk-todo input:checked + span { text-decoration: line-through; color: var(--muted); }
+.trk-note { font-size: .85rem; color: var(--muted); margin: 10px 0 0; }
+.trk .disclaimer.trk-d2 { margin: 6px 0 12px; }
+@media (max-width: 520px) {
+  .trk-hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .trk-hero-img { width: 170px; }
+  .trk .btn.card { width: 100%; justify-content: center; }
+  .trk-tabs [role="tab"] { font-size: .88rem; padding: 8px 4px; }
+  html[lang="ta"] .trk-tabs [role="tab"] { font-size: .8rem; }
+}
+@media (prefers-color-scheme: dark) { .trk-checks .ck-now { background: #1f3320; } }
+
+/* V4-3. Consent banner (shown until Accept / Decline). Floating buttons move up while it is open (--pn-lift). */
+.pn-consent { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 60; max-width: 760px; margin: 0 auto; background: var(--white, #fff); color: var(--ink, #222);
+              border: 1px solid var(--line, #ddd); border-radius: 18px; box-shadow: 0 12px 34px rgba(0,0,0,.18); padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.pn-consent p { margin: 0; flex: 1 1 300px; font-size: .9rem; line-height: 1.45; }
+.pn-consent-b { display: flex; gap: 8px; flex: 0 0 auto; margin-left: auto; }
+.pn-consent button { font: inherit; font-weight: 700; min-height: 44px; padding: 8px 18px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line, #ccc); background: transparent; color: inherit; }
+.pn-consent .pn-c-yes { background: var(--ink, #1d2b4f); color: var(--cream, #fff); border-color: transparent; }
+@media (max-width: 480px) { .pn-consent-b { width: 100%; } .pn-consent button { flex: 1 1 0; } }
+.wa-float { bottom: calc(18px + var(--pn-lift, 0px)); }
+@media (max-width: 760px) { .wa-float { bottom: calc(12px + var(--pn-lift, 0px)); } }
+
+/* V4-4. FAQ chat helper: round button stacked ABOVE the WhatsApp button (same right edge, 12 px gap; phones 14 px). */
+.pn-chat { position: fixed; right: 18px; bottom: calc(18px + 48px + 12px + var(--pn-lift, 0px)); z-index: 41; transition: opacity .2s, transform .2s; }
+.pn-chat-btn { width: 52px; height: 52px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; margin-left: auto;
+               background: #0083CF; color: #fff; box-shadow: 0 10px 26px rgba(0,0,0,.18); }
+.pn-chat-btn svg { width: 26px; height: 26px; }
+.pn-chat.pn-chat-hide { opacity: 0; pointer-events: none; transform: translateY(6px); }
+.pn-chat-panel { position: absolute; right: 0; bottom: 62px; width: min(360px, calc(100vw - 24px)); max-height: min(560px, calc(100vh - 170px - var(--pn-lift, 0px)));
+                 display: flex; flex-direction: column; background: var(--white, #fff); color: var(--ink, #222); border: 1px solid var(--line, #ddd); border-radius: 20px; box-shadow: 0 18px 44px rgba(0,0,0,.22); overflow: hidden; }
+.pn-chat-panel[hidden] { display: none; }
+.pn-chat-h { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #0083CF; color: #fff; }
+.pn-chat-x { border: 0; background: transparent; color: inherit; font-size: 1.1rem; width: 40px; height: 40px; cursor: pointer; border-radius: 50%; }
+.pn-chat-log { padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; overscroll-behavior: contain; }
+.pn-m { max-width: 92%; font-size: .9rem; line-height: 1.45; }
+.pn-m p { margin: 0 0 6px; }
+.pn-m.bot { background: var(--sand, #f4eee6); border-radius: 14px 14px 14px 4px; padding: 9px 11px; }
+.pn-m.me { align-self: flex-end; background: #0083CF; color: #fff; border-radius: 14px 14px 4px 14px; padding: 8px 11px; }
+.pn-m.chips, .pn-m.more { display: flex; flex-direction: column; gap: 6px; max-width: 100%; }
+.pn-m.chips button, .pn-more { text-align: left; font: inherit; font-size: .86rem; padding: 8px 11px; min-height: 40px; border-radius: 12px; border: 1px solid #0083CF; background: transparent; color: inherit; cursor: pointer; }
+.pn-chat-link, .pn-chat-wa { display: inline-block; margin: 2px 8px 0 0; font-weight: 700; font-size: .86rem; }
+.pn-chat-wa { color: #0b6e35; }
+.pn-chat-f { display: flex; gap: 6px; padding: 8px 10px; border-top: 1px solid var(--line, #ddd); }
+.pn-chat-f input { flex: 1 1 auto; min-width: 0; font: inherit; font-size: 16px; padding: 9px 12px; border: 1px solid var(--line, #ccc); border-radius: 999px; background: var(--white, #fff); color: inherit; }
+.pn-chat-f button { font: inherit; font-weight: 700; border: 0; border-radius: 999px; padding: 0 14px; min-height: 42px; background: var(--ink, #1d2b4f); color: var(--cream, #fff); cursor: pointer; }
+.pn-chat-note { font-size: .72rem; color: var(--muted, #666); margin: 0; padding: 0 12px 10px; }
+@media (max-width: 760px) {
+  .pn-chat { right: 12px; bottom: calc(12px + 48px + 14px + var(--pn-lift, 0px)); }
+  .pn-chat-btn { width: 50px; height: 50px; }
+  .pn-chat-panel { position: fixed; right: 12px; left: 12px; width: auto; bottom: calc(132px + var(--pn-lift, 0px)); max-height: calc(100vh - 150px - var(--pn-lift, 0px)); }
+  footer { padding-bottom: 150px; }   /* the last footer line can scroll clear of both buttons */
+  .buy-foot { padding-bottom: 150px; }
+}
+@media (prefers-reduced-motion: reduce) { .pn-chat { transition: none; } }
+
+/* V4-5. Loader: the two parrots cut from the real logo. Mother hops, then baby hops, then the full logo lettering fades in. */
+#pn-loader .pl-art { position: relative; width: 112px; height: 120px; }
+#pn-loader .pl-art img { position: absolute; inset: 0; width: 100%; height: 100%; }
+#pn-loader .pl-word { display: block; width: 150px; height: auto; margin: 10px auto 0; opacity: 0; }
+#pn-loader .pl-box { display: flex; flex-direction: column; align-items: center; }
+#pn-loader .pl-perch { opacity: 0; animation: pl-fade .16s ease-out forwards; }
+#pn-loader .pl-mom { opacity: 0; transform-origin: 75% 70%; animation: pl-hop .38s cubic-bezier(.3,.7,.4,1) .04s forwards; }
+#pn-loader .pl-baby { opacity: 0; transform-origin: 25% 70%; animation: pl-hop2 .34s cubic-bezier(.3,.7,.4,1) .24s forwards; }
+#pn-loader .pl-word { animation: pl-fade .2s ease-out .44s forwards; }
+@keyframes pl-fade { to { opacity: 1; } }
+@keyframes pl-hop { 0% { opacity: 0; transform: translateY(14px) rotate(4deg); } 35% { opacity: 1; } 60% { transform: translateY(-9px) rotate(-3deg); } 100% { opacity: 1; transform: none; } }
+@keyframes pl-hop2 { 0% { opacity: 0; transform: translateY(12px) scale(.9); } 35% { opacity: 1; } 55% { transform: translateY(-11px) rotate(-6deg) scale(1.03); } 78% { transform: translateY(0) rotate(3deg); } 100% { opacity: 1; transform: none; } }
+
+/* V4-6. Scroll motion (only when motion.js adds html.pn-motion, i.e. never with reduced motion). Transforms + opacity only. */
+.pn-progress { position: fixed; left: 0; top: 0; width: 100%; height: 3px; z-index: 70; pointer-events: none; transform-origin: 0 50%; transform: scaleX(0);
+               background: linear-gradient(90deg, #E51B00, #F0579B 30%, #45B033 65%, #0083CF); }
+.pn-motion .pn-rv { transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); transition-delay: var(--pn-d, 0ms); }
+.pn-motion .pn-rv.pn-up:not(.pn-words) { opacity: 0; transform: translate3d(0, 22px, 0); }
+.pn-motion .pn-rv.pn-sl { opacity: 0; transform: translate3d(-26px, 0, 0); }
+.pn-motion .pn-rv.pn-sr { opacity: 0; transform: translate3d(26px, 0, 0); }
+.pn-motion .pn-rv.pn-in, .pn-motion .pn-rv.pn-up.pn-in:not(.pn-words) { opacity: 1; transform: none; }   /* 2nd selector: must outrank the .pn-up:not(.pn-words) start state */
+.pn-motion .pn-words .pn-wd { display: inline-block; max-width: 100%; overflow-wrap: anywhere;   /* long Tamil words may still wrap on 320 px phones */
+   opacity: 0; transform: translate3d(0, .45em, 0); transition: opacity .45s ease, transform .45s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--pn-i, 0) * 55ms); }
+.pn-motion .pn-words.pn-in .pn-wd { opacity: 1; transform: none; }
+.pn-fly { position: fixed; left: 14px; top: 0; z-index: 30; width: 46px; height: 50px; pointer-events: none; opacity: .9; will-change: transform; }
+.pn-fly img { position: absolute; width: 46px; height: auto; }
+.pn-fly .pn-fly-m { left: 0; top: 0; transform: rotate(var(--pn-flap, 0deg)); transition: transform .3s ease-out; }
+.pn-fly .pn-fly-b { left: 0; top: 0; transform: rotate(calc(var(--pn-flap, 0deg) * -1)); transition: transform .3s ease-out; }
+@media (max-width: 1199px) { .pn-fly { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }      /* smooth cross-fade when switching EN / தமிழ் / हिंदी (Chrome/Edge; others just switch) */
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; }
+}
+@media (prefers-reduced-motion: reduce) { .pn-progress, .pn-fly { display: none; } }
