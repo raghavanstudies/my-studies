@@ -260,3 +260,18 @@ test('TC-V3-14 tracker edge cases: due today, 5 weeks ahead, 300 days ahead; not
   // only Google Fonts may be requested, and nothing carries the date
   for (const u of sent) expect(u, u).toMatch(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//);
 });
+
+test('TC-V3-15 Tamil home 1001–1239 px: "Scan to buy" caption sits under the QR, inside the card (TC-23 fix)', async ({ page }, info) => {
+  desktopOnly(info);
+  await noLoader(page);
+  for (const [d, w, dir] of [['ta/', 1024, 'column'], ['ta/', 1239, 'column'], ['ta/', 1280, 'row'], ['ta/', 1000, 'row'], ['', 1024, 'row'], ['hi/', 1024, 'row']]) {
+    await page.setViewportSize({ width: w, height: 900 });
+    await open(page, d + 'index.html');
+    const qr = await page.$$eval('.pn-qr', qs => qs.map(q => {
+      const c = q.closest('article').getBoundingClientRect(), s = q.querySelector('span').getBoundingClientRect();
+      return { dir: getComputedStyle(q).flexDirection, inside: s.right <= c.right && s.left >= c.left };
+    }));
+    expect(qr.length).toBe(4);
+    for (const q of qr) { expect(q.dir, `${d}index at ${w}px`).toBe(dir); expect(q.inside, `${d}index at ${w}px`).toBe(true); }
+  }
+});

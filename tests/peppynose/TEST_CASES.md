@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 21 October 2026 (website V3), 372 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 21 October 2026 (website V3), 373 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -124,6 +124,7 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V3-12 | Phone header | On the 3 home pages at 320–430 px the language buttons sit on a second row and never cover the logo or Menu button; lettering never squashed (also checked at 768 and 1024 px) |
 | TC-V3-13 | Saved language | A visitor who chose Tamil and scans an English QR code lands on the Tamil buy page |
 | TC-V3-14 | Tracker edge cases and privacy | Due today: week 40, "Due date reached"; 5 weeks ahead: week 35; 300 days ahead: error; nothing is sent anywhere (only Google Fonts) |
+| TC-V3-15 | Tamil home "Scan to buy" caption (TC-23 fix) | At 1001–1239 px the Tamil caption sits under the QR code and stays inside the card; other widths and languages keep it beside the QR |
 
 ## Manual test cases (need the live site or a real phone)
 
