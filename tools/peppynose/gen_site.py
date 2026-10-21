@@ -125,6 +125,8 @@ def page(file, title, desc, body):
         <div>
           <h4>Buy online</h4>
           <ul><li><a href="{AMZ_STORE}" target="_blank" rel="noopener">Amazon.in store</a></li><li><a href="{FK_STORE}" target="_blank" rel="noopener">Flipkart</a></li></ul>
+          <h4 style="margin-top:22px">Contact</h4>
+          <ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
         </div>
       </div>
       <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices shown are from Amazon.in and may change. Lifestyle photos: Pexels.</span></div>
@@ -150,7 +152,7 @@ def buy_buttons(a, f, small=True):
     return '<div class="buy">' + ''.join(out) + '</div>'
 
 
-AGES = [('all', 'All'), ('pregnancy', 'Pregnancy'), ('newborn', 'Newborn'), ('months3', '3 months+'), ('crawling', 'Crawling babies'), ('kids', 'Toddlers & kids')]
+AGES = [('all', 'All'), ('pregnancy', 'Pregnancy'), ('newborn', 'Newborn'), ('months3', '3 months+'), ('crawling', 'Knee pads · 1–3 yrs'), ('kids', 'Toys · 1–3 yrs')]
 AGE_OF = {'Baby on Board & Bump on Board Sign': 'pregnancy newborn', 'Mom on Board & Baby on Board Sign': 'pregnancy newborn', 'Baby on Board Sign — Large': 'pregnancy newborn'}
 CAT_AGE = {'car-signs': 'pregnancy newborn', 'teethers': 'months3', 'knee-pads': 'crawling', 'play': 'kids'}
 
@@ -340,10 +342,11 @@ def about():
       <div class="wrap story">
         <img src="https://images.pexels.com/photos/30701846/pexels-photo-30701846.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Mother holding her newborn baby in soft light" loading="lazy" onerror="this.onerror=null;this.src='images/teether-gift-life.webp'">
         <div>
-          <span class="draft">Draft text — to be replaced with your story</span>
+          <span class="eyebrow">Since 2023 · Musiri, Tamil Nadu</span>
           <h2>Our story</h2>
-          <p>Peppynose™ is an Indian brand of baby and kids essentials. We make simple, gentle products for the everyday moments of early parenthood: a sign for the car on the way home from the hospital, soft pads for crawling knees, natural teethers, and toys for learning through play.</p>
-          <p>Who started Peppynose, when and why goes here.</p>
+          <p>Peppynose™ began in 2023 in Musiri, a small town near Trichy in Tamil Nadu, with a simple idea: the early years of parenthood are full of little moments, and each one deserves something made with care.</p>
+          <p>So we make simple, gentle products for those moments. A 2-in-1 sign that says “Bump on Board” while you’re expecting and flips to “Baby on Board” for the drive home. Soft cotton knee pads for first crawls. BPA-free silicone and neem wood teethers for first teeth. And toys that turn learning into play.</p>
+          <p>Every Peppynose product is sold on Amazon.in and Flipkart, so parents across India can order with the delivery and returns they already trust. We read every review, and we keep improving our products with what parents tell us.</p>
         </div>
       </div>
     </section>
@@ -377,8 +380,12 @@ def faq():
             ('What is in each teether combo?', 'Fish & Bird and Car & Cloud combos have 3 pieces each. The Complete Gift Set has 6 pieces.'),
         ]),
         ('Knee pads', [
+            ('What age are the knee pads for?', 'For little ones aged 1 to 3 years.'),
             ('What are the knee pads made of?', 'Soft cotton. They protect knees and elbows while your baby crawls.'),
             ('Which colours and packs are available?', 'Blue Smiley, Yellow Smiley, Gray Dotted and Black Dotted in packs of 2 or 4, and Mint Dotted in a pack of 4.'),
+        ]),
+        ('Toys', [
+            ('What age are the toys for?', 'The wooden kitchen set, alphabet and number foam mat and LCD writing tablets are for children aged 1 to 3 years.'),
         ]),
     ]
     blocks = '\n'.join(f'        <h2>{t}</h2>\n' + '\n'.join(f'        <details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in items) for t, items in qa)
@@ -396,10 +403,9 @@ def contact():
     body = f'''    <div class="page-head">
       <div class="wrap"><span class="eyebrow">Contact</span><h1>We’d love to <em>hear from you</em></h1><p>Questions about a product, bulk or gift orders, or feedback.</p></div>
     </div>
-    <div class="wrap contact-grid">
-      <div class="contact-card"><span class="draft">To be added</span><h3>Email</h3><p>Your business email address.</p></div>
-      <div class="contact-card"><span class="draft">To be added</span><h3>WhatsApp</h3><p>Your WhatsApp business number, with a tap-to-chat button.</p></div>
-      <div class="contact-card"><span class="draft">To be added</span><h3>Instagram</h3><p>Your Instagram handle.</p></div>
+    <div class="wrap contact-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));max-width:860px">
+      <div class="contact-card"><h3>Email us</h3><p>For product questions, bulk or gift orders, and feedback.</p><a class="btn ghost" href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></div>
+      <div class="contact-card"><h3>Visit or write to us</h3><p>Peppynose<br>T-pet Road, Musiri 621211<br>Trichy, Tamil Nadu, India</p></div>
     </div>
     <section>
       <div class="wrap">
@@ -500,8 +506,8 @@ def home():
           <a href="products.html?age=pregnancy"><span>🤰</span><b>Pregnancy</b><small>Car signs</small></a>
           <a href="products.html?age=newborn"><span>👶</span><b>Newborn</b><small>Car signs</small></a>
           <a href="products.html?age=months3"><span>🦷</span><b>3 months+</b><small>Teethers</small></a>
-          <a href="products.html?age=crawling"><span>🧸</span><b>Crawling babies</b><small>Knee pads</small></a>
-          <a href="products.html?age=kids"><span>🧩</span><b>Toddlers &amp; kids</b><small>Learning toys</small></a>
+          <a href="products.html?age=crawling"><span>🧸</span><b>Crawling babies</b><small>Knee pads · 1–3 years</small></a>
+          <a href="products.html?age=kids"><span>🧩</span><b>Toddlers &amp; kids</b><small>Learning toys · 1–3 years</small></a>
         </div>
       </div>
     </section>
@@ -709,6 +715,6 @@ def home_bold():
                 'Peppynose baby essentials: 2-in-1 Bump on Board / Baby on Board car signs, soft crawling knee pads, BPA-free teethers and learning toys. Shop on Amazon.in and Flipkart.', body)
 
 
-for name, fn in [('index.html', home), ('index-bold.html', home_bold), ('products.html', products), ('about.html', about), ('faq.html', faq), ('contact.html', contact)]:
+for name, fn in [('index.html', home), ('products.html', products), ('about.html', about), ('faq.html', faq), ('contact.html', contact)]:
     (OUT / name).write_text(fn())
 print('written to', OUT)
