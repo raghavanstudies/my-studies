@@ -115,25 +115,35 @@ test('TC-V2-06 trust badges and Instagram section on the 3 home pages', async ({
   }
 });
 
-test('TC-V2-07 WhatsApp button never covers a button or footer link while scrolling the shop', async ({ page }) => {
-  await open(page, 'products.html');
-  const max = await page.evaluate(() => document.body.scrollHeight);
-  for (let y = 0; y < max; y += 250) {
-    await page.evaluate(v => scrollTo(0, v), y);
-    await page.waitForTimeout(250);
-    const clash = await page.evaluate(() => {
-      const wa = document.querySelector('.wa-float');
-      if (wa.classList.contains('wa-hide')) return null;
-      const r = wa.getBoundingClientRect();
-      for (const el of document.querySelectorAll('.btn, .buy a, .agebtn, .chips a, footer a')) {
-        const b = el.getBoundingClientRect();
-        if (b.width && b.right > r.left && b.left < r.right && b.bottom > r.top && b.top < r.bottom) return el.textContent.trim().slice(0, 30);
-      }
-      return null;
-    });
-    expect(clash, `at scroll ${y}`).toBeNull();
-  }
-});
+for (const banner of ['open', 'closed']) {
+  test(`TC-V2-07 WhatsApp and help-chat buttons never cover a button or footer link while scrolling the shop (cookie banner ${banner})`, async ({ page }) => {
+    if (banner === 'closed') await page.addInitScript(() => localStorage.setItem('pn_consent', 'denied'));
+    await open(page, 'products.html');
+    await expect(page.locator('.pn-consent')).toHaveCount(banner === 'open' ? 1 : 0);
+    await page.waitForTimeout(300);
+    const max = await page.evaluate(() => document.body.scrollHeight);
+    for (let y = 0; y < max; y += 250) {
+      await page.evaluate(v => scrollTo(0, v), y);
+      await page.waitForTimeout(250);
+      const check = () => page.evaluate(() => {
+        for (const [f, hide] of [['.wa-float', 'wa-hide'], ['.pn-chat', 'pn-chat-hide']]) {
+          const fl = document.querySelector(f);
+          if (!fl || fl.classList.contains(hide)) continue;
+          const r = (f === '.pn-chat' ? fl.querySelector('.pn-chat-btn') : fl).getBoundingClientRect();
+          for (const el of document.querySelectorAll('.btn, .buy a, .agebtn, .chips a, footer a, .pn-qr')) {
+            const b = el.getBoundingClientRect();
+            if (b.width && b.right > r.left && b.left < r.right && b.bottom > r.top && b.top < r.bottom) return f + ' over ' + el.textContent.trim().slice(0, 30);
+          }
+        }
+        return null;
+      });
+      // a real overlap stays; a busy test machine can be a frame late hiding the button, so look again once
+      let clash = await check();
+      if (clash) { await page.waitForTimeout(500); clash = await check(); }
+      expect(clash, `at scroll ${y}`).toBeNull();
+    }
+  });
+}
 
 test('TC-V2-08 footer links are at least 40 px tall and do not overlap on phones', async ({ page }, info) => {
   test.skip(info.project.name !== 'mobile', 'phone layout');

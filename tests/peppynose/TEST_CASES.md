@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 21 October 2026 (website V3), 373 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 21 October 2026 (website V4), 405 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -30,7 +30,7 @@ The tests start a local web server for `peppynose/` and block all outside reques
 | TC-SITE-05 | Local links and files | Every link, stylesheet and image on the page exists (status 200) |
 | TC-SITE-06 | Mobile/desktop layout | No sideways scrolling |
 | TC-SITE-07 | Marketplace links | Every Amazon/Flipkart link opens in a new tab with `rel="noopener"` |
-| TC-SITE-08 | Accessibility | Every image has alt text (only the decorative header logo next to the word "Peppynose" is empty) |
+| TC-SITE-08 | Accessibility | Every image has alt text (only decorative ones may be empty: the header parrot, the loader and the flying birds) |
 | TC-SITE-09 | Mobile menu (390 px) | Menu button shows; tap opens the menu; Escape closes it; tapping outside closes it; tapping the button again closes it; aria-expanded always matches; tapping Shop goes to the Shop page |
 | TC-SITE-10 | Desktop menu (1280 px) | Menu always visible, no menu button |
 | TC-SITE-11 | Phone tap targets (390 px) | Every footer link and "See all …" link is at least 44 px tall |
@@ -97,7 +97,7 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V2-04 | Buy links | Amazon and Flipkart links are exactly the same in English, Tamil and Hindi |
 | TC-V2-05 | Hero photo | 16:9 shape on desktop, 4:5 on phones |
 | TC-V2-06 | Home pages | Trust badges row and Instagram section (6 posts, each opens Instagram in a new tab) on the 3 home pages |
-| TC-V2-07 | WhatsApp button | Hides near the footer, so it never covers a buy button or footer link while scrolling the shop |
+| TC-V2-07 | WhatsApp and help-chat buttons | Hide when a buy button, QR code or footer link passes under them, so they never cover one while scrolling the shop, with the cookie banner open and closed |
 | TC-V2-08 | Footer on phones | Footer links at least 40 px tall and do not overlap |
 | TC-V2-09 | Language switch | Shown only on the 3 home pages |
 | TC-V2-10 | Remembered language | Choosing Tamil or Hindi is remembered on other pages and the next visit; choosing EN switches back |
@@ -126,6 +126,28 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V3-14 | Tracker edge cases and privacy | Due today: week 40, "Due date reached"; 5 weeks ahead: week 35; 300 days ahead: error; nothing is sent anywhere (only Google Fonts) |
 | TC-V3-15 | Tamil home "Scan to buy" caption (TC-23 fix) | At 1001–1239 px the Tamil caption sits under the QR code and stays inside the card; other widths and languages keep it beside the QR |
 
+### Website V4: tracker tabs, analytics with consent, help chat, parrot loader, scroll animations (TC-V4)
+
+| ID | What is checked | Expected result |
+|---|---|---|
+| TC-V4-01 | All 72 pages | Load analytics-config.js, analytics.js and chatbot.js; motion.js on all but the buy pages; "Cookie settings" link in the footer; no tracking code written into any page |
+| TC-V4-02 | Cookie banner | Shows on a first visit in the page language (EN/TA/HI) with a link to that language's privacy page; nothing is requested from Google or Microsoft before "Accept" |
+| TC-V4-03 | Placeholder IDs | With G-XXXXXXXXXX / CLARITY_PROJECT_ID still in place, "Accept" loads nothing |
+| TC-V4-04 | Real IDs | Before "Accept": 0 requests; after: Google Analytics and Clarity load (2 requests); ads consent always "denied" |
+| TC-V4-05 | Decline / change mind | "Decline": no banner on the next page, nothing loads; "Cookie settings" reopens the banner; declining after accepting reloads the page and stops all requests |
+| TC-V4-06 | Click events | Amazon, Flipkart, WhatsApp and buy-page events carry the product, language and page |
+| TC-V4-07 | Tracker first screen | Due date 126 days ahead: "Week 22", peach circle with 22, "Baby is about the size of a small papaya", "126 days to go", "Share with family"; form hidden; baby pictures not requested yet; disclaimer above and below |
+| TC-V4-08 | Tracker tabs | Checkups: 7 reminders, the 18–22 week scan marked "Now"; To-do: a tick survives reload; "Clear my data" removes the date and ticks |
+| TC-V4-09 | Share card | "Share with family" saves a 1080 × 1080 PNG made on the device and opens WhatsApp with no phone number |
+| TC-V4-10 | Tracker in Tamil and Hindi | First screen, To-do ticks and reload work, no script errors |
+| TC-V4-11 | Baby sizes | Before week 4: "Baby sizes start from week 4."; week 35: bunch of bananas; after 40: "Baby is ready to meet you!" |
+| TC-V4-12 | Chat button position | Above the WhatsApp button, same right edge, never overlapping, no sideways scroll (320–1280 px) |
+| TC-V4-13 | Help chat | Tapped question and typed question get the right answers; an unknown question offers WhatsApp with the question filled in; phone number never shown; Escape closes |
+| TC-V4-14 | Help chat in Tamil and Hindi | Typed "teether cleaning" in Tamil and Hindi finds the teether care answer |
+| TC-V4-15 | Parrot loader | Three parrot/perch layers, gone within about a second, first page in a tab only, never on buy pages |
+| TC-V4-16 | Scroll animations | Progress bar, reveals and flying birds on big screens; hero photo never animated; every faded-in item is fully visible after scrolling (7 pages, EN/TA/HI); no birds on phones; nothing at all with reduced motion |
+| TC-V4-17 | Privacy page | Analytics section in all 3 languages; "Last updated: October 2026"; no phone number |
+
 ## Manual test cases (need the live site or a real phone)
 
 These can't be automated from the build environment, which cannot reach www.peppynose.com, Amazon or Flipkart.
@@ -149,3 +171,7 @@ These can't be automated from the build environment, which cannot reach www.pepp
 | TC-MAN-15 | Open www.peppynose.com in a new private window | The baby face shows briefly, then the page; the next page has no face |
 | TC-MAN-16 | Pregnancy tracker on a phone: enter a due date, tap "Share my week" | WhatsApp opens with the message, you pick who to send it to |
 | TC-MAN-17 | Look at the top-left logo on a phone with large text and in dark mode | Colourful lettering is sharp and readable; language buttons never cover it |
+| TC-MAN-18 | Open www.peppynose.com in a new private window on a phone | Cookie banner in the page language; parrots hop in for under a second |
+| TC-MAN-19 | Pregnancy tracker on a phone: tap "Share with family" | Share sheet (or download) with the week card; WhatsApp opens with no phone number |
+| TC-MAN-20 | Tap the round blue "?" button, ask a question in English, Tamil and Hindi | Sensible answer, or "Chat on WhatsApp" if nothing fits |
+| TC-MAN-21 | After pasting the real IDs: open the site, tap Accept, tap an Amazon button | GA4 Realtime shows page_view and amazon_click within a minute; Clarity shows the visit within about 2 hours |

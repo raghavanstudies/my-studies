@@ -1,30 +1,73 @@
-/* Peppynose pregnancy week tracker (V3). Vanilla JS, no libraries.
-   Privacy: the date is kept ONLY in this browser's localStorage (key "pn_preg"). Nothing is sent anywhere; no analytics.
-   Page text (all languages) comes from <script type="application/json" id="trk-data"> on each page. */
+/* Peppynose pregnancy week tracker (V4). Vanilla JS, no libraries.
+   Privacy: the date ("pn_preg") and the to-do ticks ("pn_todo") are kept ONLY in this browser's localStorage.
+   The WhatsApp family card is drawn on the phone with <canvas>; nothing is uploaded.
+   Page text (all languages) comes from <script type="application/json" id="trk-data"> on each page.
+   ---------------------------------------------------------------------------------------------
+   WEEK IMAGES: the approved image set goes in /assets/tracker/week04.webp ... week40.webp (800x800).
+   Until those files are uploaded, keep ready:false. A soft circle with the week number is shown instead
+   (no 404s, no broken images). When the approved files are in the repo, set ready:true and, if needed, the credit line. */
+const PN_TRACKER_IMAGES = { ready: false, path: '/assets/tracker/week', ext: '.webp', credit: '' };
 (() => {
   const dataEl = document.getElementById('trk-data');
   if (!dataEl) return;
   const D = JSON.parse(dataEl.textContent), S = D.s;
-  const KEY = 'pn_preg', DAY = 864e5;
+  const KEY = 'pn_preg', TODO_KEY = 'pn_todo', DAY = 864e5;
   const $ = id => document.getElementById(id);
   const form = $('trk-form'), dateIn = $('trk-date'), err = $('trk-err'), res = $('trk-result');
   const lang = (document.documentElement.lang || 'en').slice(0, 2);
   const locale = { en: 'en-IN', ta: 'ta-IN', hi: 'hi-IN' }[lang] || 'en-IN';
   const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m));
   const ymd = d => [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
-  const parse = v => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+  const parse = v => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); if (!m) return null; const d = new Date(+m[1], +m[2] - 1, +m[3]); return d.getMonth() === +m[2] - 1 ? d : null; };
   const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
   const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
   const diff = (a, b) => Math.round((a - b) / DAY);
-  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } };
-  const save = v => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} };
+  const jget = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+  const jset = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   const mode = () => (form.querySelector('input[name="mode"]:checked') || {}).value || 'due';
+  const track = (n, p) => window.pnTrack && window.pnTrack(n, p);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const imgUrl = w => PN_TRACKER_IMAGES.path + String(w).padStart(2, '0') + PN_TRACKER_IMAGES.ext;
+  let cur = null;   // { w, left } of the result on screen
 
-  // Keep the date picker within a sensible range for the chosen mode.
   const setBounds = () => {
     const t = today();
     if (mode() === 'due') { dateIn.min = ymd(addDays(t, -21)); dateIn.max = ymd(addDays(t, 280)); }
     else { dateIn.min = ymd(addDays(t, -301)); dateIn.max = ymd(t); }
+  };
+  const sizeLine = w => w < 4 ? S.v4_size_early : w > 40 ? S.v4_size_late : fmt(S.v4_size, { x: D.sizes[String(w)] });
+  const meetLine = left => left > 0 ? fmt(S.v4_card_meet, { n: left }) : S.v4_card_due;
+
+  // ---- Week image or neutral placeholder ----
+  const showImage = w => {
+    const img = $('r-img'), ph = $('r-ph'), cr = $('r-credit');
+    $('r-ph-n').textContent = String(Math.max(0, Math.min(w, 40)));
+    img.hidden = true; ph.hidden = false; cr.hidden = true;
+    if (!PN_TRACKER_IMAGES.ready || w < 4 || w > 40) return;
+    img.onload = () => { img.hidden = false; ph.hidden = true; if (PN_TRACKER_IMAGES.credit) { cr.textContent = PN_TRACKER_IMAGES.credit; cr.hidden = false; } };
+    img.onerror = () => { img.hidden = true; ph.hidden = false; };
+    img.alt = fmt(S.v4_img_alt, { w }); img.src = imgUrl(w);
+  };
+
+  // ---- Checkups tab ----
+  const renderChecks = w => {
+    $('r-checks').innerHTML = D.checks.map(c => {
+      const st = w > c.b ? 'past' : w >= c.a ? 'now' : 'next';
+      return `<li class="ck-${st}"><span class="ck-tag">${esc(S['v4_' + st])}</span><span>${esc(fmt(S.v4_check_line, { a: c.a, b: c.b, x: c.t }))}</span></li>`;
+    }).join('');
+  };
+  // ---- To-do tab (ticks saved per week in localStorage) ----
+  const renderTodo = w => {
+    const wk = Math.max(0, Math.min(w, 40)), t = D.todo.find(x => wk >= x.a && wk <= x.b) || D.todo[0];
+    const items = t.items.slice();
+    D.checks.filter(c => wk >= c.a && wk <= c.b).slice(0, 1).forEach(c => items.push(fmt(S.v4_todo_ask, { x: c.t })));
+    const all = jget(TODO_KEY) || {}, ticks = all['w' + wk] || [];
+    $('r-todo-h').textContent = fmt(S.v4_todo_h, { w: wk });
+    $('r-todo').innerHTML = items.map((txt, i) => `<li><label><input type="checkbox" data-i="${i}"${ticks[i] ? ' checked' : ''}> <span>${esc(txt)}</span></label></li>`).join('');
+    $('r-todo').onchange = e => {
+      const i = +e.target.dataset.i, a = jget(TODO_KEY) || {}; a['w' + wk] = a['w' + wk] || [];
+      a['w' + wk][i] = e.target.checked; jset(TODO_KEY, a);
+    };
   };
 
   const show = (m, v, store) => {
@@ -32,15 +75,20 @@
     if (!d) { err.textContent = S.tr_err_empty; res.hidden = true; return false; }
     const lmp = m === 'due' ? addDays(d, -280) : d;
     const due = addDays(lmp, 280);
-    const ga = diff(today(), lmp);               // days since the first day of the last period
+    const ga = diff(today(), lmp);
     if (ga < 0 || ga > 301) { err.textContent = S.tr_err_range; res.hidden = true; return false; }
     err.textContent = '';
-    if (store) save({ mode: m, date: v });
+    if (store) jset(KEY, { mode: m, date: v });
     const w = Math.floor(ga / 7), dd = ga % 7, left = diff(due, today());
+    cur = { w, left };
+    // First screen: week, image, size, days to go
     $('r-week').textContent = fmt(S.tr_week_big, { w });
+    $('r-size').textContent = sizeLine(w) + (D.emoji[String(w)] ? ' ' + D.emoji[String(w)] : '');
+    $('r-left').textContent = left > 0 ? fmt(S.tr_days_left, { n: left }) : S.tr_due_reached;
+    showImage(w);
+    // "This week" tab (V3 details)
     $('r-tri').textContent = w < 14 ? S.tr_tri1 : w < 28 ? S.tr_tri2 : S.tr_tri3;
     $('r-age').textContent = fmt(S.tr_age, { w, d: dd });
-    $('r-left').textContent = left > 0 ? fmt(S.tr_days_left, { n: left }) : S.tr_due_reached;
     $('r-prog').textContent = fmt(S.tr_progress, { w: Math.min(w, 40) });
     $('r-due').textContent = fmt(S.tr_due, { date: due.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }) });
     const bar = $('r-barwrap');
@@ -48,33 +96,96 @@
     bar.setAttribute('aria-valuetext', $('r-prog').textContent);
     $('r-bar').style.width = Math.min(100, (ga / 280) * 100).toFixed(1) + '%';
     $('r-tip').textContent = w < 4 ? S.tr_tip_early : w > 40 ? S.tr_tip_late : D.tips[String(w)];
-    $('n-mob').hidden = !(w >= 14 && w <= 33);   // Mom on Board sign: 2nd trimester onwards
-    $('n-bob').hidden = !(w >= 34);              // Baby on Board sign: near the due date
-    $('n-teeth').hidden = !(w >= 28);            // teethers: "for later" mention in the 3rd trimester
+    $('n-mob').hidden = !(w >= 14 && w <= 33);
+    $('n-bob').hidden = !(w >= 34);
+    $('n-teeth').hidden = !(w >= 28);
     const text = left > 0 ? fmt(S.tr_share_text, { w, n: left, url: D.url }) : fmt(S.tr_share_text_due, { url: D.url });
-    $('r-share').href = 'https://wa.me/?text=' + encodeURIComponent(text);   // no phone number: the user picks the chat
-    res.hidden = false;
+    $('r-share').href = 'https://wa.me/?text=' + encodeURIComponent(text);
+    renderChecks(w); renderTodo(w);
+    form.hidden = true; res.hidden = false;
+    if (store) track('tracker_used', { input_mode: m, week: w });
     return true;
   };
+
+  // ---- Tabs ----
+  const tabs = [...document.querySelectorAll('.trk-tabs [role="tab"]')];
+  const pick = t => tabs.forEach(x => { const on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; $(x.getAttribute('aria-controls')).hidden = !on; });
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => pick(t));
+    t.addEventListener('keydown', e => { const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (k) { const n = tabs[(i + k + tabs.length) % tabs.length]; pick(n); n.focus(); } });
+  });
+
+  // ---- WhatsApp family card (canvas, on the phone) ----
+  const loadImg = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
+  const wrapText = (ctx, text, x, y, maxW, lh) => {
+    const words = text.split(' '); let line = '', lines = [];
+    words.forEach(wd => { const t = line ? line + ' ' + wd : wd; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = wd; } else line = t; });
+    if (line) lines.push(line);
+    lines.forEach((l, i) => ctx.fillText(l, x, y + i * lh)); return lines.length;
+  };
+  const makeCard = async () => {
+    const { w, left } = cur, wk = Math.max(0, Math.min(w, 40));
+    const c = document.createElement('canvas'); c.width = 1080; c.height = 1080; const x = c.getContext('2d');
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const sans = '"DM Sans","Noto Sans Tamil","Noto Sans Devanagari",sans-serif', serif = 'Fraunces,"Noto Serif Tamil","Noto Serif Devanagari","Noto Sans Tamil","Noto Sans Devanagari",serif';
+    const g = x.createLinearGradient(0, 0, 0, 1080); g.addColorStop(0, '#fff4ec'); g.addColorStop(1, '#ffe6dc');
+    x.fillStyle = g; x.fillRect(0, 0, 1080, 1080);
+    x.fillStyle = '#ffffff'; x.beginPath(); x.roundRect ? x.roundRect(60, 60, 960, 960, 48) : x.rect(60, 60, 960, 960); x.fill();
+    const logo = await loadImg(D.logo);
+    if (logo) x.drawImage(logo, 540 - 230, 100, 460, 460 * logo.naturalHeight / logo.naturalWidth);
+    // baby image or placeholder circle
+    const pic = PN_TRACKER_IMAGES.ready && wk >= 4 ? await loadImg(imgUrl(wk)) : null;
+    const cx = 540, cy = 395, r = 165;
+    if (pic) { x.save(); x.beginPath(); x.arc(cx, cy, r, 0, 7); x.clip(); x.drawImage(pic, cx - r, cy - r, 2 * r, 2 * r); x.restore(); }
+    else {
+      const rg = x.createRadialGradient(cx - 50, cy - 60, 20, cx, cy, r); rg.addColorStop(0, '#ffe9df'); rg.addColorStop(1, '#f9c7b4');
+      x.fillStyle = rg; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill();
+      x.fillStyle = '#9a4a33'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `700 130px ${serif}`; x.fillText(String(wk), cx, cy + 6);
+    }
+    x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = '#1d2b4f';
+    x.font = `700 80px ${serif}`; x.fillText(fmt(S.v4_card_week, { w }), 540, 660);
+    x.font = `500 38px ${sans}`; x.fillStyle = '#4a4a55';
+    const n = wrapText(x, sizeLine(w) + (D.emoji[String(w)] ? ' ' + D.emoji[String(w)] : ''), 540, 728, 860, 48);
+    x.font = `700 46px ${sans}`; x.fillStyle = '#E51B00'; wrapText(x, meetLine(left), 540, 728 + n * 48 + 34, 860, 54);
+    x.font = `700 32px ${sans}`; x.fillStyle = '#0083CF'; x.fillText('peppynose.com', 540, 992);
+    return new Promise(r => c.toBlob(b => r(b), 'image/png'));
+  };
+  let cardBlob = null;
+  const prepCard = async () => { cardBlob = null; try { cardBlob = await makeCard(); } catch (e) { cardBlob = null; } };
+  $('r-card').addEventListener('click', async () => {
+    if (!cur) return;
+    const blob = cardBlob || await makeCard();
+    const name = 'peppynose-week-' + cur.w + '.png';
+    const text = fmt(S.v4_card_text, { w: cur.w, meet: meetLine(cur.left), url: D.url });
+    const file = typeof File === 'function' ? new File([blob], name, { type: 'image/png' }) : null;
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], text }); track('share_card_created', { method: 'web_share', week: cur.w }); } catch (e) { /* user closed the share sheet */ }
+      return;
+    }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    $('r-card-msg').textContent = S.v4_card_saved;
+    track('share_card_created', { method: 'download_whatsapp', week: cur.w });
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  });
 
   form.addEventListener('change', e => { if (e.target.name === 'mode') setBounds(); });
   form.addEventListener('submit', e => {
     e.preventDefault();
-    if (show(mode(), dateIn.value, true)) $('r-week').closest('.trk-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (show(mode(), dateIn.value, true)) { prepCard(); $('r-week').closest('.trk-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   });
-  $('r-change').addEventListener('click', () => { dateIn.focus(); form.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  $('r-change').addEventListener('click', () => { form.hidden = false; dateIn.focus(); form.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
   $('r-clear').addEventListener('click', () => {
-    try { localStorage.removeItem(KEY); } catch (e) {}
-    res.hidden = true; dateIn.value = ''; err.textContent = ''; dateIn.focus();
+    try { localStorage.removeItem(KEY); localStorage.removeItem(TODO_KEY); } catch (e) {}
+    res.hidden = true; form.hidden = false; dateIn.value = ''; err.textContent = ''; cur = null; dateIn.focus();
   });
 
-  // Restore a saved date (this device only).
-  const saved = load();
+  const saved = jget(KEY);
   if (saved && saved.date && (saved.mode === 'due' || saved.mode === 'lmp')) {
     const r = form.querySelector(`input[name="mode"][value="${saved.mode}"]`);
     if (r) r.checked = true;
     dateIn.value = saved.date;
-    show(saved.mode, saved.date, false);
+    if (show(saved.mode, saved.date, false)) prepCard();
   }
   setBounds();
 })();
