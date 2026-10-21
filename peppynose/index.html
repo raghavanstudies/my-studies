@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Peppynose — Happy pets, healthy noses</title>
-  <meta name="description" content="Peppynose makes thoughtfully designed, vet-approved essentials for happy, healthy pets.">
+  <title>Peppynose — Baby &amp; kids essentials</title>
+  <meta name="description" content="Peppynose makes thoughtful baby and kids essentials: car safety signs, crawling knee pads, teethers and learning toys. Shop on Amazon.in.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,6 @@
       --muted: #6b5a50;
       --brand: #ff7a59;
       --brand-dark: #e8603e;
-      --accent: #3bb7a0;
       --border: #f1e2d6;
       --shadow: 0 10px 30px rgba(43, 29, 22, .08);
       --radius: 20px;
@@ -69,7 +68,7 @@
     .btn:hover { background: var(--brand-dark); transform: translateY(-2px); }
     .btn-ghost { background: transparent; color: var(--text); border: 2px solid var(--border); }
     .btn-ghost:hover { background: var(--surface-alt); }
-    .nav .btn { padding: 10px 20px; }
+    .nav .btn { padding: 10px 20px; color: #fff; }
 
     /* Hero */
     .hero { padding: 80px 0 60px; }
@@ -79,14 +78,12 @@
     .hero h1 span { color: var(--brand); }
     .hero p { font-size: 1.15rem; color: var(--muted); max-width: 520px; }
     .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
-    .trust { display: flex; gap: 22px; margin-top: 32px; color: var(--muted); font-size: .95rem; flex-wrap: wrap; }
-    .trust strong { color: var(--text); }
-    .hero-art {
-      aspect-ratio: 1; border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
-      background: radial-gradient(circle at 30% 30%, #ffd2c2, var(--brand));
-      display: grid; place-items: center; box-shadow: var(--shadow);
+    .hero-art { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .hero-art img {
+      width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff;
+      border-radius: 24px; box-shadow: var(--shadow); padding: 12px;
     }
-    .hero-art svg { width: 70%; height: auto; }
+    .hero-art img:nth-child(odd) { transform: translateY(18px); }
 
     /* Sections */
     section { padding: 80px 0; }
@@ -103,12 +100,16 @@
     .card p { color: var(--muted); margin: 0; }
 
     .products { background: var(--surface-alt); }
-    .product .thumb { aspect-ratio: 4/3; border-radius: 14px; display: grid; place-items: center; font-size: 4rem; margin-bottom: 18px; }
-    .product .price { font-weight: 600; color: var(--brand-dark); margin-top: 12px; display: block; }
-
-    .testimonial blockquote { margin: 0 0 16px; font-size: 1.05rem; }
-    .testimonial .who { color: var(--muted); font-size: .95rem; }
-    .stars { color: #f5b301; letter-spacing: 2px; margin-bottom: 10px; }
+    .product { display: flex; flex-direction: column; text-decoration: none; transition: transform .15s; }
+    .product:hover { transform: translateY(-4px); }
+    .product img {
+      width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff;
+      border-radius: 14px; margin-bottom: 18px;
+    }
+    .product p { flex: 1; }
+    .product .buy { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .product .price { font-weight: 600; color: var(--brand-dark); font-size: 1.1rem; }
+    .product .link { font-weight: 600; font-size: .95rem; }
 
     /* CTA */
     .cta {
@@ -117,14 +118,8 @@
     }
     .cta h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); }
     .cta p { opacity: .92; max-width: 520px; margin: 0 auto 24px; }
-    .signup { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .signup input {
-      padding: 14px 20px; border-radius: 999px; border: 0; min-width: 0; width: 300px; max-width: 100%;
-      font-size: 1rem; font-family: inherit;
-    }
-    .signup .btn { background: var(--text); }
-    .signup .btn:hover { background: #000; }
-    .form-msg { margin-top: 14px; min-height: 1.5em; font-weight: 500; }
+    .cta .btn { background: var(--text); }
+    .cta .btn:hover { background: #000; }
 
     footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: .95rem; }
     .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
@@ -134,7 +129,7 @@
     @media (max-width: 860px) {
       .hero-grid, .grid-3 { grid-template-columns: 1fr; }
       .hero { padding-top: 48px; }
-      .hero-art { max-width: 380px; margin-inline: auto; }
+      .hero-art { max-width: 420px; margin-inline: auto; }
       .nav-links a:not(.btn) { display: none; }
       .cta { padding: 40px 20px; }
       section { padding: 56px 0; }
@@ -148,8 +143,7 @@
       <nav class="nav-links">
         <a href="#why">Why us</a>
         <a href="#products">Products</a>
-        <a href="#reviews">Reviews</a>
-        <a href="#products" class="btn">Shop now</a>
+        <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Shop on Amazon</a>
       </nav>
     </div>
   </header>
@@ -158,34 +152,19 @@
     <section class="hero">
       <div class="container hero-grid">
         <div>
-          <span class="eyebrow">🐾 Made for curious noses</span>
-          <h1>Happy pets start with a <span>peppy nose</span>.</h1>
-          <p>Thoughtfully designed, vet-approved essentials that keep your furry family healthy, playful and loved — every single day.</p>
+          <span class="eyebrow">👶 For little ones &amp; growing families</span>
+          <h1>Little things for <span>little ones</span>.</h1>
+          <p>Peppynose makes thoughtful everyday essentials for babies, toddlers and parents-to-be — from car safety signs to crawling knee pads, teethers and learning toys.</p>
           <div class="hero-actions">
-            <a href="#products" class="btn">Shop the collection</a>
-            <a href="#why" class="btn btn-ghost">Learn more</a>
-          </div>
-          <div class="trust">
-            <span><strong>10,000+</strong> happy pets</span>
-            <span><strong>4.8★</strong> average rating</span>
-            <span><strong>30-day</strong> guarantee</span>
+            <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Shop on Amazon.in</a>
+            <a href="#products" class="btn btn-ghost">See products</a>
           </div>
         </div>
-        <div class="hero-art" aria-hidden="true">
-          <svg viewBox="0 0 200 200">
-            <ellipse cx="55" cy="60" rx="28" ry="42" fill="#7a4a32" transform="rotate(-20 55 60)"/>
-            <ellipse cx="145" cy="60" rx="28" ry="42" fill="#7a4a32" transform="rotate(20 145 60)"/>
-            <circle cx="100" cy="105" r="70" fill="#f3c9a0"/>
-            <ellipse cx="100" cy="135" rx="38" ry="28" fill="#fff3e6"/>
-            <circle cx="75" cy="95" r="9" fill="#2b1d16"/>
-            <circle cx="125" cy="95" r="9" fill="#2b1d16"/>
-            <circle cx="78" cy="92" r="3" fill="#fff"/>
-            <circle cx="128" cy="92" r="3" fill="#fff"/>
-            <ellipse cx="100" cy="122" rx="16" ry="11" fill="#2b1d16"/>
-            <ellipse cx="95" cy="119" rx="5" ry="3" fill="#fff" opacity=".5"/>
-            <path d="M88 142 Q100 152 112 142" stroke="#2b1d16" stroke-width="4" fill="none" stroke-linecap="round"/>
-            <path d="M100 145 Q100 162 108 160" fill="#ff7a8a"/>
-          </svg>
+        <div class="hero-art">
+          <img src="https://m.media-amazon.com/images/I/619Dx44aGpL.jpg" alt="Peppynose Baby on Board car sign">
+          <img src="https://m.media-amazon.com/images/I/81dDt204gaL.jpg" alt="Peppynose baby crawling knee pads">
+          <img src="https://m.media-amazon.com/images/I/71Ks5jsJteL.jpg" alt="Peppynose silicone and neem wood teether">
+          <img src="https://m.media-amazon.com/images/I/61jNhqtdXtL.jpg" alt="Peppynose wooden kitchen play set">
         </div>
       </div>
     </section>
@@ -193,24 +172,24 @@
     <section id="why">
       <div class="container">
         <div class="section-head">
-          <h2>Why pet parents love Peppynose</h2>
-          <p>We sweat the details so your best friend can just enjoy being a pet.</p>
+          <h2>Why parents choose Peppynose</h2>
+          <p>Simple, useful products made with little ones in mind.</p>
         </div>
         <div class="grid-3">
           <div class="card">
-            <div class="icon">🩺</div>
-            <h3>Vet approved</h3>
-            <p>Every product is developed and reviewed with veterinarians for safety and comfort.</p>
+            <div class="icon">🚗</div>
+            <h3>Safety first</h3>
+            <p>Reversible "Baby on Board" and "Mom on Board" signs help other drivers take extra care around your family.</p>
           </div>
           <div class="card">
             <div class="icon">🌿</div>
-            <h3>Clean ingredients</h3>
-            <p>Gentle, natural materials with nothing harsh — kind to pets and the planet.</p>
+            <h3>Gentle materials</h3>
+            <p>Soft cotton knee pads, BPA-free silicone and neem wood teethers, and non-toxic wooden toys.</p>
           </div>
           <div class="card">
-            <div class="icon">💛</div>
-            <h3>Happiness guaranteed</h3>
-            <p>Not wagging with joy? Return it within 30 days for a full refund, no questions asked.</p>
+            <div class="icon">📦</div>
+            <h3>Easy to order</h3>
+            <p>Every Peppynose product is available on Amazon.in, with Amazon's delivery and returns.</p>
           </div>
         </div>
       </div>
@@ -219,58 +198,46 @@
     <section id="products" class="products">
       <div class="container">
         <div class="section-head">
-          <h2>Customer favorites</h2>
-          <p>Our best-selling essentials, loved by pets and their people.</p>
+          <h2>Our products</h2>
+          <p>Tap any product to see it on Amazon.in.</p>
         </div>
         <div class="grid-3">
-          <article class="card product">
-            <div class="thumb" style="background:#ffe1d6">🧴</div>
-            <h3>Nose &amp; Paw Balm</h3>
-            <p>Soothes dry, cracked noses and paws with organic shea and coconut oil.</p>
-            <span class="price">$14.99</span>
-          </article>
-          <article class="card product">
-            <div class="thumb" style="background:#d8f3ec">🦴</div>
-            <h3>Snuffle Play Mat</h3>
-            <p>Turns mealtime into a sniff-and-seek adventure that calms and enriches.</p>
-            <span class="price">$29.99</span>
-          </article>
-          <article class="card product">
-            <div class="thumb" style="background:#fff1c9">🛁</div>
-            <h3>Gentle Grooming Wipes</h3>
-            <p>Hypoallergenic, fragrance-free wipes for quick clean-ups on the go.</p>
-            <span class="price">$11.99</span>
-          </article>
-        </div>
-        <div style="text-align:center;margin-top:40px">
-          <!-- Replace # with your store / Amazon storefront URL -->
-          <a href="#" class="btn">View all products</a>
-        </div>
-      </div>
-    </section>
-
-    <section id="reviews">
-      <div class="container">
-        <div class="section-head">
-          <h2>Tails are wagging</h2>
-          <p>Here's what our community has to say.</p>
-        </div>
-        <div class="grid-3">
-          <figure class="card testimonial">
-            <div class="stars">★★★★★</div>
-            <blockquote>"The paw balm worked wonders on my senior lab's dry nose. Noticeable difference in two days!"</blockquote>
-            <figcaption class="who">— Priya, mom to Bruno</figcaption>
-          </figure>
-          <figure class="card testimonial">
-            <div class="stars">★★★★★</div>
-            <blockquote>"The snuffle mat is the only thing that slows my beagle down at dinner. Total game changer."</blockquote>
-            <figcaption class="who">— Marcus, dad to Pepper</figcaption>
-          </figure>
-          <figure class="card testimonial">
-            <div class="stars">★★★★★</div>
-            <blockquote>"Quality you can feel and a team that genuinely cares. Peppynose is our go-to now."</blockquote>
-            <figcaption class="who">— Elena, mom to Mochi &amp; Kiwi</figcaption>
-          </figure>
+          <a class="card product" href="https://www.amazon.in/dp/B0GP6XP68R" target="_blank" rel="noopener">
+            <img src="https://m.media-amazon.com/images/I/619Dx44aGpL.jpg" alt="" loading="lazy">
+            <h3>Baby on Board &amp; Bump on Board Car Sign</h3>
+            <p>2-in-1 reversible sign for pregnancy and newborn safety, with suction cup. 300 GSM laminated board.</p>
+            <div class="buy"><span class="price">₹249</span><span class="link">View on Amazon →</span></div>
+          </a>
+          <a class="card product" href="https://www.amazon.in/dp/B0H6SN9GGM" target="_blank" rel="noopener">
+            <img src="https://m.media-amazon.com/images/I/81dDt204gaL.jpg" alt="" loading="lazy">
+            <h3>Baby Knee Pads for Crawling</h3>
+            <p>Soft cotton knee and elbow protectors in fun prints. Available in packs of 2 and 4.</p>
+            <div class="buy"><span class="price">From ₹179</span><span class="link">View on Amazon →</span></div>
+          </a>
+          <a class="card product" href="https://www.amazon.in/dp/B0H8FGM8R3" target="_blank" rel="noopener">
+            <img src="https://m.media-amazon.com/images/I/71Ks5jsJteL.jpg" alt="" loading="lazy">
+            <h3>Silicone &amp; Neem Wood Teether Combo</h3>
+            <p>BPA-free silicone with natural neem wood to soothe teething gums. For babies 3+ months.</p>
+            <div class="buy"><span class="price">₹299</span><span class="link">View on Amazon →</span></div>
+          </a>
+          <a class="card product" href="https://www.amazon.in/dp/B0DJKLV73B" target="_blank" rel="noopener">
+            <img src="https://m.media-amazon.com/images/I/61jNhqtdXtL.jpg" alt="" loading="lazy">
+            <h3>Wooden Kitchen Play Set</h3>
+            <p>Eco-friendly, non-toxic 15-piece wooden kitchen set for pretend play.</p>
+            <div class="buy"><span class="price">₹399</span><span class="link">View on Amazon →</span></div>
+          </a>
+          <a class="card product" href="https://www.amazon.in/dp/B0DK17XHX3" target="_blank" rel="noopener">
+            <img src="https://m.media-amazon.com/images/I/61XhAeDpJ8L.jpg" alt="" loading="lazy">
+            <h3>LCD Writing &amp; Drawing Tablet</h3>
+            <p>8.5-inch reusable doodle board — draw, write and erase with one tap.</p>
+            <div class="buy"><span class="price">₹199</span><span class="link">View on Amazon →</span></div>
+          </a>
+          <a class="card product" href="https://www.amazon.in/dp/B0DJRKW3T9" target="_blank" rel="noopener">
+            <img src="https://m.media-amazon.com/images/I/61rdzuV1rfL.jpg" alt="" loading="lazy">
+            <h3>Alphabet &amp; Number Foam Puzzle Mat</h3>
+            <p>36 interlocking pieces to learn letters and numbers while playing.</p>
+            <div class="buy"><span class="price">₹229</span><span class="link">View on Amazon →</span></div>
+          </a>
         </div>
       </div>
     </section>
@@ -278,14 +245,9 @@
     <section>
       <div class="container">
         <div class="cta">
-          <h2>Join the Peppynose pack</h2>
-          <p>Get pet care tips, new product drops and 10% off your first order.</p>
-          <form class="signup" id="signup">
-            <label for="email" class="sr-only" style="position:absolute;left:-9999px">Email</label>
-            <input id="email" type="email" placeholder="you@example.com" required>
-            <button class="btn" type="submit">Subscribe</button>
-          </form>
-          <div class="form-msg" id="form-msg" role="status"></div>
+          <h2>Visit the Peppynose store</h2>
+          <p>See our full range, latest prices and offers on Amazon.in.</p>
+          <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" class="btn" target="_blank" rel="noopener">Go to Amazon store</a>
         </div>
       </div>
     </section>
@@ -293,23 +255,17 @@
 
   <footer>
     <div class="container footer-row">
-      <span>© <span id="year"></span> Peppynose. Made with 🐾</span>
+      <span>© <span id="year"></span> Peppynose</span>
       <nav>
         <a href="#why">About</a>
-        <a href="#products">Shop</a>
-        <a href="mailto:hello@peppynose.com">Contact</a>
+        <a href="#products">Products</a>
+        <a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" target="_blank" rel="noopener">Amazon store</a>
       </nav>
     </div>
   </footer>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-    // Placeholder handler: connect to your email provider (Mailchimp, Klaviyo, etc.)
-    document.getElementById('signup').addEventListener('submit', function (e) {
-      e.preventDefault();
-      document.getElementById('form-msg').textContent = "Thanks! You're on the list 🐶";
-      this.reset();
-    });
   </script>
 </body>
 </html>
