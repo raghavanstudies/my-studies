@@ -506,3 +506,88 @@ body:has(.v5) footer { margin-top: 0; }
 @media (max-width: 760px) {
   .foot a, .link-arrow { display: inline-block; padding: 10px 0; margin: -10px 0; }
 }
+
+/* ===== Peppynose v2 additions (append to the END of styles.css) ===== */
+
+/* B1. Footer: remove the 12px link overlap on phones (replaces the old negative-margin rule) */
+@media (max-width: 760px) {
+  .foot a, .link-arrow { display: inline-block; padding: 10px 0; margin: 0; }
+  .foot li { margin-bottom: 0; }
+}
+
+/* C. Hero photo: 16:9 on desktop, 4:5 on phones (img now sits inside <picture>) */
+.hero3-art picture { display: block; }
+.hero3-art > img, .hero3-art > picture > img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: center; border-radius: 36px; border: 8px solid var(--white); box-shadow: 0 30px 60px rgba(46, 42, 51, .16); display: block; }
+@media (max-width: 760px) {
+  .hero3-art > img, .hero3-art > picture > img { aspect-ratio: 4 / 5; border-width: 5px; border-radius: 24px; }
+}
+
+/* E. Trust badges row */
+.trust-badges { background: var(--white); border-bottom: 1px solid var(--line); }
+.trust-badges ul { list-style: none; margin: 0 auto; padding: 14px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; }
+.trust-badges li { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: .92rem; color: var(--ink); }
+.trust-badges li::before { content: ""; width: 20px; height: 20px; flex: none; border-radius: 50%; background: var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e2a33' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 12px no-repeat; }
+@media (max-width: 760px) { .trust-badges ul { flex-direction: column; align-items: flex-start; width: fit-content; gap: 8px; } }
+
+/* F. Instagram section */
+.ig-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.ig-grid a { display: block; border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); transition: transform .15s; }
+.ig-grid a:hover { transform: translateY(-3px); }
+.ig-grid img { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; }
+.ig-more { text-align: center; margin-top: 28px; }
+@media (max-width: 1000px) { .ig-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 520px) { .ig-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+/* G. WhatsApp floating button */
+.wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 12px 18px; border-radius: 999px; background: #25d366; color: #0b2e17; font-weight: 700; font-size: .95rem; text-decoration: none; box-shadow: 0 10px 26px rgba(0, 0, 0, .18); transition: opacity .2s, transform .2s; }
+.wa-float svg { width: 22px; height: 22px; flex: none; }
+.wa-float:hover { transform: translateY(-2px); }
+.wa-float.wa-hide { opacity: 0; pointer-events: none; transform: translateY(12px); }
+@media (max-width: 760px) {
+  .wa-float { right: 12px; bottom: 12px; padding: 12px 16px; font-size: .9rem; }
+  footer { padding-bottom: 84px; } /* the last footer line can always scroll clear of the button */
+}
+@media (prefers-reduced-motion: reduce) { .wa-float { transition: none; } }
+
+/* H. Language switch (EN / தமிழ் / हिंदी) */
+.lang-switch { display: flex; gap: 2px; border: 1px solid var(--line); border-radius: 999px; padding: 3px; font-size: .82rem; font-weight: 600; order: 3; }
+.lang-switch a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 999px; min-height: 32px; display: inline-flex; align-items: center; }
+.lang-switch a[aria-current="true"] { background: var(--ink); color: var(--cream); }
+.lang-switch a:hover { color: var(--ink); }
+.lang-switch a[aria-current="true"]:hover { color: var(--cream); }
+@media (max-width: 760px) {
+  .bar { gap: 8px; }
+  .lang-switch { margin-left: auto; padding: 2px; font-size: .75rem; gap: 0; }
+  .lang-switch a { padding: 4px 7px; min-height: 40px; }
+  .menu-btn { order: 4; padding: 8px 11px; }
+}
+@media (max-width: 430px) {
+  .brand { font-size: 1.2rem; gap: 6px; }
+  .brand img { width: 32px; height: 32px; }
+  .brand sup { display: none; }
+  .menu-btn { font-size: .85rem; padding: 8px 9px; }
+}
+
+/* H. Tamil / Hindi fonts (Latin text keeps DM Sans / Fraunces; Indic glyphs fall back to Noto) */
+html[lang="ta"] body { font-family: "DM Sans", "Noto Sans Tamil", sans-serif; line-height: 1.75; }
+html[lang="ta"] h1, html[lang="ta"] h2, html[lang="ta"] h3, html[lang="ta"] .brand { font-family: Fraunces, "Noto Serif Tamil", serif; line-height: 1.3; }
+html[lang="hi"] body { font-family: "DM Sans", "Noto Sans Devanagari", sans-serif; line-height: 1.75; }
+html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3, html[lang="hi"] .brand { font-family: Fraunces, "Noto Serif Devanagari", serif; line-height: 1.3; }
+html[lang="ta"] h1 { font-size: clamp(2rem, 4.6vw, 3.4rem); }
+html[lang="ta"] .btn, html[lang="hi"] .btn { text-align: center; }
+html[lang="ta"] .buy.priced .btn b, html[lang="hi"] .buy.priced .btn b { white-space: normal; }
+html[lang="ta"] h1, html[lang="ta"] h2, html[lang="hi"] h1, html[lang="hi"] h2, html[lang="ta"] .agegrid-p b { overflow-wrap: break-word; }
+@media (max-width: 430px) { html[lang="ta"] h1 { font-size: 1.85rem; } html[lang="ta"] .agegrid-p b { font-size: .85rem; } }
+@media (max-width: 430px) { html[lang="ta"] .agegrid-p a, html[lang="hi"] .agegrid-p a { min-width: 0; padding: 22px 10px; } html[lang="ta"] .agegrid-p small { overflow-wrap: anywhere; } }
+.lang-switch a[lang="ta"] { font-family: "Noto Sans Tamil", sans-serif; } .lang-switch a[lang="hi"] { font-family: "Noto Sans Devanagari", sans-serif; }
+
+/* H2. Language switch repeated inside the mobile menu, and the one-time language suggestion banner */
+.nav .lang-switch.in-menu { display: none; }
+@media (max-width: 760px) {
+  .nav .lang-switch.in-menu { display: flex; margin: 10px 20px 14px; width: fit-content; order: 0; align-self: flex-start; }
+  .nav .lang-switch.in-menu a { width: auto; padding: 6px 12px; }
+}
+.lang-hint { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 12px; background: var(--mint); color: #1d2b4f; font-size: .9rem; padding: 8px 44px 8px 16px; position: relative; text-align: center; }
+.lang-hint a { color: #1d2b4f; font-weight: 700; }
+.lang-hint button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border: 0; background: none; font-size: 1rem; color: #1d2b4f; cursor: pointer; }
+.lang-hint[lang="ta"] { font-family: "Noto Sans Tamil", sans-serif; } .lang-hint[lang="hi"] { font-family: "Noto Sans Devanagari", sans-serif; }

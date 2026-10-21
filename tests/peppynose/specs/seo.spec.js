@@ -11,7 +11,12 @@ test('TC-SEO-01 every page has canonical, og and twitter tags pointing at its ow
     expect(await meta('meta[property="og:url"]'), path).toBe(url);
     expect(await meta('meta[property="og:type"]'), path).toBe('website');
     expect(await meta('meta[name="twitter:card"]'), path).toBe('summary_large_image');
-    expect(await meta('meta[property="og:image"]'), path).toBe(SITE + 'images/og-banner.jpg');
+    expect(await meta('meta[property="og:image"]'), path).toBe(SITE + 'images/og-banner.jpg?v=2');
+    // hreflang alternates for en, ta, hi and x-default
+    const sub = path === 'index.html' ? '' : path;
+    for (const [h, d] of [['en', ''], ['ta', 'ta/'], ['hi', 'hi/'], ['x-default', '']]) {
+      expect(await page.locator(`link[rel="alternate"][hreflang="${h}"]`).getAttribute('href'), `${path} ${h}`).toBe(SITE + d + sub);
+    }
     expect(await meta('meta[property="og:title"]'), path).toBeTruthy();
     expect(await meta('meta[name="description"]'), path).toBeTruthy();
   }
@@ -43,11 +48,14 @@ test('TC-SEO-04 robots.txt allows crawling and points to the sitemap', async ({ 
   expect(body).toContain('Sitemap: https://www.peppynose.com/sitemap.xml');
 });
 
-test('TC-SEO-05 sitemap lists all 9 pages and each one exists', async ({ request }) => {
+test('TC-SEO-05 sitemap lists all 27 pages (9 × EN/TA/HI) and each one exists', async ({ request }) => {
   const res = await request.get('/sitemap.xml');
   expect(res.status()).toBe(200);
-  const locs = [...(await res.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  expect(locs.sort()).toEqual(PAGES.map(p => SITE + (p === 'index.html' ? '' : p)).sort());
+  const xml = await res.text();
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+  const expected = ['', 'ta/', 'hi/'].flatMap(d => PAGES.map(p => SITE + d + (p === 'index.html' ? '' : p)));
+  expect(locs.sort()).toEqual(expected.sort());
+  expect((xml.match(/<xhtml:link /g) || []).length).toBe(27 * 4);
   for (const loc of locs) {
     const local = '/' + (loc.replace(SITE, '') || 'index.html');
     expect((await request.get(local)).status(), loc).toBe(200);

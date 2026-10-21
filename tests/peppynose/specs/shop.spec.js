@@ -57,20 +57,21 @@ test('TC-SHOP-06 all buy links are present and unavailable items have none', asy
   expect([...pids].sort()).toEqual([...FLIPKART_PIDS].sort());
 });
 
-test('TC-SHOP-07 each marketplace button shows its own price', async ({ page }) => {
+test('TC-SHOP-07 every marketplace button says "Check price", no ₹ anywhere', async ({ page }) => {
   const opt = (name, pack) => card(page, name).locator('.opt', { hasText: pack });
   const bob = 'Baby on Board & Bump on Board Sign';
-  await expect(opt(bob, 'Pack of 1').locator('a.amazon')).toHaveText(/Amazon\s*₹249/);
+  await expect(opt(bob, 'Pack of 1').locator('a.amazon')).toHaveText(/Amazon\s*Check price/);
   await expect(opt(bob, 'Pack of 1').locator('a.flipkart')).toHaveText(/Flipkart\s*Check price/);
-  await expect(opt(bob, 'Pack of 2').locator('a.amazon')).toHaveText(/Amazon\s*₹399/);
+  await expect(opt(bob, 'Pack of 2').locator('a.amazon')).toHaveText(/Amazon\s*Check price/);
   await expect(opt(bob, 'Pack of 2').locator('a.flipkart')).toHaveText(/Flipkart\s*Check price/);
   const mob = card(page, 'Mom on Board & Baby on Board Sign');
-  await expect(mob.locator('a.amazon')).toHaveText(/Amazon\s*₹249/);
+  await expect(mob.locator('a.amazon')).toHaveText(/Amazon\s*Check price/);
   await expect(mob.locator('a.flipkart')).toHaveText(/Flipkart\s*Check price/);
-  // every Amazon button has a rupee price; every Flipkart button says "Check price" (Flipkart prices change with offers)
+  // every button says "Check price": marketplace prices change with offers
   const amazon = await page.$$eval('.card a.amazon', as => as.map(a => a.innerText));
   expect(amazon.length).toBe(18);
-  for (const t of amazon) expect(t).toMatch(/₹\d+/);
+  for (const t of amazon) expect(t.replace(/\s+/g, ' ').trim()).toBe('Amazon Check price');
+  expect(await page.locator('body').innerText()).not.toContain('₹');
   const flip = await page.$$eval('.card a.flipkart', as => as.map(a => a.innerText.replace(/\s+/g, ' ').trim()));
   expect(flip.length).toBe(15);
   for (const t of flip) expect(t).toBe('Flipkart Check price');
