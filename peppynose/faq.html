@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ — Peppynose</title>
+  <meta name="description" content="Answers to common questions about buying Peppynose products, delivery, returns, car signs, teethers and knee pads.">
+  <meta property="og:title" content="FAQ — Peppynose">
+  <meta property="og:description" content="Answers to common questions about buying Peppynose products, delivery, returns, car signs, teethers and knee pads.">
+  <meta property="og:image" content="https://www.peppynose.com/logo.png">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="brand" href="index.html"><img src="logo-mark.png" alt="">Peppynose<sup>™</sup></a>
+      <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav">
+          <a href="index.html">Home</a>
+          <a href="products.html">Shop</a>
+          <a href="about.html">About</a>
+          <a href="faq.html" aria-current="page">FAQ</a>
+          <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="wrap"><span class="eyebrow">Help</span><h1>Frequently asked questions</h1><p>Quick answers about buying, delivery and our products.</p></div>
+    </div>
+    <div class="wrap faq">
+        <h2>Buying</h2>
+        <details><summary>Where can I buy Peppynose products?</summary><p>On Amazon.in and Flipkart. Every product on this site has a button that opens it on the marketplace.</p></details>
+        <details><summary>Who handles delivery, returns and refunds?</summary><p>Amazon.in or Flipkart, depending on where you ordered, under that marketplace’s delivery and return policy. You can request a return from your order page there.</p></details>
+        <details><summary>Why can’t I buy directly on this website?</summary><p>We sell through Amazon.in and Flipkart so you get their fast delivery, secure payment and easy returns.</p></details>
+        <h2>Car safety signs</h2>
+        <details><summary>What does 2-in-1 reversible mean?</summary><p>One side says &quot;Bump on Board&quot; (or &quot;Mom on Board&quot;) for pregnancy, and the other says &quot;Baby on Board&quot; for after your baby arrives. Just flip it.</p></details>
+        <details><summary>What sizes are available?</summary><p>14.5 × 14.5 cm and a larger 17.5 × 17.5 cm, in packs of 1 or 2.</p></details>
+        <details><summary>How does it attach to the car?</summary><p>With a suction cup on the rear windshield. It can be removed and moved to another car.</p></details>
+        <h2>Teethers</h2>
+        <details><summary>From what age can my baby use the teethers?</summary><p>From 3 months. The silicone is BPA-free and the shapes are neem wood.</p></details>
+        <details><summary>What is in each teether combo?</summary><p>Fish &amp; Bird and Car &amp; Cloud combos have 3 pieces each. The Complete Gift Set has 6 pieces.</p></details>
+        <h2>Knee pads</h2>
+        <details><summary>What are the knee pads made of?</summary><p>Soft cotton. They protect knees and elbows while your baby crawls.</p></details>
+        <details><summary>Which colours and packs are available?</summary><p>Blue Smiley, Yellow Smiley, Gray Dotted and Black Dotted in packs of 2 or 4, and Mint Dotted in a pack of 4.</p></details>
+      <p style="margin-top:40px;color:var(--muted)">Still have a question? <a href="contact.html">Contact us</a>.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div><img src="logo.png" alt="Peppynose logo"></div>
+        <div>
+          <h4>Explore</h4>
+          <ul><li><a href="products.html">Shop all products</a></li><li><a href="about.html">About us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul>
+        </div>
+        <div>
+          <h4>Buy online</h4>
+          <ul><li><a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" target="_blank" rel="noopener">Amazon.in store</a></li><li><a href="https://www.flipkart.com/search?q=peppynose" target="_blank" rel="noopener">Flipkart</a></li></ul>
+        </div>
+      </div>
+      <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices shown are from Amazon.in and may change. Lifestyle photos: Pexels.</span></div>
+    </div>
+  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const b = document.querySelector('.menu-btn'), n = document.getElementById('nav');
+    b.addEventListener('click', () => b.setAttribute('aria-expanded', n.classList.toggle('open')));
+  </script>
+</body>
+</html>
