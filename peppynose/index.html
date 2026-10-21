@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Peppynose — Baby &amp; kids essentials</title>
   <meta name="description" content="Peppynose makes thoughtful baby and kids essentials: car safety signs, crawling knee pads, teethers and learning toys. Shop on Amazon.in.">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -55,7 +56,7 @@
     }
     .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
     .logo { display: flex; align-items: center; gap: 10px; font-family: Fredoka, sans-serif; font-weight: 700; font-size: 1.5rem; text-decoration: none; }
-    .logo img { width: 34px; height: 34px; }
+    .logo img { width: 44px; height: 44px; }
     .nav-links { display: flex; gap: 28px; align-items: center; }
     .nav-links a { text-decoration: none; color: var(--muted); font-weight: 500; }
     .nav-links a:hover { color: var(--text); }
@@ -125,12 +126,15 @@
     .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
     .footer-row nav { display: flex; gap: 20px; }
     .footer-row a { text-decoration: none; }
+    .footer-brand { display: flex; align-items: center; gap: 16px; }
+    .footer-brand img { height: 72px; width: auto; }
 
     @media (max-width: 860px) {
       .hero-grid, .grid-3 { grid-template-columns: 1fr; }
       .hero { padding-top: 48px; }
       .hero-art { max-width: 420px; margin-inline: auto; }
       .nav-links a:not(.btn) { display: none; }
+      .nav .btn { padding: 8px 14px; font-size: .9rem; }
       .cta { padding: 40px 20px; }
       section { padding: 56px 0; }
     }
@@ -139,7 +143,7 @@
 <body>
   <header>
     <div class="container nav">
-      <a href="#" class="logo"><img src="favicon.svg" alt="">Peppynose</a>
+      <a href="#" class="logo"><img src="logo-mark.png" alt="">Peppynose</a>
       <nav class="nav-links">
         <a href="#why">Why us</a>
         <a href="#products">Products</a>
@@ -255,7 +259,7 @@
 
   <footer>
     <div class="container footer-row">
-      <span>© <span id="year"></span> Peppynose</span>
+      <div class="footer-brand"><img src="logo.png" alt="Peppynose logo"><span>© <span id="year"></span> Peppynose™</span></div>
       <nav>
         <a href="#why">About</a>
         <a href="#products">Products</a>
