@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — Peppynose</title>
+  <meta name="description" content="Get in touch with Peppynose.">
+  <meta property="og:title" content="Contact — Peppynose">
+  <meta property="og:description" content="Get in touch with Peppynose.">
+  <meta property="og:image" content="https://www.peppynose.com/logo.png">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="brand" href="index.html"><img src="logo-mark.png" alt="">Peppynose<sup>™</sup></a>
+      <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav">
+          <a href="index.html">Home</a>
+          <a href="products.html">Shop</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html" aria-current="page">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="wrap"><span class="eyebrow">Contact</span><h1>We’d love to <em>hear from you</em></h1><p>Questions about a product, bulk or gift orders, or feedback.</p></div>
+    </div>
+    <div class="wrap contact-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));max-width:860px">
+      <div class="contact-card"><h3>Email us</h3><p>For product questions, bulk or gift orders, and feedback.</p><a class="btn ghost" href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></div>
+      <div class="contact-card"><h3>Visit or write to us</h3><p>Peppynose<br>T-pet Road, Musiri 621211<br>Trichy, Tamil Nadu, India</p></div>
+    </div>
+    <section>
+      <div class="wrap">
+        <div class="band" style="background:var(--peach-soft)">
+          <h2>Help with an order?</h2>
+          <p>For delivery, returns or refunds, contact the marketplace you ordered from. They handle every order.</p>
+          <div class="actions"><a class="btn amazon" href="https://www.amazon.in/gp/css/order-history" target="_blank" rel="noopener">Amazon.in orders</a><a class="btn flipkart" href="https://www.flipkart.com/account/orders" target="_blank" rel="noopener">Flipkart orders</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div><img src="logo.png" alt="Peppynose logo"></div>
+        <div>
+          <h4>Explore</h4>
+          <ul><li><a href="products.html">Shop all products</a></li><li><a href="about.html">About us</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul>
+        </div>
+        <div>
+          <h4>Buy online</h4>
+          <ul><li><a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" target="_blank" rel="noopener">Amazon.in store</a></li><li><a href="https://www.flipkart.com/search?q=peppynose" target="_blank" rel="noopener">Flipkart</a></li></ul>
+          <h4 style="margin-top:22px">Contact</h4>
+          <ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
+        </div>
+      </div>
+      <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices shown are from Amazon.in and may change. Lifestyle photos: Pexels.</span></div>
+    </div>
+  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const b = document.querySelector('.menu-btn'), n = document.getElementById('nav');
+    b.addEventListener('click', () => b.setAttribute('aria-expanded', n.classList.toggle('open')));
+  </script>
+</body>
+</html>
