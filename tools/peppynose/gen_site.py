@@ -91,7 +91,18 @@ NAV = [('index.html', 'Home'), ('products.html', 'Shop'), ('about.html', 'About'
 
 
 SITE = 'https://www.peppynose.com/'
-OG_IMAGE = SITE + 'images/og-banner.jpg'
+OG_IMAGE = SITE + 'images/og-banner.jpg?v=2'  # ?v=2 refreshes WhatsApp/Facebook preview caches after the V2 banner change
+INDIC_FONTS = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Sans+Tamil:wght@400;500;700&family=Noto+Serif+Devanagari:wght@500;600&family=Noto+Serif+Tamil:wght@500;600&display=swap'
+WHATSAPP = 'https://wa.me/917448704660?text=Hi%20Peppynose%2C%20I%20have%20a%20question'
+WA_ICON = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.5L3.5 20.5l1.4-4.6a8.4 8.4 0 1 1 15.6-4.3z"/><path d="M9 8.6c0 3.4 3 6.4 6.4 6.4l1.2-1.6-2-1-1 .8a5 5 0 0 1-2.8-2.8l.8-1-1-2z" fill="currentColor" stroke="none"/></svg>'
+
+
+def lang_switch(extra=''):
+    # English home page only; /ta/ and /hi/ home pages carry their own copies
+    return (f'<div class="lang-switch{extra}" role="group" aria-label="Choose language">'
+            '<a href="index.html" hreflang="en" lang="en" aria-current="true">EN</a>'
+            '<a href="ta/index.html" hreflang="ta" lang="ta">தமிழ்</a>'
+            '<a href="hi/index.html" hreflang="hi" lang="hi">हिंदी</a></div>')
 POLICIES = [('shipping.html', 'Shipping policy'), ('returns.html', 'Returns & refunds'), ('privacy.html', 'Privacy policy'), ('terms.html', 'Terms of use')]
 
 
@@ -99,8 +110,12 @@ def page(file, title, desc, body, root=''):
     # root='/' for pages served from any path (404.html); '' keeps links relative everywhere else
     nav = '\n'.join(f'          <a href="{root}{h}"{" aria-current=\"page\"" if h == file else ""}>{t}</a>' for h, t in NAV)
     url = SITE + ('' if file == 'index.html' else file)
+    path = '' if file == 'index.html' else file
+    hreflang = ''.join(f'\n  <link rel="alternate" hreflang="{h}" href="{SITE}{d}{path}">'
+                       for h, d in [('en', ''), ('ta', 'ta/'), ('hi', 'hi/'), ('x-default', '')])
     seo = ('  <meta name="robots" content="noindex">' if file == '404.html' else
-           f'  <link rel="canonical" href="{url}">\n  <meta property="og:url" content="{url}">')
+           f'  <link rel="canonical" href="{url}">{hreflang}\n  <meta property="og:url" content="{url}">')
+    home = file == 'index.html'
     policies = ''.join(f'<li><a href="{root}{h}">{t}</a></li>' for h, t in POLICIES)
     return f'''<!doctype html>
 <html lang="en">
@@ -126,7 +141,9 @@ def page(file, title, desc, body, root=''):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+  <link href="{e(INDIC_FONTS)}" rel="stylesheet">
   <link rel="stylesheet" href="{root}styles.css">
+  <script src="{root}lang.js"></script>
 </head>
 <body>
   <header>
@@ -134,8 +151,8 @@ def page(file, title, desc, body, root=''):
       <a class="brand" href="{root}index.html"><img src="{root}logo-mark.png" alt="">Peppynose<sup>™</sup></a>
       <button class="menu-btn" aria-expanded="false" aria-controls="nav">Menu</button>
       <nav class="nav" id="nav">
-{nav}
-      </nav>
+{nav}{(chr(10) + '        ' + lang_switch(' in-menu')) if home else ''}
+      </nav>{(chr(10) + '      ' + lang_switch()) if home else ''}
     </div>
   </header>
 
@@ -146,7 +163,7 @@ def page(file, title, desc, body, root=''):
   <footer>
     <div class="wrap">
       <div class="foot">
-        <div><img src="{root}logo.png" alt="Peppynose logo"></div>
+        <div><img src="{root}images/logo-footer.webp" alt="Peppynose logo" width="266" height="200" loading="lazy"></div>
         <div>
           <h4>Explore</h4>
           <ul><li><a href="{root}products.html">Shop all products</a></li><li><a href="{root}about.html">About us</a></li><li><a href="{root}faq.html">FAQ</a></li><li><a href="{root}contact.html">Contact</a></li></ul>
@@ -165,6 +182,7 @@ def page(file, title, desc, body, root=''):
       <div class="copy"><span>© <span id="year">2026</span> Peppynose™. All rights reserved.</span><span>Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.</span></div>
     </div>
   </footer>
+  <a class="wa-float" href="{WHATSAPP}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp (opens in a new tab)">{WA_ICON}<span>Chat with us</span></a>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     const b = document.querySelector('.menu-btn'), n = document.getElementById('nav');
@@ -173,6 +191,7 @@ def page(file, title, desc, body, root=''):
     document.addEventListener('keydown', ev => {{ if (ev.key === 'Escape' && n.classList.contains('open')) {{ setMenu(false); b.focus(); }} }});
     document.addEventListener('click', ev => {{ if (n.classList.contains('open') && !n.contains(ev.target) && !b.contains(ev.target)) setMenu(false); }});
   </script>
+  <script src="{root}wa.js" defer></script>
 </body>
 </html>
 '''
@@ -182,7 +201,8 @@ def buy_buttons(a, f, small=True, ap=None):
     s = ' small' if small else ''
     out = []
     if a:
-        out.append(f'<a class="btn amazon{s}" href="{a}" target="_blank" rel="noopener"><span>Amazon</span><b>{ap or "Check price"}</b></a>')
+        # V2: the marketplace is the only source of truth for price, so no ₹ is shown (ap is kept for the data only)
+        out.append(f'<a class="btn amazon{s}" href="{a}" target="_blank" rel="noopener"><span>Amazon</span><b>Check price</b></a>')
     if f:
         out.append(f'<a class="btn flipkart{s}" href="{f}" target="_blank" rel="noopener"><span>Flipkart</span><b>{FK_PRICE.get(f, "Check price")}</b></a>')
     return '<div class="buy priced">' + ''.join(out) + '</div>'
@@ -345,7 +365,7 @@ def products():
       <div class="wrap">
         <span class="eyebrow">Shop</span>
         <h1>All products</h1>
-        <p>Every Peppynose product, with a button for each pack size. Each button shows that marketplace’s price; tap Amazon or Flipkart to buy.</p>
+        <p>Every Peppynose product, with a button for each pack size. Tap Amazon or Flipkart to see the latest price and buy.</p>
         <div class="agebar" role="group" aria-label="Filter by age">
           <span>Shop by age:</span>
 {agebtns}
@@ -497,9 +517,10 @@ def returns():
 
 def privacy():
     return policy_page('privacy.html', 'Policies', 'Privacy policy', 'How the Peppynose website handles your information.', [
-        ('Summary', ['<p>This website is an information site for Peppynose™ products. It has no user accounts, no shopping cart, no forms and no payments, and we do not use advertising or analytics cookies.</p>']),
+        ('Summary', ['<p>This website is an information site for Peppynose™ products. It has no user accounts, no shopping cart, no forms and no payments, and we do not use advertising or analytics cookies. We do not list a phone number; you can reach us by email or WhatsApp chat.</p>']),
         ('Information we receive', [
             '<p><strong>Emails you send us.</strong> If you write to <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a>, we receive your email address and message and use them only to reply to you.</p>',
+            '<p><strong>Messages you send us on WhatsApp.</strong> We do not list a phone number on this website. If you message us using the “Chat with us” WhatsApp button, we receive your WhatsApp number, name and message and use them only to reply to you. WhatsApp handles the chat under its own privacy policy.</p>',
             '<p><strong>Website hosting.</strong> The site is hosted on GitHub Pages. Like any web host, GitHub may record technical information such as your IP address when you visit, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub’s privacy statement</a>.</p>',
             '<p><strong>Fonts and photos from other services.</strong> Pages load fonts from Google Fonts and some photos from Pexels, so your browser connects to those services when a page opens.</p>']),
         ('Buying on Amazon.in and Flipkart', ['<p>When you follow a link to Amazon.in or Flipkart, you leave this website. Your order, payment and delivery details are handled by that marketplace under its own privacy policy; we do not receive your payment details.</p>']),
@@ -531,10 +552,13 @@ def not_found():
 
 
 def sitemap():
+    # 9 pages × 3 languages, each with en/ta/hi/x-default alternates (404 pages excluded)
     files = ['', 'products.html', 'about.html', 'faq.html', 'contact.html'] + [h for h, _ in POLICIES]
-    urls = '\n'.join(f'  <url><loc>{SITE}{f}</loc></url>' for f in files)
+    alts = lambda f: ''.join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{SITE}{d}{f}"/>'
+                             for h, d in [('en', ''), ('ta', 'ta/'), ('hi', 'hi/'), ('x-default', '')])
+    urls = '\n'.join(f'  <url><loc>{SITE}{d}{f}</loc>{alts(f)}</url>' for d in ['', 'ta/', 'hi/'] for f in files)
     return f'''<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 {urls}
 </urlset>
 '''
@@ -566,6 +590,29 @@ ICON = {
     'heart': '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
     'box': '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>',
 }
+
+
+IG_POSTS = [  # (post URL, thumbnail, alt) — thumbnails are Peppynose's own source files, 600×600
+    ('https://www.instagram.com/p/Dev-nlBm_uH/', 'ig-01-website-launch.webp', 'Peppynose website launch post'),
+    ('https://www.instagram.com/p/Det8B2pG6GL/', 'ig-02-bbob-carousel.webp', 'Peppynose Baby on Board & Bump on Board sign'),
+    ('https://www.instagram.com/p/DemNlUiowOE/', 'ig-03-mbob-carousel.webp', 'Peppynose Mom on Board & Baby on Board sign'),
+    ('https://www.instagram.com/p/DerX-e9G8Nd/', 'ig-04-kneepads-carousel.webp', 'Peppynose crawling knee pads in five colours'),
+    ('https://www.instagram.com/p/DePcXmAiaBf/', 'ig-05-teethers-post.webp', 'Peppynose silicone and neem wood teethers'),
+    ('https://www.instagram.com/reel/DePa71kihlz/', 'ig-06-bbob-pack2-reel.webp', 'Peppynose Baby on Board sign, pack of 2 (Reel)'),
+]
+
+
+def ig_section():
+    tiles = '\n'.join(f'        <li><a href="{u}" target="_blank" rel="noopener"><img src="images/ig/{f}" alt="{e(a)}" width="600" height="600" loading="lazy" decoding="async"></a></li>'
+                      for u, f, a in IG_POSTS)
+    return f'''    <section class="ig-sec" id="instagram"><div class="wrap">
+      <div class="center-head"><span class="eyebrow">Instagram</span><h2>Follow us on Instagram</h2>
+        <p>New products, tips and little moments from @peppynose_toystore.</p></div>
+      <ul class="ig-grid">
+{tiles}
+      </ul>
+      <div class="ig-more"><a class="btn ghost" href="https://www.instagram.com/peppynose_toystore/" target="_blank" rel="noopener">See more on Instagram</a></div>
+    </div></section>'''
 
 
 def stage_row(i, st):
@@ -619,12 +666,21 @@ def home():
           <div class="proof"><span class="stars">★★★★☆</span><span><b>4.4/5</b> from 140 ratings on Amazon.in</span></div>
         </div>
         <div class="hero3-art">
-          <img src="images/hero-family.webp" alt="A smiling Indian mother with her child as a baby, a toddler and a school-going kid">
-          <a class="fcard fc3" href="{amz('B0GVZFQ2Y5')}" target="_blank" rel="noopener"><img src="images/mob.webp" alt="Peppynose Mom on Board sign"><span><b>Mom on Board sign</b>For moms-to-be · ₹249 on Amazon.in</span></a>
+          <picture>
+            <source media="(max-width: 760px)" srcset="images/hero-photo-4x5.webp" width="1080" height="1350">
+            <img src="images/hero-photo.webp" alt="Baby chewing a Peppynose silicone teether ring" width="1500" height="844" fetchpriority="high">
+          </picture>
+          <a class="fcard fc3" href="{amz('B0GVZFQ2Y5')}" target="_blank" rel="noopener"><img src="images/mob.webp" alt="Peppynose Mom on Board sign"><span><b>Mom on Board sign</b>For moms-to-be · See price on Amazon.in</span></a>
           <span class="spark s1">✦</span>
         </div>
       </div>
     </section>
+
+    <div class="trust-badges"><div class="wrap"><ul aria-label="Why shop Peppynose">
+      <li>Ships via Flipkart &amp; Amazon</li>
+      <li>Easy returns via Flipkart &amp; Amazon</li>
+      <li>Made for Indian cars &amp; babies</li>
+    </ul></div></div>
 
     <div class="marquee" aria-hidden="true"><div class="track">{mq}{mq}</div></div>
 
@@ -678,6 +734,8 @@ def home():
         </div>
       </div>
     </section>
+
+{ig_section()}
 
     <section>
       <div class="wrap">

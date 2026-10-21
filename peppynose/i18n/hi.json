@@ -1,0 +1,4060 @@
+{
+ "_about": "Peppynose hi strings. \"pages\": page -> element (tag, tag@attribute, meta.name, title) -> list of {en, hi} in document order (deduplicated per page). \"strings\": flat English -> hi map used to build /hi/*.html. \"_new\": strings for the v2 changes (not on the live site yet). Brand/product names, review quotes and reviewer names are intentionally left in English.",
+ "lang": "hi",
+ "pages": {
+  "index": {
+   "title": [
+    {
+     "en": "Peppynose — Gentle baby & kids essentials",
+     "hi": "Peppynose — बच्चों के लिए कोमल ज़रूरी चीज़ें"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Peppynose — Gentle baby & kids essentials",
+     "hi": "Peppynose — बच्चों के लिए कोमल ज़रूरी चीज़ें"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Peppynose — Gentle baby & kids essentials",
+     "hi": "Peppynose — बच्चों के लिए कोमल ज़रूरी चीज़ें"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "Peppynose makes gentle baby and kids essentials: Baby on Board car signs, crawling knee pads, silicone & neem wood teethers and learning toys. Shop on Amazon.in and Flipkart.",
+     "hi": "Peppynose बच्चों के लिए कोमल ज़रूरी चीज़ें बनाता है: Baby on Board कार साइन, घुटनों के बल चलने वाले बच्चों के लिए नी पैड, सिलिकॉन और नीम की लकड़ी के टीथर और सीखने वाले खिलौने। Amazon.in और Flipkart पर खरीदें।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "Peppynose makes gentle baby and kids essentials: Baby on Board car signs, crawling knee pads, silicone & neem wood teethers and learning toys. Shop on Amazon.in and Flipkart.",
+     "hi": "Peppynose बच्चों के लिए कोमल ज़रूरी चीज़ें बनाता है: Baby on Board कार साइन, घुटनों के बल चलने वाले बच्चों के लिए नी पैड, सिलिकॉन और नीम की लकड़ी के टीथर और सीखने वाले खिलौने। Amazon.in और Flipkart पर खरीदें।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "Peppynose makes gentle baby and kids essentials: Baby on Board car signs, crawling knee pads, silicone & neem wood teethers and learning toys. Shop on Amazon.in and Flipkart.",
+     "hi": "Peppynose बच्चों के लिए कोमल ज़रूरी चीज़ें बनाता है: Baby on Board कार साइन, घुटनों के बल चलने वाले बच्चों के लिए नी पैड, सिलिकॉन और नीम की लकड़ी के टीथर और सीखने वाले खिलौने। Amazon.in और Flipkart पर खरीदें।"
+    }
+   ],
+   "img@alt": [
+    {
+     "en": "A smiling Indian mother with her child as a baby, a toddler and a school-going kid",
+     "hi": "मुस्कुराती भारतीय माँ अपने बच्चे के साथ"
+    },
+    {
+     "en": "Peppynose Mom on Board sign",
+     "hi": "Peppynose Mom on Board साइन"
+    },
+    {
+     "en": "Pregnant mother holding her belly",
+     "hi": "अपने पेट को थामे गर्भवती माँ"
+    },
+    {
+     "en": "Peppynose Baby on Board & Bump on Board Sign",
+     "hi": "Peppynose Baby on Board & Bump on Board साइन"
+    },
+    {
+     "en": "Peppynose Baby on Board & Bump on Board Sign",
+     "hi": "Peppynose Baby on Board & Bump on Board साइन"
+    },
+    {
+     "en": "Peppynose Mom on Board & Baby on Board Sign",
+     "hi": "Peppynose Mom on Board & Baby on Board साइन"
+    },
+    {
+     "en": "Baby with a Peppynose silicone and neem wood teether",
+     "hi": "Peppynose सिलिकॉन और नीम की लकड़ी के टीथर के साथ बच्चा"
+    },
+    {
+     "en": "Peppynose Complete Gift Set (6 pieces)",
+     "hi": "Peppynose Complete Gift Set (6 पीस)"
+    },
+    {
+     "en": "Peppynose Fish & Bird Combo (3 pieces)",
+     "hi": "Peppynose Fish & Bird Combo (3 पीस)"
+    },
+    {
+     "en": "Baby crawling in Peppynose Yellow Smiley knee pads",
+     "hi": "Peppynose Yellow Smiley नी पैड पहनकर घुटनों के बल चलता बच्चा"
+    },
+    {
+     "en": "Peppynose Knee Pads — Blue Smiley, pack of 2",
+     "hi": "Peppynose नी पैड — Blue Smiley, 2 का पैक"
+    },
+    {
+     "en": "Peppynose Knee Pads — Yellow Smiley, pack of 2",
+     "hi": "Peppynose नी पैड — Yellow Smiley, 2 का पैक"
+    },
+    {
+     "en": "Peppynose wooden kitchen play set",
+     "hi": "Peppynose लकड़ी का किचन प्ले सेट"
+    },
+    {
+     "en": "Peppynose Wooden Kitchen Play Set",
+     "hi": "Peppynose लकड़ी का किचन प्ले सेट"
+    },
+    {
+     "en": "Peppynose Wooden Kitchen Play Set",
+     "hi": "Peppynose लकड़ी का किचन प्ले सेट"
+    },
+    {
+     "en": "Peppynose Alphabet & Number Foam Mat",
+     "hi": "Peppynose अक्षर और अंक फोम मैट"
+    },
+    {
+     "en": "Peppynose Knee Pads — Blue Smiley",
+     "hi": "Peppynose नी पैड — Blue Smiley"
+    },
+    {
+     "en": "Peppynose Teether Complete Gift Set (6 pieces)",
+     "hi": "Peppynose टीथर Complete Gift Set (6 पीस)"
+    },
+    {
+     "en": "Mother and baby resting together",
+     "hi": "साथ आराम करते माँ और बच्चा"
+    },
+    {
+     "en": "Baby crawling in Peppynose Mint Dotted knee pads",
+     "hi": "Peppynose Mint Dotted नी पैड पहनकर घुटनों के बल चलता बच्चा"
+    },
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "span@aria-label": [
+    {
+     "en": "5 out of 5 stars",
+     "hi": "5 में से 5 स्टार"
+    },
+    {
+     "en": "4 out of 5 stars",
+     "hi": "5 में से 4 स्टार"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Shop on Amazon.in",
+     "hi": "Amazon.in पर खरीदें"
+    },
+    {
+     "en": "Shop on Flipkart",
+     "hi": "Flipkart पर खरीदें"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "See all car safety signs →",
+     "hi": "सभी कार सेफ़्टी साइन देखें →"
+    },
+    {
+     "en": "See all teethers →",
+     "hi": "सभी टीथर देखें →"
+    },
+    {
+     "en": "See all baby knee pads →",
+     "hi": "सभी बेबी नी पैड देखें →"
+    },
+    {
+     "en": "See all learning & play →",
+     "hi": "सभी सीखने और खेलने वाले खिलौने देखें →"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "div": [
+    {
+     "en": "Rated",
+     "hi": "रेटिंग"
+    },
+    {
+     "en": "by 140 Amazon.in buyers · Baby on Board sign",
+     "hi": "— 140 Amazon.in खरीदारों से · Baby on Board साइन"
+    },
+    {
+     "en": "4.4 out of 5 on Amazon.in · 140 ratings",
+     "hi": "Amazon.in पर 5 में से 4.4 · 140 रेटिंग"
+    }
+   ],
+   "b": [
+    {
+     "en": "4.4 out of 5",
+     "hi": "5 में से 4.4"
+    },
+    {
+     "en": "Mom on Board sign",
+     "hi": "Mom on Board साइन"
+    },
+    {
+     "en": "Pregnancy",
+     "hi": "गर्भावस्था"
+    },
+    {
+     "en": "Newborn",
+     "hi": "नवजात"
+    },
+    {
+     "en": "3 months+",
+     "hi": "3 महीने+"
+    },
+    {
+     "en": "Crawling babies",
+     "hi": "घुटनों के बल चलने वाले बच्चे"
+    },
+    {
+     "en": "Toddlers & kids",
+     "hi": "छोटे बच्चे"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    }
+   ],
+   "span": [
+    {
+     "en": "For moms, from bump to big kid",
+     "hi": "माँओं के लिए, बेबी बंप से बड़े बच्चे तक"
+    },
+    {
+     "en": "from 140 ratings on Amazon.in",
+     "hi": "Amazon.in पर 140 रेटिंग से"
+    },
+    {
+     "en": "For moms-to-be · ₹249 on Amazon.in",
+     "hi": "होने वाली माँओं के लिए · Amazon.in पर ₹249"
+    },
+    {
+     "en": "BPA-free silicone",
+     "hi": "BPA-मुक्त सिलिकॉन"
+    },
+    {
+     "en": "BPA-free silicone",
+     "hi": "BPA-मुक्त सिलिकॉन"
+    },
+    {
+     "en": "Natural neem wood",
+     "hi": "प्राकृतिक नीम की लकड़ी"
+    },
+    {
+     "en": "Natural neem wood",
+     "hi": "प्राकृतिक नीम की लकड़ी"
+    },
+    {
+     "en": "Soft cotton knee pads",
+     "hi": "मुलायम कॉटन नी पैड"
+    },
+    {
+     "en": "Soft cotton knee pads",
+     "hi": "मुलायम कॉटन नी पैड"
+    },
+    {
+     "en": "2-in-1 reversible car signs",
+     "hi": "2-in-1 दोनों तरफ़ वाले कार साइन"
+    },
+    {
+     "en": "2-in-1 reversible car signs",
+     "hi": "2-in-1 दोनों तरफ़ वाले कार साइन"
+    },
+    {
+     "en": "Verified 4★ & 5★ reviews",
+     "hi": "सत्यापित 4★ और 5★ रिव्यू"
+    },
+    {
+     "en": "Verified 4★ & 5★ reviews",
+     "hi": "सत्यापित 4★ और 5★ रिव्यू"
+    },
+    {
+     "en": "Delivered by Amazon.in & Flipkart",
+     "hi": "Amazon.in और Flipkart से डिलीवरी"
+    },
+    {
+     "en": "Delivered by Amazon.in & Flipkart",
+     "hi": "Amazon.in और Flipkart से डिलीवरी"
+    },
+    {
+     "en": "Shop by age",
+     "hi": "उम्र के हिसाब से खरीदें"
+    },
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Made for every little stage",
+     "hi": "हर छोटे पड़ाव के लिए बना"
+    },
+    {
+     "en": "Expecting & bringing baby home",
+     "hi": "गर्भावस्था और बच्चे को घर लाना"
+    },
+    {
+     "en": "Car Safety Signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Teething",
+     "hi": "दाँत निकलना"
+    },
+    {
+     "en": "Crawling",
+     "hi": "घुटनों के बल चलना"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Playing & learning",
+     "hi": "खेलना और सीखना"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    },
+    {
+     "en": "Best sellers",
+     "hi": "सबसे ज़्यादा बिकने वाले"
+    },
+    {
+     "en": "Reviews",
+     "hi": "रिव्यू"
+    },
+    {
+     "en": "Verified purchase · Amazon.in",
+     "hi": "सत्यापित खरीद · Amazon.in"
+    },
+    {
+     "en": "Verified purchase · Flipkart",
+     "hi": "सत्यापित खरीद · Flipkart"
+    },
+    {
+     "en": "Our promise",
+     "hi": "हमारा वादा"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "With you at every",
+     "hi": "हर"
+    },
+    {
+     "en": "stage.",
+     "hi": "पड़ाव पर आपके साथ।"
+    }
+   ],
+   "em": [
+    {
+     "en": "little",
+     "hi": "छोटे"
+    },
+    {
+     "en": "for now",
+     "hi": "अभी के लिए"
+    },
+    {
+     "en": "one stage",
+     "hi": "एक-एक पड़ाव"
+    },
+    {
+     "en": "online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "p": [
+    {
+     "en": "From pregnancy to first crawls, first teeth and first words, Peppynose™ makes gentle, useful things for you and your little one.",
+     "hi": "गर्भावस्था से लेकर पहली बार घुटनों के बल चलने, पहले दाँत और पहले शब्दों तक, Peppynose™ आपके और आपके नन्हे-मुन्ने के लिए कोमल और काम की चीज़ें बनाता है।"
+    },
+    {
+     "en": "Everything we make is designed around a real moment, from pregnancy to your baby’s first years.",
+     "hi": "गर्भावस्था से लेकर बच्चे के शुरुआती सालों तक, हम जो भी बनाते हैं वह किसी असली पल को ध्यान में रखकर बनाया जाता है।"
+    },
+    {
+     "en": "Let other drivers know there’s a little one on board. One 2-in-1 sign says “Bump on Board” during pregnancy, then flips to “Baby on Board”.",
+     "hi": "दूसरे ड्राइवरों को बताएँ कि गाड़ी में एक नन्हा मेहमान है। एक ही 2-in-1 साइन गर्भावस्था में “Bump on Board” दिखाता है, फिर पलटने पर “Baby on Board”।"
+    },
+    {
+     "en": "BPA-free silicone with natural neem wood shapes, made for little hands and sore gums from 3 months.",
+     "hi": "प्राकृतिक नीम की लकड़ी की आकृतियों के साथ BPA-मुक्त सिलिकॉन, 3 महीने से छोटे हाथों और दुखते मसूड़ों के लिए।"
+    },
+    {
+     "en": "Soft cotton knee and elbow protectors in smiley and dotted designs, for brave little explorers.",
+     "hi": "बहादुर नन्हे खोजियों के लिए स्माइली और डॉटेड डिज़ाइन में मुलायम कॉटन के घुटने और कोहनी प्रोटेक्टर।"
+    },
+    {
+     "en": "Pretend play, first letters and mess-free drawing: toys that make learning fun.",
+     "hi": "नकली खेल, पहले अक्षर और बिना गंदगी की ड्रॉइंग: ऐसे खिलौने जो सीखना मज़ेदार बनाते हैं।"
+    },
+    {
+     "en": "2-in-1 reversible, 14.5 × 14.5 cm, 300 GSM laminated board with suction cup.",
+     "hi": "2-in-1 दोनों तरफ़, 14.5 × 14.5 सेमी, सक्शन कप के साथ 300 GSM लैमिनेटेड बोर्ड।"
+    },
+    {
+     "en": "Soft cotton knee & elbow protector with a smiley face.",
+     "hi": "स्माइली चेहरे वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+    },
+    {
+     "en": "Silicone teether ring with 5 neem wood shapes. A lovely baby gift.",
+     "hi": "नीम की लकड़ी की 5 आकृतियों के साथ सिलिकॉन टीथर रिंग। बच्चे के लिए प्यारा तोहफ़ा।"
+    },
+    {
+     "en": "Eco-friendly, non-toxic, 15 pieces for pretend play.",
+     "hi": "पर्यावरण के अनुकूल, बिना ज़हरीले तत्व, नकली खेल के लिए 15 पीस।"
+    },
+    {
+     "en": "Genuine reviews from verified buyers, word for word.",
+     "hi": "सत्यापित खरीदारों के असली रिव्यू, शब्दशः।"
+    },
+    {
+     "en": "BPA-free silicone, natural neem wood and soft cotton, chosen for little hands, gums and knees.",
+     "hi": "छोटे हाथों, मसूड़ों और घुटनों के लिए चुने गए BPA-मुक्त सिलिकॉन, प्राकृतिक नीम की लकड़ी और मुलायम कॉटन।"
+    },
+    {
+     "en": "Products for real everyday moments, like a 2-in-1 sign that works before and after baby arrives.",
+     "hi": "रोज़ के असली पलों के लिए प्रोडक्ट, जैसे 2-in-1 साइन जो बच्चे के आने से पहले और बाद दोनों में काम आता है।"
+    },
+    {
+     "en": "Order on Amazon.in or Flipkart with the delivery and returns you already trust.",
+     "hi": "Amazon.in या Flipkart पर ऑर्डर करें, उसी डिलीवरी और रिटर्न के साथ जिन पर आप पहले से भरोसा करते हैं।"
+    },
+    {
+     "en": "See our full range, latest prices and offers on your favourite marketplace.",
+     "hi": "हमारी पूरी रेंज, ताज़ा कीमतें और ऑफ़र अपने पसंदीदा मार्केटप्लेस पर देखें।"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Find what’s right",
+     "hi": "सही चीज़ चुनें"
+    },
+    {
+     "en": "From bump to baby,",
+     "hi": "बेबी बंप से बेबी तक,"
+    },
+    {
+     "en": "at a time",
+     "hi": "साथ-साथ"
+    },
+    {
+     "en": "Parents’ favourites",
+     "hi": "माता-पिता की पसंद"
+    },
+    {
+     "en": "Loved by parents",
+     "hi": "माता-पिता को पसंद"
+    },
+    {
+     "en": "Little things, made with care",
+     "hi": "प्यार से बनी छोटी-छोटी चीज़ें"
+    },
+    {
+     "en": "Shop Peppynose",
+     "hi": "Peppynose"
+    }
+   ],
+   "small": [
+    {
+     "en": "Car signs",
+     "hi": "कार साइन"
+    },
+    {
+     "en": "Car signs",
+     "hi": "कार साइन"
+    },
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Knee pads · 1–3 years",
+     "hi": "नी पैड · 1–3 साल"
+    },
+    {
+     "en": "Learning toys · 1–3 years",
+     "hi": "सीखने वाले खिलौने · 1–3 साल"
+    },
+    {
+     "en": "Pack of 1",
+     "hi": "1 का पैक"
+    },
+    {
+     "en": "Pack of 2",
+     "hi": "2 का पैक"
+    },
+    {
+     "en": "Gift set of 6",
+     "hi": "6 का गिफ़्ट सेट"
+    },
+    {
+     "en": "Set of 15",
+     "hi": "15 का सेट"
+    }
+   ],
+   "h3": [
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Car Safety Signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Baby on Board & Bump on Board Sign",
+     "hi": "Baby on Board & Bump on Board साइन"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    },
+    {
+     "en": "Wooden Kitchen Play Set",
+     "hi": "लकड़ी का किचन प्ले सेट"
+    },
+    {
+     "en": "Knee Pads — Blue Smiley",
+     "hi": "नी पैड — Blue Smiley"
+    },
+    {
+     "en": "Teether Complete Gift Set (6 pieces)",
+     "hi": "टीथर Complete Gift Set (6 पीस)"
+    },
+    {
+     "en": "Safe and gentle",
+     "hi": "सुरक्षित और कोमल"
+    },
+    {
+     "en": "Simple and useful",
+     "hi": "आसान और काम का"
+    },
+    {
+     "en": "Easy to buy",
+     "hi": "खरीदना आसान"
+    }
+   ],
+   "strong": [
+    {
+     "en": "Baby on Board & Bump on Board Sign",
+     "hi": "Baby on Board & Bump on Board साइन"
+    },
+    {
+     "en": "Mom on Board & Baby on Board Sign",
+     "hi": "Mom on Board & Baby on Board साइन"
+    },
+    {
+     "en": "Complete Gift Set (6 pieces)",
+     "hi": "Complete Gift Set (6 पीस)"
+    },
+    {
+     "en": "Fish & Bird Combo (3 pieces)",
+     "hi": "Fish & Bird Combo (3 पीस)"
+    },
+    {
+     "en": "Knee Pads — Blue Smiley, pack of 2",
+     "hi": "नी पैड — Blue Smiley, 2 का पैक"
+    },
+    {
+     "en": "Knee Pads — Yellow Smiley, pack of 2",
+     "hi": "नी पैड — Yellow Smiley, 2 का पैक"
+    },
+    {
+     "en": "Wooden Kitchen Play Set",
+     "hi": "लकड़ी का किचन प्ले सेट"
+    },
+    {
+     "en": "Alphabet & Number Foam Mat",
+     "hi": "अक्षर और अंक फोम मैट"
+    },
+    {
+     "en": "Bhaskar",
+     "hi": "Bhaskar"
+    },
+    {
+     "en": "Pratik Kamble, Raigad",
+     "hi": "Pratik Kamble, Raigad"
+    }
+   ],
+   "blockquote": [
+    {
+     "en": "“It’s good easy to remove and attach to another car as well if needed.”",
+     "hi": "“It’s good easy to remove and attach to another car as well if needed.”"
+    },
+    {
+     "en": "“Overall good and value for money products”",
+     "hi": "“Overall good and value for money products”"
+    }
+   ],
+   "figcaption": [
+    {
+     "en": "· Mom on Board sign · 17 October 2026 ·",
+     "hi": "· Mom on Board साइन · 17 अक्टूबर 2026 ·"
+    },
+    {
+     "en": "· Baby on Board sign ·",
+     "hi": "· Baby on Board साइन ·"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ]
+  },
+  "products": {
+   "img@alt": [
+    {
+     "en": "Peppynose Baby on Board & Bump on Board Sign",
+     "hi": "Peppynose Baby on Board & Bump on Board साइन"
+    },
+    {
+     "en": "Peppynose Mom on Board & Baby on Board Sign",
+     "hi": "Peppynose Mom on Board & Baby on Board साइन"
+    },
+    {
+     "en": "Peppynose Wooden Kitchen Play Set",
+     "hi": "Peppynose लकड़ी का किचन प्ले सेट"
+    },
+    {
+     "en": "Peppynose Alphabet & Number Foam Mat",
+     "hi": "Peppynose अक्षर और अंक फोम मैट"
+    },
+    {
+     "en": "Peppynose Knee Pads — Blue Smiley",
+     "hi": "Peppynose नी पैड — Blue Smiley"
+    },
+    {
+     "en": "Peppynose Teether Complete Gift Set (6 pieces)",
+     "hi": "Peppynose टीथर Complete Gift Set (6 पीस)"
+    },
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    },
+    {
+     "en": "Peppynose Baby on Board Sign — Large",
+     "hi": "Peppynose Baby on Board साइन — बड़ा"
+    },
+    {
+     "en": "Peppynose Teether Fish & Bird Combo (3 pieces)",
+     "hi": "Peppynose टीथर Fish & Bird Combo (3 पीस)"
+    },
+    {
+     "en": "Peppynose Teether Car & Cloud Combo (3 pieces)",
+     "hi": "Peppynose टीथर Car & Cloud Combo (3 पीस)"
+    },
+    {
+     "en": "Peppynose Knee Pads — Yellow Smiley",
+     "hi": "Peppynose नी पैड — Yellow Smiley"
+    },
+    {
+     "en": "Peppynose Knee Pads — Mint Dotted",
+     "hi": "Peppynose नी पैड — Mint Dotted"
+    },
+    {
+     "en": "Peppynose Knee Pads — Gray Dotted",
+     "hi": "Peppynose नी पैड — Gray Dotted"
+    },
+    {
+     "en": "Peppynose Knee Pads — Black Dotted",
+     "hi": "Peppynose नी पैड — Black Dotted"
+    },
+    {
+     "en": "Peppynose LCD Writing Tablet — Blue",
+     "hi": "Peppynose LCD राइटिंग टैबलेट — Blue"
+    },
+    {
+     "en": "Peppynose LCD Writing Tablet — Multicolour",
+     "hi": "Peppynose LCD राइटिंग टैबलेट — Multicolour"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Car Safety Signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    },
+    {
+     "en": "Pregnancy",
+     "hi": "गर्भावस्था"
+    },
+    {
+     "en": "Newborn",
+     "hi": "नवजात"
+    },
+    {
+     "en": "3 months+",
+     "hi": "3 महीने+"
+    },
+    {
+     "en": "All",
+     "hi": "सभी"
+    },
+    {
+     "en": "Knee pads · 1–3 yrs",
+     "hi": "नी पैड · 1–3 साल"
+    },
+    {
+     "en": "Toys · 1–3 yrs",
+     "hi": "खिलौने · 1–3 साल"
+    },
+    {
+     "en": "Coming soon 🔜",
+     "hi": "जल्द आ रहा है 🔜"
+    },
+    {
+     "en": "Out of stock",
+     "hi": "स्टॉक में नहीं"
+    }
+   ],
+   "span": [
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Car Safety Signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Car Safety Signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Car Safety Signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Amazon",
+     "hi": "Amazon"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    },
+    {
+     "en": "Pack of 1",
+     "hi": "1 का पैक"
+    },
+    {
+     "en": "Pack of 1",
+     "hi": "1 का पैक"
+    },
+    {
+     "en": "Pack of 2",
+     "hi": "2 का पैक"
+    },
+    {
+     "en": "Pack of 2",
+     "hi": "2 का पैक"
+    },
+    {
+     "en": "Pack of 2",
+     "hi": "2 का पैक"
+    },
+    {
+     "en": "Pack of 2",
+     "hi": "2 का पैक"
+    },
+    {
+     "en": "Pack of 2",
+     "hi": "2 का पैक"
+    },
+    {
+     "en": "Gift set of 6",
+     "hi": "6 का गिफ़्ट सेट"
+    },
+    {
+     "en": "Set of 15",
+     "hi": "15 का सेट"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    },
+    {
+     "en": "Shop by age:",
+     "hi": "उम्र के हिसाब से:"
+    },
+    {
+     "en": "Coming soon 🔜",
+     "hi": "जल्द आ रहा है 🔜"
+    },
+    {
+     "en": "17.5 × 17.5 cm, pack of 1 or 2. Not on sale yet.",
+     "hi": "17.5 × 17.5 सेमी, 1 या 2 का पैक। अभी बिक्री पर नहीं।"
+    },
+    {
+     "en": "Combo of 3",
+     "hi": "3 का कॉम्बो"
+    },
+    {
+     "en": "Combo of 3",
+     "hi": "3 का कॉम्बो"
+    },
+    {
+     "en": "Pack of 4",
+     "hi": "4 का पैक"
+    },
+    {
+     "en": "Pack of 4",
+     "hi": "4 का पैक"
+    },
+    {
+     "en": "Pack of 4",
+     "hi": "4 का पैक"
+    },
+    {
+     "en": "Pack of 4",
+     "hi": "4 का पैक"
+    },
+    {
+     "en": "Pack of 4",
+     "hi": "4 का पैक"
+    },
+    {
+     "en": "36 pieces",
+     "hi": "36 पीस"
+    },
+    {
+     "en": "1 tablet",
+     "hi": "1 टैबलेट"
+    },
+    {
+     "en": "Out of stock",
+     "hi": "स्टॉक में नहीं"
+    },
+    {
+     "en": "Currently unavailable on Amazon.in.",
+     "hi": "अभी Amazon.in पर उपलब्ध नहीं।"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Car Safety Signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Baby Knee Pads",
+     "hi": "बेबी नी पैड"
+    },
+    {
+     "en": "Learning & Play",
+     "hi": "सीखना और खेलना"
+    }
+   ],
+   "h3": [
+    {
+     "en": "Baby on Board & Bump on Board Sign",
+     "hi": "Baby on Board & Bump on Board साइन"
+    },
+    {
+     "en": "Mom on Board & Baby on Board Sign",
+     "hi": "Mom on Board & Baby on Board साइन"
+    },
+    {
+     "en": "Wooden Kitchen Play Set",
+     "hi": "लकड़ी का किचन प्ले सेट"
+    },
+    {
+     "en": "Alphabet & Number Foam Mat",
+     "hi": "अक्षर और अंक फोम मैट"
+    },
+    {
+     "en": "Knee Pads — Blue Smiley",
+     "hi": "नी पैड — Blue Smiley"
+    },
+    {
+     "en": "Teether Complete Gift Set (6 pieces)",
+     "hi": "टीथर Complete Gift Set (6 पीस)"
+    },
+    {
+     "en": "Baby on Board Sign — Large",
+     "hi": "Baby on Board साइन — बड़ा"
+    },
+    {
+     "en": "Teether Fish & Bird Combo (3 pieces)",
+     "hi": "टीथर Fish & Bird Combo (3 पीस)"
+    },
+    {
+     "en": "Teether Car & Cloud Combo (3 pieces)",
+     "hi": "टीथर Car & Cloud Combo (3 पीस)"
+    },
+    {
+     "en": "Knee Pads — Yellow Smiley",
+     "hi": "नी पैड — Yellow Smiley"
+    },
+    {
+     "en": "Knee Pads — Mint Dotted",
+     "hi": "नी पैड — Mint Dotted"
+    },
+    {
+     "en": "Knee Pads — Gray Dotted",
+     "hi": "नी पैड — Gray Dotted"
+    },
+    {
+     "en": "Knee Pads — Black Dotted",
+     "hi": "नी पैड — Black Dotted"
+    },
+    {
+     "en": "LCD Writing Tablet — Blue",
+     "hi": "LCD राइटिंग टैबलेट — Blue"
+    },
+    {
+     "en": "LCD Writing Tablet — Multicolour",
+     "hi": "LCD राइटिंग टैबलेट — Multicolour"
+    }
+   ],
+   "b": [
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    },
+    {
+     "en": "Check price",
+     "hi": "कीमत देखें"
+    }
+   ],
+   "p": [
+    {
+     "en": "2-in-1 reversible, 14.5 × 14.5 cm, 300 GSM laminated board with suction cup.",
+     "hi": "2-in-1 दोनों तरफ़, 14.5 × 14.5 सेमी, सक्शन कप के साथ 300 GSM लैमिनेटेड बोर्ड।"
+    },
+    {
+     "en": "Soft cotton knee & elbow protector with a smiley face.",
+     "hi": "स्माइली चेहरे वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+    },
+    {
+     "en": "Soft cotton knee & elbow protector with a smiley face.",
+     "hi": "स्माइली चेहरे वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+    },
+    {
+     "en": "Silicone teether ring with 5 neem wood shapes. A lovely baby gift.",
+     "hi": "नीम की लकड़ी की 5 आकृतियों के साथ सिलिकॉन टीथर रिंग। बच्चे के लिए प्यारा तोहफ़ा।"
+    },
+    {
+     "en": "Eco-friendly, non-toxic, 15 pieces for pretend play.",
+     "hi": "पर्यावरण के अनुकूल, बिना ज़हरीले तत्व, नकली खेल के लिए 15 पीस।"
+    },
+    {
+     "en": "Every Peppynose product, with a button for each pack size. Each button shows that marketplace’s price; tap Amazon or Flipkart to buy.",
+     "hi": "हर Peppynose प्रोडक्ट, हर पैक साइज़ के लिए एक बटन के साथ। ताज़ा कीमत देखने और खरीदने के लिए Amazon या Flipkart पर टैप करें।"
+    },
+    {
+     "en": "Reversible 2-in-1 signs that tell other drivers to take extra care: \"Bump on Board\" during pregnancy, \"Baby on Board\" after.",
+     "hi": "दूसरे ड्राइवरों को ज़्यादा सावधानी बरतने को कहने वाले 2-in-1 दोनों तरफ़ वाले साइन: गर्भावस्था में \"Bump on Board\", बाद में \"Baby on Board\"।"
+    },
+    {
+     "en": "2-in-1 reversible, \"Mom on Board\" for moms-to-be, 14.5 cm, with suction cup.",
+     "hi": "2-in-1 दोनों तरफ़, होने वाली माँओं के लिए \"Mom on Board\", 14.5 सेमी, सक्शन कप के साथ।"
+    },
+    {
+     "en": "2-in-1 reversible, larger 17.5 × 17.5 cm, 300 GSM laminated board.",
+     "hi": "2-in-1 दोनों तरफ़, बड़ा 17.5 × 17.5 सेमी, 300 GSM लैमिनेटेड बोर्ड।"
+    },
+    {
+     "en": "Silicone and neem wood teether combos, BPA-free, for babies 3 months and up.",
+     "hi": "3 महीने और उससे बड़े बच्चों के लिए BPA-मुक्त सिलिकॉन और नीम की लकड़ी के टीथर कॉम्बो।"
+    },
+    {
+     "en": "Silicone teether ring with neem wood fish and bird.",
+     "hi": "नीम की लकड़ी की मछली और चिड़िया के साथ सिलिकॉन टीथर रिंग।"
+    },
+    {
+     "en": "Silicone teether ring with neem wood car and cloud.",
+     "hi": "नीम की लकड़ी की कार और बादल के साथ सिलिकॉन टीथर रिंग।"
+    },
+    {
+     "en": "Soft cotton knee and elbow protectors for crawling babies, in packs of 2 or 4.",
+     "hi": "घुटनों के बल चलने वाले बच्चों के लिए मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर, 2 या 4 के पैक में।"
+    },
+    {
+     "en": "Soft cotton knee & elbow protector with dotted grip.",
+     "hi": "डॉटेड ग्रिप वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+    },
+    {
+     "en": "Soft cotton knee & elbow protector with dotted grip.",
+     "hi": "डॉटेड ग्रिप वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+    },
+    {
+     "en": "Soft cotton knee & elbow protector with dotted grip.",
+     "hi": "डॉटेड ग्रिप वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+    },
+    {
+     "en": "Toys for drawing, pretend play and learning letters and numbers.",
+     "hi": "ड्रॉइंग, नकली खेल और अक्षर-अंक सीखने के खिलौने।"
+    },
+    {
+     "en": "36 interlocking foam pieces for learning through play.",
+     "hi": "खेल-खेल में सीखने के लिए 36 जुड़ने वाले फोम पीस।"
+    },
+    {
+     "en": "8.5-inch reusable LCD screen for mess-free drawing.",
+     "hi": "बिना गंदगी की ड्रॉइंग के लिए दोबारा इस्तेमाल होने वाली 8.5-इंच LCD स्क्रीन।"
+    },
+    {
+     "en": "Reusable doodle board for writing and drawing.",
+     "hi": "लिखने और ड्रॉइंग के लिए दोबारा इस्तेमाल होने वाला डूडल बोर्ड।"
+    }
+   ],
+   "div": [
+    {
+     "en": "4.4 out of 5 on Amazon.in · 140 ratings",
+     "hi": "Amazon.in पर 5 में से 4.4 · 140 रेटिंग"
+    },
+    {
+     "en": "4.2 out of 5 on Amazon.in · 35 ratings",
+     "hi": "Amazon.in पर 5 में से 4.2 · 35 रेटिंग"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "title": [
+    {
+     "en": "Shop all products — Peppynose",
+     "hi": "सभी प्रोडक्ट — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Shop all products — Peppynose",
+     "hi": "सभी प्रोडक्ट — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Shop all products — Peppynose",
+     "hi": "सभी प्रोडक्ट — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "All Peppynose baby and kids products: car safety signs, teethers, crawling knee pads and learning toys, on Amazon.in and Flipkart.",
+     "hi": "Peppynose के सभी बच्चों वाले प्रोडक्ट: कार सेफ़्टी साइन, टीथर, नी पैड और सीखने वाले खिलौने, Amazon.in और Flipkart पर।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "All Peppynose baby and kids products: car safety signs, teethers, crawling knee pads and learning toys, on Amazon.in and Flipkart.",
+     "hi": "Peppynose के सभी बच्चों वाले प्रोडक्ट: कार सेफ़्टी साइन, टीथर, नी पैड और सीखने वाले खिलौने, Amazon.in और Flipkart पर।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "All Peppynose baby and kids products: car safety signs, teethers, crawling knee pads and learning toys, on Amazon.in and Flipkart.",
+     "hi": "Peppynose के सभी बच्चों वाले प्रोडक्ट: कार सेफ़्टी साइन, टीथर, नी पैड और सीखने वाले खिलौने, Amazon.in और Flipkart पर।"
+    }
+   ],
+   "div@aria-label": [
+    {
+     "en": "Filter by age",
+     "hi": "उम्र के हिसाब से छाँटें"
+    }
+   ],
+   "h1": [
+    {
+     "en": "All products",
+     "hi": "सभी प्रोडक्ट"
+    }
+   ]
+  },
+  "about": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    },
+    {
+     "en": "Mother holding her newborn baby in soft light",
+     "hi": "हल्की रोशनी में अपने नवजात को गोद में लिए माँ"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "h3": [
+    {
+     "en": "Safe and gentle",
+     "hi": "सुरक्षित और कोमल"
+    },
+    {
+     "en": "Simple and useful",
+     "hi": "आसान और काम का"
+    },
+    {
+     "en": "Honest value",
+     "hi": "ईमानदार दाम"
+    }
+   ],
+   "p": [
+    {
+     "en": "BPA-free silicone, natural neem wood and soft cotton, chosen for little hands, gums and knees.",
+     "hi": "छोटे हाथों, मसूड़ों और घुटनों के लिए चुने गए BPA-मुक्त सिलिकॉन, प्राकृतिक नीम की लकड़ी और मुलायम कॉटन।"
+    },
+    {
+     "en": "Peppynose™ began in 2023 in Musiri, a small town near Trichy in Tamil Nadu, with a simple idea: the early years of parenthood are full of little moments, and each one deserves something made with care.",
+     "hi": "Peppynose™ की शुरुआत 2023 में तमिलनाडु में त्रिची के पास छोटे से कस्बे मुसिरी में एक सीधे-से विचार के साथ हुई: माता-पिता बनने के शुरुआती साल छोटे-छोटे पलों से भरे होते हैं, और हर पल के लिए प्यार से बनी कोई चीज़ होनी चाहिए।"
+    },
+    {
+     "en": "So we make simple, gentle products for those moments. A 2-in-1 sign that says “Bump on Board” while you’re expecting and flips to “Baby on Board” for the drive home. Soft cotton knee pads for first crawls. BPA-free silicone and neem wood teethers for first teeth. And toys that turn learning into play.",
+     "hi": "इसलिए हम उन पलों के लिए आसान और कोमल प्रोडक्ट बनाते हैं। एक 2-in-1 साइन जो गर्भावस्था में “Bump on Board” कहता है और घर लौटते समय पलटकर “Baby on Board”। पहली बार घुटनों के बल चलने के लिए मुलायम कॉटन नी पैड। पहले दाँतों के लिए BPA-मुक्त सिलिकॉन और नीम की लकड़ी के टीथर। और ऐसे खिलौने जो सीखने को खेल बना दें।"
+    },
+    {
+     "en": "Every Peppynose product is sold on Amazon.in and Flipkart, so parents across India can order with the delivery and returns they already trust. We read every review, and we keep improving our products with what parents tell us.",
+     "hi": "हर Peppynose प्रोडक्ट Amazon.in और Flipkart पर बिकता है, ताकि पूरे भारत के माता-पिता उसी डिलीवरी और रिटर्न के साथ ऑर्डर कर सकें जिन पर वे पहले से भरोसा करते हैं। हम हर रिव्यू पढ़ते हैं और माता-पिता की बातों से अपने प्रोडक्ट लगातार बेहतर करते हैं।"
+    },
+    {
+     "en": "Products that solve real everyday moments for babies and parents.",
+     "hi": "ऐसे प्रोडक्ट जो बच्चों और माता-पिता की रोज़ की असली ज़रूरतें पूरी करें।"
+    },
+    {
+     "en": "Fair prices, and real reviews from verified buyers.",
+     "hi": "सही दाम, और सत्यापित खरीदारों के असली रिव्यू।"
+    }
+   ],
+   "span": [
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    },
+    {
+     "en": "Since 2023 · Musiri, Tamil Nadu",
+     "hi": "2023 से · मुसिरी, तमिलनाडु"
+    },
+    {
+     "en": "What we believe",
+     "hi": "हम क्या मानते हैं"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "title": [
+    {
+     "en": "About us — Peppynose",
+     "hi": "हमारे बारे में — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "About us — Peppynose",
+     "hi": "हमारे बारे में — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "About us — Peppynose",
+     "hi": "हमारे बारे में — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "The story behind Peppynose, an Indian brand of baby and kids essentials.",
+     "hi": "बच्चों की ज़रूरी चीज़ों के भारतीय ब्रांड Peppynose की कहानी।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "The story behind Peppynose, an Indian brand of baby and kids essentials.",
+     "hi": "बच्चों की ज़रूरी चीज़ों के भारतीय ब्रांड Peppynose की कहानी।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "The story behind Peppynose, an Indian brand of baby and kids essentials.",
+     "hi": "बच्चों की ज़रूरी चीज़ों के भारतीय ब्रांड Peppynose की कहानी।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "Little things for",
+     "hi": "नन्हे-मुन्नों के लिए"
+    }
+   ],
+   "em": [
+    {
+     "en": "little ones",
+     "hi": "छोटी-छोटी चीज़ें"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Our story",
+     "hi": "हमारी कहानी"
+    },
+    {
+     "en": "Our promise to parents",
+     "hi": "माता-पिता से हमारा वादा"
+    }
+   ]
+  },
+  "faq": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    },
+    {
+     "en": "Contact us",
+     "hi": "हमसे संपर्क करें"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Teethers",
+     "hi": "टीथर"
+    },
+    {
+     "en": "Buying",
+     "hi": "खरीदना"
+    },
+    {
+     "en": "Car safety signs",
+     "hi": "कार सेफ़्टी साइन"
+    },
+    {
+     "en": "Knee pads",
+     "hi": "नी पैड"
+    },
+    {
+     "en": "Toys",
+     "hi": "खिलौने"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "span": [
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    },
+    {
+     "en": "Help",
+     "hi": "मदद"
+    }
+   ],
+   "title": [
+    {
+     "en": "FAQ — Peppynose",
+     "hi": "सवाल-जवाब — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "FAQ — Peppynose",
+     "hi": "सवाल-जवाब — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "FAQ — Peppynose",
+     "hi": "सवाल-जवाब — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "Answers to common questions about buying Peppynose products, delivery, returns, car signs, teethers and knee pads.",
+     "hi": "Peppynose प्रोडक्ट खरीदने, डिलीवरी, रिटर्न, कार साइन, टीथर और नी पैड से जुड़े आम सवालों के जवाब।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "Answers to common questions about buying Peppynose products, delivery, returns, car signs, teethers and knee pads.",
+     "hi": "Peppynose प्रोडक्ट खरीदने, डिलीवरी, रिटर्न, कार साइन, टीथर और नी पैड से जुड़े आम सवालों के जवाब।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "Answers to common questions about buying Peppynose products, delivery, returns, car signs, teethers and knee pads.",
+     "hi": "Peppynose प्रोडक्ट खरीदने, डिलीवरी, रिटर्न, कार साइन, टीथर और नी पैड से जुड़े आम सवालों के जवाब।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "Frequently asked questions",
+     "hi": "अक्सर पूछे जाने वाले सवाल"
+    }
+   ],
+   "p": [
+    {
+     "en": "Quick answers about buying, delivery and our products.",
+     "hi": "खरीदने, डिलीवरी और हमारे प्रोडक्ट के बारे में झटपट जवाब।"
+    },
+    {
+     "en": "On Amazon.in and Flipkart. Every product on this site has a button that opens it on the marketplace.",
+     "hi": "Amazon.in और Flipkart पर। इस साइट पर हर प्रोडक्ट के साथ एक बटन है जो उसे मार्केटप्लेस पर खोलता है।"
+    },
+    {
+     "en": "Amazon.in or Flipkart, depending on where you ordered, under that marketplace’s delivery and return policy. You can request a return from your order page there.",
+     "hi": "आपने जहाँ ऑर्डर किया है, वही Amazon.in या Flipkart, अपनी डिलीवरी और रिटर्न नीति के तहत। आप वहाँ अपने ऑर्डर पेज से रिटर्न माँग सकते हैं।"
+    },
+    {
+     "en": "We sell through Amazon.in and Flipkart so you get their fast delivery, secure payment and easy returns.",
+     "hi": "हम Amazon.in और Flipkart से बेचते हैं ताकि आपको उनकी तेज़ डिलीवरी, सुरक्षित पेमेंट और आसान रिटर्न मिले।"
+    },
+    {
+     "en": "One side says \"Bump on Board\" (or \"Mom on Board\") for pregnancy, and the other says \"Baby on Board\" for after your baby arrives. Just flip it.",
+     "hi": "एक तरफ़ गर्भावस्था के लिए \"Bump on Board\" (या \"Mom on Board\") लिखा है, दूसरी तरफ़ बच्चे के आने के बाद के लिए \"Baby on Board\"। बस पलट दें।"
+    },
+    {
+     "en": "14.5 × 14.5 cm, in packs of 1 or 2. A larger 17.5 × 17.5 cm size is coming soon.",
+     "hi": "14.5 × 14.5 सेमी, 1 या 2 के पैक में। बड़ा 17.5 × 17.5 सेमी साइज़ जल्द आ रहा है।"
+    },
+    {
+     "en": "With a suction cup on the rear windshield. It can be removed and moved to another car.",
+     "hi": "पीछे के शीशे पर सक्शन कप से। इसे हटाकर दूसरी कार में भी लगा सकते हैं।"
+    },
+    {
+     "en": "From 3 months. The silicone is BPA-free and the shapes are neem wood.",
+     "hi": "3 महीने से। सिलिकॉन BPA-मुक्त है और आकृतियाँ नीम की लकड़ी की हैं।"
+    },
+    {
+     "en": "Fish & Bird and Car & Cloud combos have 3 pieces each. The Complete Gift Set has 6 pieces.",
+     "hi": "Fish & Bird और Car & Cloud कॉम्बो में 3-3 पीस हैं। Complete Gift Set में 6 पीस हैं।"
+    },
+    {
+     "en": "For little ones aged 1 to 3 years.",
+     "hi": "1 से 3 साल के बच्चों के लिए।"
+    },
+    {
+     "en": "Soft cotton. They protect knees and elbows while your baby crawls.",
+     "hi": "मुलायम कॉटन। बच्चे के घुटनों के बल चलते समय ये घुटनों और कोहनियों को बचाते हैं।"
+    },
+    {
+     "en": "Blue Smiley, Yellow Smiley, Gray Dotted and Black Dotted in packs of 2 or 4, and Mint Dotted in a pack of 4.",
+     "hi": "Blue Smiley, Yellow Smiley, Gray Dotted और Black Dotted 2 या 4 के पैक में, और Mint Dotted 4 के पैक में।"
+    },
+    {
+     "en": "The wooden kitchen set, alphabet and number foam mat and LCD writing tablets are for children aged 1 to 3 years.",
+     "hi": "लकड़ी का किचन सेट, अक्षर और अंक फोम मैट और LCD राइटिंग टैबलेट 1 से 3 साल के बच्चों के लिए हैं।"
+    },
+    {
+     "en": "Still have a question?",
+     "hi": "अब भी कोई सवाल है?"
+    }
+   ],
+   "summary": [
+    {
+     "en": "Where can I buy Peppynose products?",
+     "hi": "Peppynose प्रोडक्ट कहाँ से खरीदें?"
+    },
+    {
+     "en": "Who handles delivery, returns and refunds?",
+     "hi": "डिलीवरी, रिटर्न और रिफ़ंड कौन संभालता है?"
+    },
+    {
+     "en": "Why can’t I buy directly on this website?",
+     "hi": "इस वेबसाइट पर सीधे क्यों नहीं खरीद सकते?"
+    },
+    {
+     "en": "What does 2-in-1 reversible mean?",
+     "hi": "2-in-1 दोनों तरफ़ वाला का मतलब क्या है?"
+    },
+    {
+     "en": "What sizes are available?",
+     "hi": "कौन-से साइज़ मिलते हैं?"
+    },
+    {
+     "en": "How does it attach to the car?",
+     "hi": "इसे कार पर कैसे लगाएँ?"
+    },
+    {
+     "en": "From what age can my baby use the teethers?",
+     "hi": "मेरा बच्चा किस उम्र से टीथर इस्तेमाल कर सकता है?"
+    },
+    {
+     "en": "What is in each teether combo?",
+     "hi": "हर टीथर कॉम्बो में क्या है?"
+    },
+    {
+     "en": "What age are the knee pads for?",
+     "hi": "नी पैड किस उम्र के लिए हैं?"
+    },
+    {
+     "en": "What are the knee pads made of?",
+     "hi": "नी पैड किस चीज़ से बने हैं?"
+    },
+    {
+     "en": "Which colours and packs are available?",
+     "hi": "कौन-से रंग और पैक मिलते हैं?"
+    },
+    {
+     "en": "What age are the toys for?",
+     "hi": "खिलौने किस उम्र के लिए हैं?"
+    }
+   ]
+  },
+  "contact": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    },
+    {
+     "en": "Amazon.in orders",
+     "hi": "Amazon.in ऑर्डर"
+    },
+    {
+     "en": "Flipkart orders",
+     "hi": "Flipkart ऑर्डर"
+    }
+   ],
+   "p": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Questions about a product, bulk or gift orders, or feedback.",
+     "hi": "प्रोडक्ट के बारे में सवाल, थोक या गिफ़्ट ऑर्डर, या सुझाव।"
+    },
+    {
+     "en": "For product questions, bulk or gift orders, and feedback.",
+     "hi": "प्रोडक्ट से जुड़े सवालों, थोक या गिफ़्ट ऑर्डर और सुझावों के लिए।"
+    },
+    {
+     "en": "T-pet Road, Musiri 621211",
+     "hi": "T-pet Road, Musiri 621211"
+    },
+    {
+     "en": "Trichy, Tamil Nadu, India",
+     "hi": "Trichy, Tamil Nadu, India"
+    },
+    {
+     "en": "For delivery, returns or refunds, contact the marketplace you ordered from. They handle every order.",
+     "hi": "डिलीवरी, रिटर्न या रिफ़ंड के लिए उस मार्केटप्लेस से संपर्क करें जहाँ से आपने ऑर्डर किया। हर ऑर्डर वही संभालते हैं।"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "span": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "title": [
+    {
+     "en": "Contact — Peppynose",
+     "hi": "संपर्क — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Contact — Peppynose",
+     "hi": "संपर्क — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Contact — Peppynose",
+     "hi": "संपर्क — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "Get in touch with Peppynose.",
+     "hi": "Peppynose से संपर्क करें।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "Get in touch with Peppynose.",
+     "hi": "Peppynose से संपर्क करें।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "Get in touch with Peppynose.",
+     "hi": "Peppynose से संपर्क करें।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "We’d love to",
+     "hi": "हमें"
+    }
+   ],
+   "em": [
+    {
+     "en": "hear from you",
+     "hi": "आपसे सुनना अच्छा लगेगा"
+    }
+   ],
+   "h3": [
+    {
+     "en": "Email us",
+     "hi": "हमें ईमेल करें"
+    },
+    {
+     "en": "Visit or write to us",
+     "hi": "हमसे मिलें या हमें लिखें"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Help with an order?",
+     "hi": "ऑर्डर में मदद चाहिए?"
+    }
+   ]
+  },
+  "privacy": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    },
+    {
+     "en": "GitHub’s privacy statement",
+     "hi": "GitHub का प्राइवेसी स्टेटमेंट"
+    }
+   ],
+   "p": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "T-pet Road, Musiri 621211",
+     "hi": "T-pet Road, Musiri 621211"
+    },
+    {
+     "en": "Trichy, Tamil Nadu, India",
+     "hi": "Trichy, Tamil Nadu, India"
+    },
+    {
+     "en": "Last updated: 21 October 2026",
+     "hi": "आख़िरी अपडेट: 21 अक्टूबर 2026"
+    },
+    {
+     "en": "This website is an information site for Peppynose™ products. It has no user accounts, no shopping cart, no forms and no payments, and we do not use advertising or analytics cookies.",
+     "hi": "यह वेबसाइट Peppynose™ प्रोडक्ट की जानकारी देने वाली साइट है। इसमें कोई यूज़र अकाउंट, शॉपिंग कार्ट, फ़ॉर्म या पेमेंट नहीं है, और हम विज्ञापन या एनालिटिक्स कुकीज़ का इस्तेमाल नहीं करते।"
+    },
+    {
+     "en": "If you write to",
+     "hi": "अगर आप"
+    },
+    {
+     "en": ", we receive your email address and message and use them only to reply to you.",
+     "hi": " पर लिखते हैं, तो हमें आपका ईमेल पता और संदेश मिलता है, जिनका इस्तेमाल हम सिर्फ़ आपको जवाब देने के लिए करते हैं।"
+    },
+    {
+     "en": "The site is hosted on GitHub Pages. Like any web host, GitHub may record technical information such as your IP address when you visit, under",
+     "hi": "यह साइट GitHub Pages पर होस्ट है। किसी भी वेब होस्ट की तरह, आपके आने पर GitHub आपका IP पता जैसी तकनीकी जानकारी दर्ज कर सकता है। विवरण के लिए देखें:"
+    },
+    {
+     "en": "Pages load fonts from Google Fonts and some photos from Pexels, so your browser connects to those services when a page opens.",
+     "hi": "पेज Google Fonts से फ़ॉन्ट और Pexels से कुछ फ़ोटो लोड करते हैं, इसलिए पेज खुलने पर आपका ब्राउज़र उन सेवाओं से जुड़ता है।"
+    },
+    {
+     "en": "When you follow a link to Amazon.in or Flipkart, you leave this website. Your order, payment and delivery details are handled by that marketplace under its own privacy policy; we do not receive your payment details.",
+     "hi": "Amazon.in या Flipkart के लिंक पर जाते ही आप इस वेबसाइट से बाहर चले जाते हैं। आपके ऑर्डर, पेमेंट और डिलीवरी की जानकारी वह मार्केटप्लेस अपनी प्राइवेसी पॉलिसी के तहत संभालता है; आपकी पेमेंट जानकारी हमें नहीं मिलती।"
+    },
+    {
+     "en": "To ask about, correct or delete any email correspondence we hold about you, contact us:",
+     "hi": "हमारे पास आपके बारे में मौजूद किसी भी ईमेल बातचीत के बारे में पूछने, उसे सुधारने या हटाने के लिए हमसे संपर्क करें:"
+    },
+    {
+     "en": "Email:",
+     "hi": "ईमेल:"
+    },
+    {
+     "en": "If we change this policy, we will update it on this page and change the date at the top.",
+     "hi": "अगर हम यह पॉलिसी बदलते हैं, तो इसे इसी पेज पर अपडेट करेंगे और ऊपर की तारीख बदल देंगे।"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "span": [
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "title": [
+    {
+     "en": "Privacy policy — Peppynose",
+     "hi": "प्राइवेसी पॉलिसी — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Privacy policy — Peppynose",
+     "hi": "प्राइवेसी पॉलिसी — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Privacy policy — Peppynose",
+     "hi": "प्राइवेसी पॉलिसी — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "How the Peppynose website handles your information.",
+     "hi": "Peppynose वेबसाइट आपकी जानकारी को कैसे संभालती है।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "How the Peppynose website handles your information.",
+     "hi": "Peppynose वेबसाइट आपकी जानकारी को कैसे संभालती है।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "How the Peppynose website handles your information.",
+     "hi": "Peppynose वेबसाइट आपकी जानकारी को कैसे संभालती है।"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Summary",
+     "hi": "सारांश"
+    },
+    {
+     "en": "Information we receive",
+     "hi": "हमें मिलने वाली जानकारी"
+    },
+    {
+     "en": "Buying on Amazon.in and Flipkart",
+     "hi": "Amazon.in और Flipkart पर खरीदना"
+    },
+    {
+     "en": "Your choices",
+     "hi": "आपके विकल्प"
+    },
+    {
+     "en": "Changes",
+     "hi": "बदलाव"
+    }
+   ],
+   "strong": [
+    {
+     "en": "Emails you send us.",
+     "hi": "आपके भेजे ईमेल।"
+    },
+    {
+     "en": "Website hosting.",
+     "hi": "वेबसाइट होस्टिंग।"
+    },
+    {
+     "en": "Fonts and photos from other services.",
+     "hi": "दूसरी सेवाओं से फ़ॉन्ट और फ़ोटो।"
+    }
+   ]
+  },
+  "terms": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    },
+    {
+     "en": "Amazon.in",
+     "hi": "Amazon.in"
+    }
+   ],
+   "p": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "T-pet Road, Musiri 621211",
+     "hi": "T-pet Road, Musiri 621211"
+    },
+    {
+     "en": "Trichy, Tamil Nadu, India",
+     "hi": "Trichy, Tamil Nadu, India"
+    },
+    {
+     "en": "Last updated: 21 October 2026",
+     "hi": "आख़िरी अपडेट: 21 अक्टूबर 2026"
+    },
+    {
+     "en": "Email:",
+     "hi": "ईमेल:"
+    },
+    {
+     "en": "This website gives information about Peppynose™ products. By using it, you agree to these terms.",
+     "hi": "यह वेबसाइट Peppynose™ प्रोडक्ट की जानकारी देती है। इसका इस्तेमाल करके आप इन शर्तों से सहमत होते हैं।"
+    },
+    {
+     "en": "Peppynose™ products are sold through",
+     "hi": "Peppynose™ प्रोडक्ट यहाँ बिकते हैं:"
+    },
+    {
+     "en": "and",
+     "hi": "और"
+    },
+    {
+     "en": ". This website does not take orders or payments. When you buy a Peppynose product, the order is placed with, and fulfilled by, the marketplace you buy from.",
+     "hi": "। यह वेबसाइट ऑर्डर या पेमेंट नहीं लेती। जब आप कोई Peppynose प्रोडक्ट खरीदते हैं, तो ऑर्डर उसी मार्केटप्लेस पर दर्ज होता है और वही उसे पूरा करता है जहाँ से आप खरीदते हैं।"
+    },
+    {
+     "en": "Prices, stock and offers on this website are shown for information and may change. The price and terms shown on Amazon.in or Flipkart at checkout are the ones that apply to your order.",
+     "hi": "इस वेबसाइट पर दिखाई गई कीमतें, स्टॉक और ऑफ़र सिर्फ़ जानकारी के लिए हैं और बदल सकते हैं। चेकआउट पर Amazon.in या Flipkart पर दिखाई गई कीमत और शर्तें ही आपके ऑर्डर पर लागू होती हैं।"
+    },
+    {
+     "en": "We try to keep product descriptions, photos and ratings accurate. Some photos are lifestyle images, and products may vary slightly in colour or appearance. Always read the product page on the marketplace before buying, and follow the age guidance and safety instructions supplied with each product.",
+     "hi": "हम प्रोडक्ट के विवरण, फ़ोटो और रेटिंग सही रखने की कोशिश करते हैं। कुछ फ़ोटो लाइफ़स्टाइल तस्वीरें हैं, और प्रोडक्ट के रंग या रूप में थोड़ा फ़र्क हो सकता है। खरीदने से पहले हमेशा मार्केटप्लेस पर प्रोडक्ट पेज पढ़ें, और हर प्रोडक्ट के साथ दी गई उम्र संबंधी सलाह और सुरक्षा निर्देशों का पालन करें।"
+    },
+    {
+     "en": "This site links to Amazon.in, Flipkart and other websites. We are not responsible for their content or policies.",
+     "hi": "यह साइट Amazon.in, Flipkart और दूसरी वेबसाइटों के लिंक देती है। उनकी सामग्री या नीतियों के लिए हम ज़िम्मेदार नहीं हैं।"
+    },
+    {
+     "en": "Peppynose™, the Peppynose logo, and the text and product photos on this website belong to Peppynose. Please do not copy them without permission. Some lifestyle photos are from Pexels and are used under the Pexels licence.",
+     "hi": "Peppynose™, Peppynose लोगो, और इस वेबसाइट का टेक्स्ट और प्रोडक्ट फ़ोटो Peppynose के हैं। कृपया बिना अनुमति इन्हें कॉपी न करें। कुछ लाइफ़स्टाइल फ़ोटो Pexels से हैं और Pexels लाइसेंस के तहत इस्तेमाल किए गए हैं।"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "About this website",
+     "hi": "इस वेबसाइट के बारे में"
+    },
+    {
+     "en": "Orders and prices",
+     "hi": "ऑर्डर और कीमतें"
+    },
+    {
+     "en": "Product information",
+     "hi": "प्रोडक्ट की जानकारी"
+    },
+    {
+     "en": "Links to other websites",
+     "hi": "दूसरी वेबसाइटों के लिंक"
+    },
+    {
+     "en": "Brand and content",
+     "hi": "ब्रांड और सामग्री"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "span": [
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "title": [
+    {
+     "en": "Terms of use — Peppynose",
+     "hi": "उपयोग की शर्तें — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Terms of use — Peppynose",
+     "hi": "उपयोग की शर्तें — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Terms of use — Peppynose",
+     "hi": "उपयोग की शर्तें — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "Terms for using the Peppynose website.",
+     "hi": "Peppynose वेबसाइट इस्तेमाल करने की शर्तें।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "Terms for using the Peppynose website.",
+     "hi": "Peppynose वेबसाइट इस्तेमाल करने की शर्तें।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "Terms for using the Peppynose website.",
+     "hi": "Peppynose वेबसाइट इस्तेमाल करने की शर्तें।"
+    }
+   ]
+  },
+  "returns": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    },
+    {
+     "en": "Amazon.in orders",
+     "hi": "Amazon.in ऑर्डर"
+    },
+    {
+     "en": "Flipkart orders",
+     "hi": "Flipkart ऑर्डर"
+    },
+    {
+     "en": "Amazon.in",
+     "hi": "Amazon.in"
+    }
+   ],
+   "p": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "T-pet Road, Musiri 621211",
+     "hi": "T-pet Road, Musiri 621211"
+    },
+    {
+     "en": "Trichy, Tamil Nadu, India",
+     "hi": "Trichy, Tamil Nadu, India"
+    },
+    {
+     "en": "Last updated: 21 October 2026",
+     "hi": "आख़िरी अपडेट: 21 अक्टूबर 2026"
+    },
+    {
+     "en": "Email:",
+     "hi": "ईमेल:"
+    },
+    {
+     "en": "Peppynose™ products are sold through",
+     "hi": "Peppynose™ प्रोडक्ट यहाँ बिकते हैं:"
+    },
+    {
+     "en": "and",
+     "hi": "और"
+    },
+    {
+     "en": ". This website does not take orders or payments. When you buy a Peppynose product, the order is placed with, and fulfilled by, the marketplace you buy from.",
+     "hi": "। यह वेबसाइट ऑर्डर या पेमेंट नहीं लेती। जब आप कोई Peppynose प्रोडक्ट खरीदते हैं, तो ऑर्डर उसी मार्केटप्लेस पर दर्ज होता है और वही उसे पूरा करता है जहाँ से आप खरीदते हैं।"
+    },
+    {
+     "en": "Returns, replacements and refunds are handled by Amazon.in or Flipkart under their own return and refund policies. The return window and conditions for each product are shown on its product page on the marketplace.",
+     "hi": "रिटर्न, रिप्लेसमेंट और रिफ़ंड Amazon.in या Flipkart अपनी रिटर्न और रिफ़ंड नीतियों के तहत संभालते हैं। हर प्रोडक्ट की रिटर्न अवधि और शर्तें मार्केटप्लेस पर उसके प्रोडक्ट पेज पर दिखाई जाती हैं।"
+    },
+    {
+     "en": "Open your order on the marketplace you bought from and choose the return or replacement option:",
+     "hi": "जहाँ से खरीदा है उस मार्केटप्लेस पर अपना ऑर्डर खोलें और रिटर्न या रिप्लेसमेंट का विकल्प चुनें:"
+    },
+    {
+     "en": "or",
+     "hi": "या"
+    },
+    {
+     "en": ". Refunds are paid by the marketplace to your original payment method, as described in its policy.",
+     "hi": "। रिफ़ंड मार्केटप्लेस अपनी नीति के अनुसार आपके मूल पेमेंट तरीके में भेजता है।"
+    },
+    {
+     "en": "If something is wrong with a Peppynose product, please also let us know so we can help and improve:",
+     "hi": "अगर किसी Peppynose प्रोडक्ट में कुछ गड़बड़ है, तो कृपया हमें भी बताएँ ताकि हम मदद कर सकें और सुधार कर सकें:"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "span": [
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "title": [
+    {
+     "en": "Returns & refunds — Peppynose",
+     "hi": "रिटर्न और रिफ़ंड — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Returns & refunds — Peppynose",
+     "hi": "रिटर्न और रिफ़ंड — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Returns & refunds — Peppynose",
+     "hi": "रिटर्न और रिफ़ंड — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "Peppynose returns and refunds: orders are placed on Amazon.in and Flipkart, so their return and refund policies apply.",
+     "hi": "Peppynose रिटर्न और रिफ़ंड: ऑर्डर Amazon.in और Flipkart पर होते हैं, इसलिए उनकी रिटर्न और रिफ़ंड नीतियाँ लागू होती हैं।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "Peppynose returns and refunds: orders are placed on Amazon.in and Flipkart, so their return and refund policies apply.",
+     "hi": "Peppynose रिटर्न और रिफ़ंड: ऑर्डर Amazon.in और Flipkart पर होते हैं, इसलिए उनकी रिटर्न और रिफ़ंड नीतियाँ लागू होती हैं।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "Peppynose returns and refunds: orders are placed on Amazon.in and Flipkart, so their return and refund policies apply.",
+     "hi": "Peppynose रिटर्न और रिफ़ंड: ऑर्डर Amazon.in और Flipkart पर होते हैं, इसलिए उनकी रिटर्न और रिफ़ंड नीतियाँ लागू होती हैं।"
+    }
+   ],
+   "h2": [
+    {
+     "en": "Returns and refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "How to request a return",
+     "hi": "रिटर्न कैसे माँगें"
+    },
+    {
+     "en": "Problem with a product?",
+     "hi": "प्रोडक्ट में कोई समस्या?"
+    }
+   ]
+  },
+  "shipping": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    },
+    {
+     "en": "Amazon.in orders",
+     "hi": "Amazon.in ऑर्डर"
+    },
+    {
+     "en": "Flipkart orders",
+     "hi": "Flipkart ऑर्डर"
+    },
+    {
+     "en": "Amazon.in",
+     "hi": "Amazon.in"
+    }
+   ],
+   "p": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "T-pet Road, Musiri 621211",
+     "hi": "T-pet Road, Musiri 621211"
+    },
+    {
+     "en": "Trichy, Tamil Nadu, India",
+     "hi": "Trichy, Tamil Nadu, India"
+    },
+    {
+     "en": "Last updated: 21 October 2026",
+     "hi": "आख़िरी अपडेट: 21 अक्टूबर 2026"
+    },
+    {
+     "en": "Email:",
+     "hi": "ईमेल:"
+    },
+    {
+     "en": "Peppynose™ products are sold through",
+     "hi": "Peppynose™ प्रोडक्ट यहाँ बिकते हैं:"
+    },
+    {
+     "en": "and",
+     "hi": "और"
+    },
+    {
+     "en": ". This website does not take orders or payments. When you buy a Peppynose product, the order is placed with, and fulfilled by, the marketplace you buy from.",
+     "hi": "। यह वेबसाइट ऑर्डर या पेमेंट नहीं लेती। जब आप कोई Peppynose प्रोडक्ट खरीदते हैं, तो ऑर्डर उसी मार्केटप्लेस पर दर्ज होता है और वही उसे पूरा करता है जहाँ से आप खरीदते हैं।"
+    },
+    {
+     "en": "or",
+     "hi": "या"
+    },
+    {
+     "en": "Shipping, delivery times and any delivery charges are set by Amazon.in or Flipkart and shown on the product page and at checkout before you pay. Their shipping policies apply to your order.",
+     "hi": "शिपिंग, डिलीवरी का समय और कोई भी डिलीवरी शुल्क Amazon.in या Flipkart तय करते हैं और पेमेंट से पहले प्रोडक्ट पेज और चेकआउट पर दिखाते हैं। आपके ऑर्डर पर उनकी शिपिंग नीतियाँ लागू होती हैं।"
+    },
+    {
+     "en": "You can track your order from your account on the marketplace you ordered from:",
+     "hi": "आप जिस मार्केटप्लेस से ऑर्डर किया है, वहाँ अपने अकाउंट से ऑर्डर ट्रैक कर सकते हैं:"
+    },
+    {
+     "en": "For delivery questions, please contact the marketplace first, as they handle shipping. For anything about our products, write to us:",
+     "hi": "डिलीवरी से जुड़े सवालों के लिए पहले मार्केटप्लेस से संपर्क करें, क्योंकि शिपिंग वही संभालते हैं। हमारे प्रोडक्ट के बारे में कुछ भी हो, हमें लिखें:"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "span": [
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "title": [
+    {
+     "en": "Shipping policy — Peppynose",
+     "hi": "शिपिंग पॉलिसी — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Shipping policy — Peppynose",
+     "hi": "शिपिंग पॉलिसी — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Shipping policy — Peppynose",
+     "hi": "शिपिंग पॉलिसी — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "How Peppynose orders are shipped: all orders are placed and delivered through Amazon.in and Flipkart.",
+     "hi": "Peppynose ऑर्डर कैसे भेजे जाते हैं: सभी ऑर्डर Amazon.in और Flipkart के ज़रिए होते और डिलीवर होते हैं।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "How Peppynose orders are shipped: all orders are placed and delivered through Amazon.in and Flipkart.",
+     "hi": "Peppynose ऑर्डर कैसे भेजे जाते हैं: सभी ऑर्डर Amazon.in और Flipkart के ज़रिए होते और डिलीवर होते हैं।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "How Peppynose orders are shipped: all orders are placed and delivered through Amazon.in and Flipkart.",
+     "hi": "Peppynose ऑर्डर कैसे भेजे जाते हैं: सभी ऑर्डर Amazon.in और Flipkart के ज़रिए होते और डिलीवर होते हैं।"
+    }
+   ],
+   "h2": [
+    {
+     "en": "How orders are shipped",
+     "hi": "ऑर्डर कैसे भेजे जाते हैं"
+    },
+    {
+     "en": "Tracking your order",
+     "hi": "अपना ऑर्डर ट्रैक करें"
+    },
+    {
+     "en": "Questions",
+     "hi": "सवाल"
+    }
+   ]
+  },
+  "404": {
+   "img@alt": [
+    {
+     "en": "Peppynose logo",
+     "hi": "Peppynose लोगो"
+    }
+   ],
+   "a": [
+    {
+     "en": "Peppynose",
+     "hi": "Peppynose"
+    },
+    {
+     "en": "Home",
+     "hi": "होम"
+    },
+    {
+     "en": "Shop",
+     "hi": "दुकान"
+    },
+    {
+     "en": "About",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "FAQ",
+     "hi": "सवाल-जवाब"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Flipkart",
+     "hi": "Flipkart"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Shop all products",
+     "hi": "सभी प्रोडक्ट देखें"
+    },
+    {
+     "en": "Amazon.in store",
+     "hi": "Amazon.in स्टोर"
+    },
+    {
+     "en": "About us",
+     "hi": "हमारे बारे में"
+    },
+    {
+     "en": "Shipping policy",
+     "hi": "शिपिंग नीति"
+    },
+    {
+     "en": "Returns & refunds",
+     "hi": "रिटर्न और रिफ़ंड"
+    },
+    {
+     "en": "Privacy policy",
+     "hi": "गोपनीयता नीति"
+    },
+    {
+     "en": "Terms of use",
+     "hi": "उपयोग की शर्तें"
+    },
+    {
+     "en": "care.peppynose@gmail.com",
+     "hi": "care.peppynose@gmail.com"
+    },
+    {
+     "en": "Instagram",
+     "hi": "Instagram"
+    },
+    {
+     "en": "Back to home",
+     "hi": "होम पर वापस जाएँ"
+    }
+   ],
+   "button": [
+    {
+     "en": "Menu",
+     "hi": "मेन्यू"
+    }
+   ],
+   "h4": [
+    {
+     "en": "Contact",
+     "hi": "संपर्क"
+    },
+    {
+     "en": "Explore",
+     "hi": "देखें"
+    },
+    {
+     "en": "Policies",
+     "hi": "नीतियाँ"
+    },
+    {
+     "en": "Buy online",
+     "hi": "ऑनलाइन खरीदें"
+    }
+   ],
+   "li": [
+    {
+     "en": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+     "hi": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu"
+    }
+   ],
+   "span": [
+    {
+     "en": "Peppynose™. All rights reserved.",
+     "hi": "Peppynose™. सर्वाधिकार सुरक्षित।"
+    },
+    {
+     "en": "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.",
+     "hi": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।"
+    },
+    {
+     "en": "Error 404",
+     "hi": "त्रुटि 404"
+    }
+   ],
+   "title": [
+    {
+     "en": "Page not found — Peppynose",
+     "hi": "पेज नहीं मिला — Peppynose"
+    }
+   ],
+   "meta.og:title": [
+    {
+     "en": "Page not found — Peppynose",
+     "hi": "पेज नहीं मिला — Peppynose"
+    }
+   ],
+   "meta.twitter:title": [
+    {
+     "en": "Page not found — Peppynose",
+     "hi": "पेज नहीं मिला — Peppynose"
+    }
+   ],
+   "meta.description": [
+    {
+     "en": "This page could not be found.",
+     "hi": "यह पेज नहीं मिल सका।"
+    }
+   ],
+   "meta.og:description": [
+    {
+     "en": "This page could not be found.",
+     "hi": "यह पेज नहीं मिल सका।"
+    }
+   ],
+   "meta.twitter:description": [
+    {
+     "en": "This page could not be found.",
+     "hi": "यह पेज नहीं मिल सका।"
+    }
+   ],
+   "h1": [
+    {
+     "en": "Oops, this page",
+     "hi": "ओह, यह पेज"
+    }
+   ],
+   "em": [
+    {
+     "en": "wandered off",
+     "hi": "कहीं भटक गया"
+    }
+   ],
+   "p": [
+    {
+     "en": "The page you’re looking for doesn’t exist or has moved.",
+     "hi": "आप जो पेज ढूँढ रहे हैं वह मौजूद नहीं है या कहीं और चला गया है।"
+    }
+   ]
+  }
+ },
+ "strings": {
+  "Peppynose — Gentle baby & kids essentials": "Peppynose — बच्चों के लिए कोमल ज़रूरी चीज़ें",
+  "Peppynose makes gentle baby and kids essentials: Baby on Board car signs, crawling knee pads, silicone & neem wood teethers and learning toys. Shop on Amazon.in and Flipkart.": "Peppynose बच्चों के लिए कोमल ज़रूरी चीज़ें बनाता है: Baby on Board कार साइन, घुटनों के बल चलने वाले बच्चों के लिए नी पैड, सिलिकॉन और नीम की लकड़ी के टीथर और सीखने वाले खिलौने। Amazon.in और Flipkart पर खरीदें।",
+  "A smiling Indian mother with her child as a baby, a toddler and a school-going kid": "मुस्कुराती भारतीय माँ अपने बच्चे के साथ",
+  "Peppynose Mom on Board sign": "Peppynose Mom on Board साइन",
+  "Pregnant mother holding her belly": "अपने पेट को थामे गर्भवती माँ",
+  "Peppynose Baby on Board & Bump on Board Sign": "Peppynose Baby on Board & Bump on Board साइन",
+  "Peppynose Mom on Board & Baby on Board Sign": "Peppynose Mom on Board & Baby on Board साइन",
+  "Baby with a Peppynose silicone and neem wood teether": "Peppynose सिलिकॉन और नीम की लकड़ी के टीथर के साथ बच्चा",
+  "Peppynose Complete Gift Set (6 pieces)": "Peppynose Complete Gift Set (6 पीस)",
+  "Peppynose Fish & Bird Combo (3 pieces)": "Peppynose Fish & Bird Combo (3 पीस)",
+  "Baby crawling in Peppynose Yellow Smiley knee pads": "Peppynose Yellow Smiley नी पैड पहनकर घुटनों के बल चलता बच्चा",
+  "Peppynose Knee Pads — Blue Smiley, pack of 2": "Peppynose नी पैड — Blue Smiley, 2 का पैक",
+  "Peppynose Knee Pads — Yellow Smiley, pack of 2": "Peppynose नी पैड — Yellow Smiley, 2 का पैक",
+  "Peppynose wooden kitchen play set": "Peppynose लकड़ी का किचन प्ले सेट",
+  "Peppynose Wooden Kitchen Play Set": "Peppynose लकड़ी का किचन प्ले सेट",
+  "Peppynose Alphabet & Number Foam Mat": "Peppynose अक्षर और अंक फोम मैट",
+  "Peppynose Knee Pads — Blue Smiley": "Peppynose नी पैड — Blue Smiley",
+  "Peppynose Teether Complete Gift Set (6 pieces)": "Peppynose टीथर Complete Gift Set (6 पीस)",
+  "5 out of 5 stars": "5 में से 5 स्टार",
+  "4 out of 5 stars": "5 में से 4 स्टार",
+  "Mother and baby resting together": "साथ आराम करते माँ और बच्चा",
+  "Baby crawling in Peppynose Mint Dotted knee pads": "Peppynose Mint Dotted नी पैड पहनकर घुटनों के बल चलता बच्चा",
+  "Peppynose logo": "Peppynose लोगो",
+  "Peppynose": "Peppynose",
+  "Menu": "मेन्यू",
+  "Home": "होम",
+  "Shop": "दुकान",
+  "About": "हमारे बारे में",
+  "FAQ": "सवाल-जवाब",
+  "Contact": "संपर्क",
+  "Rated": "रेटिंग",
+  "4.4 out of 5": "5 में से 4.4",
+  "by 140 Amazon.in buyers · Baby on Board sign": "— 140 Amazon.in खरीदारों से · Baby on Board साइन",
+  "For moms, from bump to big kid": "माँओं के लिए, बेबी बंप से बड़े बच्चे तक",
+  "With you at every": "हर",
+  "little": "छोटे",
+  "stage.": "पड़ाव पर आपके साथ।",
+  "From pregnancy to first crawls, first teeth and first words, Peppynose™ makes gentle, useful things for you and your little one.": "गर्भावस्था से लेकर पहली बार घुटनों के बल चलने, पहले दाँत और पहले शब्दों तक, Peppynose™ आपके और आपके नन्हे-मुन्ने के लिए कोमल और काम की चीज़ें बनाता है।",
+  "Shop on Amazon.in": "Amazon.in पर खरीदें",
+  "Shop on Flipkart": "Flipkart पर खरीदें",
+  "from 140 ratings on Amazon.in": "Amazon.in पर 140 रेटिंग से",
+  "Mom on Board sign": "Mom on Board साइन",
+  "For moms-to-be · ₹249 on Amazon.in": "होने वाली माँओं के लिए · Amazon.in पर ₹249",
+  "BPA-free silicone": "BPA-मुक्त सिलिकॉन",
+  "Natural neem wood": "प्राकृतिक नीम की लकड़ी",
+  "Soft cotton knee pads": "मुलायम कॉटन नी पैड",
+  "2-in-1 reversible car signs": "2-in-1 दोनों तरफ़ वाले कार साइन",
+  "Verified 4★ & 5★ reviews": "सत्यापित 4★ और 5★ रिव्यू",
+  "Delivered by Amazon.in & Flipkart": "Amazon.in और Flipkart से डिलीवरी",
+  "Shop by age": "उम्र के हिसाब से खरीदें",
+  "Find what’s right": "सही चीज़ चुनें",
+  "for now": "अभी के लिए",
+  "Pregnancy": "गर्भावस्था",
+  "Car signs": "कार साइन",
+  "Newborn": "नवजात",
+  "3 months+": "3 महीने+",
+  "Teethers": "टीथर",
+  "Crawling babies": "घुटनों के बल चलने वाले बच्चे",
+  "Knee pads · 1–3 years": "नी पैड · 1–3 साल",
+  "Toddlers & kids": "छोटे बच्चे",
+  "Learning toys · 1–3 years": "सीखने वाले खिलौने · 1–3 साल",
+  "Made for every little stage": "हर छोटे पड़ाव के लिए बना",
+  "From bump to baby,": "बेबी बंप से बेबी तक,",
+  "one stage": "एक-एक पड़ाव",
+  "at a time": "साथ-साथ",
+  "Everything we make is designed around a real moment, from pregnancy to your baby’s first years.": "गर्भावस्था से लेकर बच्चे के शुरुआती सालों तक, हम जो भी बनाते हैं वह किसी असली पल को ध्यान में रखकर बनाया जाता है।",
+  "Expecting & bringing baby home": "गर्भावस्था और बच्चे को घर लाना",
+  "Car Safety Signs": "कार सेफ़्टी साइन",
+  "Let other drivers know there’s a little one on board. One 2-in-1 sign says “Bump on Board” during pregnancy, then flips to “Baby on Board”.": "दूसरे ड्राइवरों को बताएँ कि गाड़ी में एक नन्हा मेहमान है। एक ही 2-in-1 साइन गर्भावस्था में “Bump on Board” दिखाता है, फिर पलटने पर “Baby on Board”।",
+  "Baby on Board & Bump on Board Sign": "Baby on Board & Bump on Board साइन",
+  "Amazon": "Amazon",
+  "Flipkart": "Flipkart",
+  "Check price": "कीमत देखें",
+  "Mom on Board & Baby on Board Sign": "Mom on Board & Baby on Board साइन",
+  "See all car safety signs →": "सभी कार सेफ़्टी साइन देखें →",
+  "Teething": "दाँत निकलना",
+  "BPA-free silicone with natural neem wood shapes, made for little hands and sore gums from 3 months.": "प्राकृतिक नीम की लकड़ी की आकृतियों के साथ BPA-मुक्त सिलिकॉन, 3 महीने से छोटे हाथों और दुखते मसूड़ों के लिए।",
+  "Complete Gift Set (6 pieces)": "Complete Gift Set (6 पीस)",
+  "Fish & Bird Combo (3 pieces)": "Fish & Bird Combo (3 पीस)",
+  "See all teethers →": "सभी टीथर देखें →",
+  "Crawling": "घुटनों के बल चलना",
+  "Baby Knee Pads": "बेबी नी पैड",
+  "Soft cotton knee and elbow protectors in smiley and dotted designs, for brave little explorers.": "बहादुर नन्हे खोजियों के लिए स्माइली और डॉटेड डिज़ाइन में मुलायम कॉटन के घुटने और कोहनी प्रोटेक्टर।",
+  "Knee Pads — Blue Smiley, pack of 2": "नी पैड — Blue Smiley, 2 का पैक",
+  "Knee Pads — Yellow Smiley, pack of 2": "नी पैड — Yellow Smiley, 2 का पैक",
+  "See all baby knee pads →": "सभी बेबी नी पैड देखें →",
+  "Playing & learning": "खेलना और सीखना",
+  "Learning & Play": "सीखना और खेलना",
+  "Pretend play, first letters and mess-free drawing: toys that make learning fun.": "नकली खेल, पहले अक्षर और बिना गंदगी की ड्रॉइंग: ऐसे खिलौने जो सीखना मज़ेदार बनाते हैं।",
+  "Wooden Kitchen Play Set": "लकड़ी का किचन प्ले सेट",
+  "Alphabet & Number Foam Mat": "अक्षर और अंक फोम मैट",
+  "See all learning & play →": "सभी सीखने और खेलने वाले खिलौने देखें →",
+  "Best sellers": "सबसे ज़्यादा बिकने वाले",
+  "Parents’ favourites": "माता-पिता की पसंद",
+  "Shop all products": "सभी प्रोडक्ट देखें",
+  "2-in-1 reversible, 14.5 × 14.5 cm, 300 GSM laminated board with suction cup.": "2-in-1 दोनों तरफ़, 14.5 × 14.5 सेमी, सक्शन कप के साथ 300 GSM लैमिनेटेड बोर्ड।",
+  "4.4 out of 5 on Amazon.in · 140 ratings": "Amazon.in पर 5 में से 4.4 · 140 रेटिंग",
+  "Pack of 1": "1 का पैक",
+  "Knee Pads — Blue Smiley": "नी पैड — Blue Smiley",
+  "Soft cotton knee & elbow protector with a smiley face.": "स्माइली चेहरे वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।",
+  "Pack of 2": "2 का पैक",
+  "Teether Complete Gift Set (6 pieces)": "टीथर Complete Gift Set (6 पीस)",
+  "Silicone teether ring with 5 neem wood shapes. A lovely baby gift.": "नीम की लकड़ी की 5 आकृतियों के साथ सिलिकॉन टीथर रिंग। बच्चे के लिए प्यारा तोहफ़ा।",
+  "Gift set of 6": "6 का गिफ़्ट सेट",
+  "Eco-friendly, non-toxic, 15 pieces for pretend play.": "पर्यावरण के अनुकूल, बिना ज़हरीले तत्व, नकली खेल के लिए 15 पीस।",
+  "Set of 15": "15 का सेट",
+  "Reviews": "रिव्यू",
+  "Loved by parents": "माता-पिता को पसंद",
+  "Genuine reviews from verified buyers, word for word.": "सत्यापित खरीदारों के असली रिव्यू, शब्दशः।",
+  "“It’s good easy to remove and attach to another car as well if needed.”": "“It’s good easy to remove and attach to another car as well if needed.”",
+  "Bhaskar": "Bhaskar",
+  "· Mom on Board sign · 17 October 2026 ·": "· Mom on Board साइन · 17 अक्टूबर 2026 ·",
+  "Verified purchase · Amazon.in": "सत्यापित खरीद · Amazon.in",
+  "“Overall good and value for money products”": "“Overall good and value for money products”",
+  "Pratik Kamble, Raigad": "Pratik Kamble, Raigad",
+  "· Baby on Board sign ·": "· Baby on Board साइन ·",
+  "Verified purchase · Flipkart": "सत्यापित खरीद · Flipkart",
+  "Our promise": "हमारा वादा",
+  "Little things, made with care": "प्यार से बनी छोटी-छोटी चीज़ें",
+  "Safe and gentle": "सुरक्षित और कोमल",
+  "BPA-free silicone, natural neem wood and soft cotton, chosen for little hands, gums and knees.": "छोटे हाथों, मसूड़ों और घुटनों के लिए चुने गए BPA-मुक्त सिलिकॉन, प्राकृतिक नीम की लकड़ी और मुलायम कॉटन।",
+  "Simple and useful": "आसान और काम का",
+  "Products for real everyday moments, like a 2-in-1 sign that works before and after baby arrives.": "रोज़ के असली पलों के लिए प्रोडक्ट, जैसे 2-in-1 साइन जो बच्चे के आने से पहले और बाद दोनों में काम आता है।",
+  "Easy to buy": "खरीदना आसान",
+  "Order on Amazon.in or Flipkart with the delivery and returns you already trust.": "Amazon.in या Flipkart पर ऑर्डर करें, उसी डिलीवरी और रिटर्न के साथ जिन पर आप पहले से भरोसा करते हैं।",
+  "Shop Peppynose": "Peppynose",
+  "online": "ऑनलाइन खरीदें",
+  "See our full range, latest prices and offers on your favourite marketplace.": "हमारी पूरी रेंज, ताज़ा कीमतें और ऑफ़र अपने पसंदीदा मार्केटप्लेस पर देखें।",
+  "Amazon.in store": "Amazon.in स्टोर",
+  "Explore": "देखें",
+  "About us": "हमारे बारे में",
+  "Policies": "नीतियाँ",
+  "Shipping policy": "शिपिंग नीति",
+  "Returns & refunds": "रिटर्न और रिफ़ंड",
+  "Privacy policy": "गोपनीयता नीति",
+  "Terms of use": "उपयोग की शर्तें",
+  "Buy online": "ऑनलाइन खरीदें",
+  "care.peppynose@gmail.com": "care.peppynose@gmail.com",
+  "Instagram": "Instagram",
+  "T-pet Road, Musiri 621211, Trichy, Tamil Nadu": "T-pet Road, Musiri 621211, Trichy, Tamil Nadu",
+  "Peppynose™. All rights reserved.": "Peppynose™. सर्वाधिकार सुरक्षित।",
+  "Prices may change; the latest price is on Amazon.in or Flipkart. Lifestyle photos: Pexels.": "कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।",
+  "Shop all products — Peppynose": "सभी प्रोडक्ट — Peppynose",
+  "All Peppynose baby and kids products: car safety signs, teethers, crawling knee pads and learning toys, on Amazon.in and Flipkart.": "Peppynose के सभी बच्चों वाले प्रोडक्ट: कार सेफ़्टी साइन, टीथर, नी पैड और सीखने वाले खिलौने, Amazon.in और Flipkart पर।",
+  "Filter by age": "उम्र के हिसाब से छाँटें",
+  "Peppynose Baby on Board Sign — Large": "Peppynose Baby on Board साइन — बड़ा",
+  "Peppynose Teether Fish & Bird Combo (3 pieces)": "Peppynose टीथर Fish & Bird Combo (3 पीस)",
+  "Peppynose Teether Car & Cloud Combo (3 pieces)": "Peppynose टीथर Car & Cloud Combo (3 पीस)",
+  "Peppynose Knee Pads — Yellow Smiley": "Peppynose नी पैड — Yellow Smiley",
+  "Peppynose Knee Pads — Mint Dotted": "Peppynose नी पैड — Mint Dotted",
+  "Peppynose Knee Pads — Gray Dotted": "Peppynose नी पैड — Gray Dotted",
+  "Peppynose Knee Pads — Black Dotted": "Peppynose नी पैड — Black Dotted",
+  "Peppynose LCD Writing Tablet — Blue": "Peppynose LCD राइटिंग टैबलेट — Blue",
+  "Peppynose LCD Writing Tablet — Multicolour": "Peppynose LCD राइटिंग टैबलेट — Multicolour",
+  "All products": "सभी प्रोडक्ट",
+  "Every Peppynose product, with a button for each pack size. Each button shows that marketplace’s price; tap Amazon or Flipkart to buy.": "हर Peppynose प्रोडक्ट, हर पैक साइज़ के लिए एक बटन के साथ। ताज़ा कीमत देखने और खरीदने के लिए Amazon या Flipkart पर टैप करें।",
+  "Shop by age:": "उम्र के हिसाब से:",
+  "All": "सभी",
+  "Knee pads · 1–3 yrs": "नी पैड · 1–3 साल",
+  "Toys · 1–3 yrs": "खिलौने · 1–3 साल",
+  "Reversible 2-in-1 signs that tell other drivers to take extra care: \"Bump on Board\" during pregnancy, \"Baby on Board\" after.": "दूसरे ड्राइवरों को ज़्यादा सावधानी बरतने को कहने वाले 2-in-1 दोनों तरफ़ वाले साइन: गर्भावस्था में \"Bump on Board\", बाद में \"Baby on Board\"।",
+  "2-in-1 reversible, \"Mom on Board\" for moms-to-be, 14.5 cm, with suction cup.": "2-in-1 दोनों तरफ़, होने वाली माँओं के लिए \"Mom on Board\", 14.5 सेमी, सक्शन कप के साथ।",
+  "4.2 out of 5 on Amazon.in · 35 ratings": "Amazon.in पर 5 में से 4.2 · 35 रेटिंग",
+  "Coming soon 🔜": "जल्द आ रहा है 🔜",
+  "Baby on Board Sign — Large": "Baby on Board साइन — बड़ा",
+  "2-in-1 reversible, larger 17.5 × 17.5 cm, 300 GSM laminated board.": "2-in-1 दोनों तरफ़, बड़ा 17.5 × 17.5 सेमी, 300 GSM लैमिनेटेड बोर्ड।",
+  "17.5 × 17.5 cm, pack of 1 or 2. Not on sale yet.": "17.5 × 17.5 सेमी, 1 या 2 का पैक। अभी बिक्री पर नहीं।",
+  "Silicone and neem wood teether combos, BPA-free, for babies 3 months and up.": "3 महीने और उससे बड़े बच्चों के लिए BPA-मुक्त सिलिकॉन और नीम की लकड़ी के टीथर कॉम्बो।",
+  "Teether Fish & Bird Combo (3 pieces)": "टीथर Fish & Bird Combo (3 पीस)",
+  "Silicone teether ring with neem wood fish and bird.": "नीम की लकड़ी की मछली और चिड़िया के साथ सिलिकॉन टीथर रिंग।",
+  "Combo of 3": "3 का कॉम्बो",
+  "Teether Car & Cloud Combo (3 pieces)": "टीथर Car & Cloud Combo (3 पीस)",
+  "Silicone teether ring with neem wood car and cloud.": "नीम की लकड़ी की कार और बादल के साथ सिलिकॉन टीथर रिंग।",
+  "Soft cotton knee and elbow protectors for crawling babies, in packs of 2 or 4.": "घुटनों के बल चलने वाले बच्चों के लिए मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर, 2 या 4 के पैक में।",
+  "Pack of 4": "4 का पैक",
+  "Knee Pads — Yellow Smiley": "नी पैड — Yellow Smiley",
+  "Knee Pads — Mint Dotted": "नी पैड — Mint Dotted",
+  "Soft cotton knee & elbow protector with dotted grip.": "डॉटेड ग्रिप वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।",
+  "Knee Pads — Gray Dotted": "नी पैड — Gray Dotted",
+  "Knee Pads — Black Dotted": "नी पैड — Black Dotted",
+  "Toys for drawing, pretend play and learning letters and numbers.": "ड्रॉइंग, नकली खेल और अक्षर-अंक सीखने के खिलौने।",
+  "36 interlocking foam pieces for learning through play.": "खेल-खेल में सीखने के लिए 36 जुड़ने वाले फोम पीस।",
+  "36 pieces": "36 पीस",
+  "LCD Writing Tablet — Blue": "LCD राइटिंग टैबलेट — Blue",
+  "8.5-inch reusable LCD screen for mess-free drawing.": "बिना गंदगी की ड्रॉइंग के लिए दोबारा इस्तेमाल होने वाली 8.5-इंच LCD स्क्रीन।",
+  "1 tablet": "1 टैबलेट",
+  "Out of stock": "स्टॉक में नहीं",
+  "LCD Writing Tablet — Multicolour": "LCD राइटिंग टैबलेट — Multicolour",
+  "Reusable doodle board for writing and drawing.": "लिखने और ड्रॉइंग के लिए दोबारा इस्तेमाल होने वाला डूडल बोर्ड।",
+  "Currently unavailable on Amazon.in.": "अभी Amazon.in पर उपलब्ध नहीं।",
+  "About us — Peppynose": "हमारे बारे में — Peppynose",
+  "The story behind Peppynose, an Indian brand of baby and kids essentials.": "बच्चों की ज़रूरी चीज़ों के भारतीय ब्रांड Peppynose की कहानी।",
+  "Mother holding her newborn baby in soft light": "हल्की रोशनी में अपने नवजात को गोद में लिए माँ",
+  "Little things for": "नन्हे-मुन्नों के लिए",
+  "little ones": "छोटी-छोटी चीज़ें",
+  "Since 2023 · Musiri, Tamil Nadu": "2023 से · मुसिरी, तमिलनाडु",
+  "Our story": "हमारी कहानी",
+  "Peppynose™ began in 2023 in Musiri, a small town near Trichy in Tamil Nadu, with a simple idea: the early years of parenthood are full of little moments, and each one deserves something made with care.": "Peppynose™ की शुरुआत 2023 में तमिलनाडु में त्रिची के पास छोटे से कस्बे मुसिरी में एक सीधे-से विचार के साथ हुई: माता-पिता बनने के शुरुआती साल छोटे-छोटे पलों से भरे होते हैं, और हर पल के लिए प्यार से बनी कोई चीज़ होनी चाहिए।",
+  "So we make simple, gentle products for those moments. A 2-in-1 sign that says “Bump on Board” while you’re expecting and flips to “Baby on Board” for the drive home. Soft cotton knee pads for first crawls. BPA-free silicone and neem wood teethers for first teeth. And toys that turn learning into play.": "इसलिए हम उन पलों के लिए आसान और कोमल प्रोडक्ट बनाते हैं। एक 2-in-1 साइन जो गर्भावस्था में “Bump on Board” कहता है और घर लौटते समय पलटकर “Baby on Board”। पहली बार घुटनों के बल चलने के लिए मुलायम कॉटन नी पैड। पहले दाँतों के लिए BPA-मुक्त सिलिकॉन और नीम की लकड़ी के टीथर। और ऐसे खिलौने जो सीखने को खेल बना दें।",
+  "Every Peppynose product is sold on Amazon.in and Flipkart, so parents across India can order with the delivery and returns they already trust. We read every review, and we keep improving our products with what parents tell us.": "हर Peppynose प्रोडक्ट Amazon.in और Flipkart पर बिकता है, ताकि पूरे भारत के माता-पिता उसी डिलीवरी और रिटर्न के साथ ऑर्डर कर सकें जिन पर वे पहले से भरोसा करते हैं। हम हर रिव्यू पढ़ते हैं और माता-पिता की बातों से अपने प्रोडक्ट लगातार बेहतर करते हैं।",
+  "What we believe": "हम क्या मानते हैं",
+  "Our promise to parents": "माता-पिता से हमारा वादा",
+  "Products that solve real everyday moments for babies and parents.": "ऐसे प्रोडक्ट जो बच्चों और माता-पिता की रोज़ की असली ज़रूरतें पूरी करें।",
+  "Honest value": "ईमानदार दाम",
+  "Fair prices, and real reviews from verified buyers.": "सही दाम, और सत्यापित खरीदारों के असली रिव्यू।",
+  "FAQ — Peppynose": "सवाल-जवाब — Peppynose",
+  "Answers to common questions about buying Peppynose products, delivery, returns, car signs, teethers and knee pads.": "Peppynose प्रोडक्ट खरीदने, डिलीवरी, रिटर्न, कार साइन, टीथर और नी पैड से जुड़े आम सवालों के जवाब।",
+  "Help": "मदद",
+  "Frequently asked questions": "अक्सर पूछे जाने वाले सवाल",
+  "Quick answers about buying, delivery and our products.": "खरीदने, डिलीवरी और हमारे प्रोडक्ट के बारे में झटपट जवाब।",
+  "Buying": "खरीदना",
+  "Where can I buy Peppynose products?": "Peppynose प्रोडक्ट कहाँ से खरीदें?",
+  "On Amazon.in and Flipkart. Every product on this site has a button that opens it on the marketplace.": "Amazon.in और Flipkart पर। इस साइट पर हर प्रोडक्ट के साथ एक बटन है जो उसे मार्केटप्लेस पर खोलता है।",
+  "Who handles delivery, returns and refunds?": "डिलीवरी, रिटर्न और रिफ़ंड कौन संभालता है?",
+  "Amazon.in or Flipkart, depending on where you ordered, under that marketplace’s delivery and return policy. You can request a return from your order page there.": "आपने जहाँ ऑर्डर किया है, वही Amazon.in या Flipkart, अपनी डिलीवरी और रिटर्न नीति के तहत। आप वहाँ अपने ऑर्डर पेज से रिटर्न माँग सकते हैं।",
+  "Why can’t I buy directly on this website?": "इस वेबसाइट पर सीधे क्यों नहीं खरीद सकते?",
+  "We sell through Amazon.in and Flipkart so you get their fast delivery, secure payment and easy returns.": "हम Amazon.in और Flipkart से बेचते हैं ताकि आपको उनकी तेज़ डिलीवरी, सुरक्षित पेमेंट और आसान रिटर्न मिले।",
+  "Car safety signs": "कार सेफ़्टी साइन",
+  "What does 2-in-1 reversible mean?": "2-in-1 दोनों तरफ़ वाला का मतलब क्या है?",
+  "One side says \"Bump on Board\" (or \"Mom on Board\") for pregnancy, and the other says \"Baby on Board\" for after your baby arrives. Just flip it.": "एक तरफ़ गर्भावस्था के लिए \"Bump on Board\" (या \"Mom on Board\") लिखा है, दूसरी तरफ़ बच्चे के आने के बाद के लिए \"Baby on Board\"। बस पलट दें।",
+  "What sizes are available?": "कौन-से साइज़ मिलते हैं?",
+  "14.5 × 14.5 cm, in packs of 1 or 2. A larger 17.5 × 17.5 cm size is coming soon.": "14.5 × 14.5 सेमी, 1 या 2 के पैक में। बड़ा 17.5 × 17.5 सेमी साइज़ जल्द आ रहा है।",
+  "How does it attach to the car?": "इसे कार पर कैसे लगाएँ?",
+  "With a suction cup on the rear windshield. It can be removed and moved to another car.": "पीछे के शीशे पर सक्शन कप से। इसे हटाकर दूसरी कार में भी लगा सकते हैं।",
+  "From what age can my baby use the teethers?": "मेरा बच्चा किस उम्र से टीथर इस्तेमाल कर सकता है?",
+  "From 3 months. The silicone is BPA-free and the shapes are neem wood.": "3 महीने से। सिलिकॉन BPA-मुक्त है और आकृतियाँ नीम की लकड़ी की हैं।",
+  "What is in each teether combo?": "हर टीथर कॉम्बो में क्या है?",
+  "Fish & Bird and Car & Cloud combos have 3 pieces each. The Complete Gift Set has 6 pieces.": "Fish & Bird और Car & Cloud कॉम्बो में 3-3 पीस हैं। Complete Gift Set में 6 पीस हैं।",
+  "Knee pads": "नी पैड",
+  "What age are the knee pads for?": "नी पैड किस उम्र के लिए हैं?",
+  "For little ones aged 1 to 3 years.": "1 से 3 साल के बच्चों के लिए।",
+  "What are the knee pads made of?": "नी पैड किस चीज़ से बने हैं?",
+  "Soft cotton. They protect knees and elbows while your baby crawls.": "मुलायम कॉटन। बच्चे के घुटनों के बल चलते समय ये घुटनों और कोहनियों को बचाते हैं।",
+  "Which colours and packs are available?": "कौन-से रंग और पैक मिलते हैं?",
+  "Blue Smiley, Yellow Smiley, Gray Dotted and Black Dotted in packs of 2 or 4, and Mint Dotted in a pack of 4.": "Blue Smiley, Yellow Smiley, Gray Dotted और Black Dotted 2 या 4 के पैक में, और Mint Dotted 4 के पैक में।",
+  "Toys": "खिलौने",
+  "What age are the toys for?": "खिलौने किस उम्र के लिए हैं?",
+  "The wooden kitchen set, alphabet and number foam mat and LCD writing tablets are for children aged 1 to 3 years.": "लकड़ी का किचन सेट, अक्षर और अंक फोम मैट और LCD राइटिंग टैबलेट 1 से 3 साल के बच्चों के लिए हैं।",
+  "Still have a question?": "अब भी कोई सवाल है?",
+  "Contact us": "हमसे संपर्क करें",
+  "Contact — Peppynose": "संपर्क — Peppynose",
+  "Get in touch with Peppynose.": "Peppynose से संपर्क करें।",
+  "We’d love to": "हमें",
+  "hear from you": "आपसे सुनना अच्छा लगेगा",
+  "Questions about a product, bulk or gift orders, or feedback.": "प्रोडक्ट के बारे में सवाल, थोक या गिफ़्ट ऑर्डर, या सुझाव।",
+  "Email us": "हमें ईमेल करें",
+  "For product questions, bulk or gift orders, and feedback.": "प्रोडक्ट से जुड़े सवालों, थोक या गिफ़्ट ऑर्डर और सुझावों के लिए।",
+  "Visit or write to us": "हमसे मिलें या हमें लिखें",
+  "T-pet Road, Musiri 621211": "T-pet Road, Musiri 621211",
+  "Trichy, Tamil Nadu, India": "Trichy, Tamil Nadu, India",
+  "Help with an order?": "ऑर्डर में मदद चाहिए?",
+  "For delivery, returns or refunds, contact the marketplace you ordered from. They handle every order.": "डिलीवरी, रिटर्न या रिफ़ंड के लिए उस मार्केटप्लेस से संपर्क करें जहाँ से आपने ऑर्डर किया। हर ऑर्डर वही संभालते हैं।",
+  "Amazon.in orders": "Amazon.in ऑर्डर",
+  "Flipkart orders": "Flipkart ऑर्डर",
+  "Privacy policy — Peppynose": "प्राइवेसी पॉलिसी — Peppynose",
+  "How the Peppynose website handles your information.": "Peppynose वेबसाइट आपकी जानकारी को कैसे संभालती है।",
+  "Last updated: 21 October 2026": "आख़िरी अपडेट: 21 अक्टूबर 2026",
+  "Summary": "सारांश",
+  "This website is an information site for Peppynose™ products. It has no user accounts, no shopping cart, no forms and no payments, and we do not use advertising or analytics cookies.": "यह वेबसाइट Peppynose™ प्रोडक्ट की जानकारी देने वाली साइट है। इसमें कोई यूज़र अकाउंट, शॉपिंग कार्ट, फ़ॉर्म या पेमेंट नहीं है, और हम विज्ञापन या एनालिटिक्स कुकीज़ का इस्तेमाल नहीं करते।",
+  "Information we receive": "हमें मिलने वाली जानकारी",
+  "Emails you send us.": "आपके भेजे ईमेल।",
+  "If you write to": "अगर आप",
+  ", we receive your email address and message and use them only to reply to you.": " पर लिखते हैं, तो हमें आपका ईमेल पता और संदेश मिलता है, जिनका इस्तेमाल हम सिर्फ़ आपको जवाब देने के लिए करते हैं।",
+  "Website hosting.": "वेबसाइट होस्टिंग।",
+  "The site is hosted on GitHub Pages. Like any web host, GitHub may record technical information such as your IP address when you visit, under": "यह साइट GitHub Pages पर होस्ट है। किसी भी वेब होस्ट की तरह, आपके आने पर GitHub आपका IP पता जैसी तकनीकी जानकारी दर्ज कर सकता है। विवरण के लिए देखें:",
+  "GitHub’s privacy statement": "GitHub का प्राइवेसी स्टेटमेंट",
+  "Fonts and photos from other services.": "दूसरी सेवाओं से फ़ॉन्ट और फ़ोटो।",
+  "Pages load fonts from Google Fonts and some photos from Pexels, so your browser connects to those services when a page opens.": "पेज Google Fonts से फ़ॉन्ट और Pexels से कुछ फ़ोटो लोड करते हैं, इसलिए पेज खुलने पर आपका ब्राउज़र उन सेवाओं से जुड़ता है।",
+  "Buying on Amazon.in and Flipkart": "Amazon.in और Flipkart पर खरीदना",
+  "When you follow a link to Amazon.in or Flipkart, you leave this website. Your order, payment and delivery details are handled by that marketplace under its own privacy policy; we do not receive your payment details.": "Amazon.in या Flipkart के लिंक पर जाते ही आप इस वेबसाइट से बाहर चले जाते हैं। आपके ऑर्डर, पेमेंट और डिलीवरी की जानकारी वह मार्केटप्लेस अपनी प्राइवेसी पॉलिसी के तहत संभालता है; आपकी पेमेंट जानकारी हमें नहीं मिलती।",
+  "Your choices": "आपके विकल्प",
+  "To ask about, correct or delete any email correspondence we hold about you, contact us:": "हमारे पास आपके बारे में मौजूद किसी भी ईमेल बातचीत के बारे में पूछने, उसे सुधारने या हटाने के लिए हमसे संपर्क करें:",
+  "Email:": "ईमेल:",
+  "Changes": "बदलाव",
+  "If we change this policy, we will update it on this page and change the date at the top.": "अगर हम यह पॉलिसी बदलते हैं, तो इसे इसी पेज पर अपडेट करेंगे और ऊपर की तारीख बदल देंगे।",
+  "Terms of use — Peppynose": "उपयोग की शर्तें — Peppynose",
+  "Terms for using the Peppynose website.": "Peppynose वेबसाइट इस्तेमाल करने की शर्तें।",
+  "About this website": "इस वेबसाइट के बारे में",
+  "This website gives information about Peppynose™ products. By using it, you agree to these terms.": "यह वेबसाइट Peppynose™ प्रोडक्ट की जानकारी देती है। इसका इस्तेमाल करके आप इन शर्तों से सहमत होते हैं।",
+  "Orders and prices": "ऑर्डर और कीमतें",
+  "Peppynose™ products are sold through": "Peppynose™ प्रोडक्ट यहाँ बिकते हैं:",
+  "Amazon.in": "Amazon.in",
+  "and": "और",
+  ". This website does not take orders or payments. When you buy a Peppynose product, the order is placed with, and fulfilled by, the marketplace you buy from.": "। यह वेबसाइट ऑर्डर या पेमेंट नहीं लेती। जब आप कोई Peppynose प्रोडक्ट खरीदते हैं, तो ऑर्डर उसी मार्केटप्लेस पर दर्ज होता है और वही उसे पूरा करता है जहाँ से आप खरीदते हैं।",
+  "Prices, stock and offers on this website are shown for information and may change. The price and terms shown on Amazon.in or Flipkart at checkout are the ones that apply to your order.": "इस वेबसाइट पर दिखाई गई कीमतें, स्टॉक और ऑफ़र सिर्फ़ जानकारी के लिए हैं और बदल सकते हैं। चेकआउट पर Amazon.in या Flipkart पर दिखाई गई कीमत और शर्तें ही आपके ऑर्डर पर लागू होती हैं।",
+  "Product information": "प्रोडक्ट की जानकारी",
+  "We try to keep product descriptions, photos and ratings accurate. Some photos are lifestyle images, and products may vary slightly in colour or appearance. Always read the product page on the marketplace before buying, and follow the age guidance and safety instructions supplied with each product.": "हम प्रोडक्ट के विवरण, फ़ोटो और रेटिंग सही रखने की कोशिश करते हैं। कुछ फ़ोटो लाइफ़स्टाइल तस्वीरें हैं, और प्रोडक्ट के रंग या रूप में थोड़ा फ़र्क हो सकता है। खरीदने से पहले हमेशा मार्केटप्लेस पर प्रोडक्ट पेज पढ़ें, और हर प्रोडक्ट के साथ दी गई उम्र संबंधी सलाह और सुरक्षा निर्देशों का पालन करें।",
+  "Links to other websites": "दूसरी वेबसाइटों के लिंक",
+  "This site links to Amazon.in, Flipkart and other websites. We are not responsible for their content or policies.": "यह साइट Amazon.in, Flipkart और दूसरी वेबसाइटों के लिंक देती है। उनकी सामग्री या नीतियों के लिए हम ज़िम्मेदार नहीं हैं।",
+  "Brand and content": "ब्रांड और सामग्री",
+  "Peppynose™, the Peppynose logo, and the text and product photos on this website belong to Peppynose. Please do not copy them without permission. Some lifestyle photos are from Pexels and are used under the Pexels licence.": "Peppynose™, Peppynose लोगो, और इस वेबसाइट का टेक्स्ट और प्रोडक्ट फ़ोटो Peppynose के हैं। कृपया बिना अनुमति इन्हें कॉपी न करें। कुछ लाइफ़स्टाइल फ़ोटो Pexels से हैं और Pexels लाइसेंस के तहत इस्तेमाल किए गए हैं।",
+  "Returns & refunds — Peppynose": "रिटर्न और रिफ़ंड — Peppynose",
+  "Peppynose returns and refunds: orders are placed on Amazon.in and Flipkart, so their return and refund policies apply.": "Peppynose रिटर्न और रिफ़ंड: ऑर्डर Amazon.in और Flipkart पर होते हैं, इसलिए उनकी रिटर्न और रिफ़ंड नीतियाँ लागू होती हैं।",
+  "Returns and refunds": "रिटर्न और रिफ़ंड",
+  "Returns, replacements and refunds are handled by Amazon.in or Flipkart under their own return and refund policies. The return window and conditions for each product are shown on its product page on the marketplace.": "रिटर्न, रिप्लेसमेंट और रिफ़ंड Amazon.in या Flipkart अपनी रिटर्न और रिफ़ंड नीतियों के तहत संभालते हैं। हर प्रोडक्ट की रिटर्न अवधि और शर्तें मार्केटप्लेस पर उसके प्रोडक्ट पेज पर दिखाई जाती हैं।",
+  "How to request a return": "रिटर्न कैसे माँगें",
+  "Open your order on the marketplace you bought from and choose the return or replacement option:": "जहाँ से खरीदा है उस मार्केटप्लेस पर अपना ऑर्डर खोलें और रिटर्न या रिप्लेसमेंट का विकल्प चुनें:",
+  "or": "या",
+  ". Refunds are paid by the marketplace to your original payment method, as described in its policy.": "। रिफ़ंड मार्केटप्लेस अपनी नीति के अनुसार आपके मूल पेमेंट तरीके में भेजता है।",
+  "Problem with a product?": "प्रोडक्ट में कोई समस्या?",
+  "If something is wrong with a Peppynose product, please also let us know so we can help and improve:": "अगर किसी Peppynose प्रोडक्ट में कुछ गड़बड़ है, तो कृपया हमें भी बताएँ ताकि हम मदद कर सकें और सुधार कर सकें:",
+  "Shipping policy — Peppynose": "शिपिंग पॉलिसी — Peppynose",
+  "How Peppynose orders are shipped: all orders are placed and delivered through Amazon.in and Flipkart.": "Peppynose ऑर्डर कैसे भेजे जाते हैं: सभी ऑर्डर Amazon.in और Flipkart के ज़रिए होते और डिलीवर होते हैं।",
+  "How orders are shipped": "ऑर्डर कैसे भेजे जाते हैं",
+  "Shipping, delivery times and any delivery charges are set by Amazon.in or Flipkart and shown on the product page and at checkout before you pay. Their shipping policies apply to your order.": "शिपिंग, डिलीवरी का समय और कोई भी डिलीवरी शुल्क Amazon.in या Flipkart तय करते हैं और पेमेंट से पहले प्रोडक्ट पेज और चेकआउट पर दिखाते हैं। आपके ऑर्डर पर उनकी शिपिंग नीतियाँ लागू होती हैं।",
+  "Tracking your order": "अपना ऑर्डर ट्रैक करें",
+  "You can track your order from your account on the marketplace you ordered from:": "आप जिस मार्केटप्लेस से ऑर्डर किया है, वहाँ अपने अकाउंट से ऑर्डर ट्रैक कर सकते हैं:",
+  "Questions": "सवाल",
+  "For delivery questions, please contact the marketplace first, as they handle shipping. For anything about our products, write to us:": "डिलीवरी से जुड़े सवालों के लिए पहले मार्केटप्लेस से संपर्क करें, क्योंकि शिपिंग वही संभालते हैं। हमारे प्रोडक्ट के बारे में कुछ भी हो, हमें लिखें:",
+  "Page not found — Peppynose": "पेज नहीं मिला — Peppynose",
+  "This page could not be found.": "यह पेज नहीं मिल सका।",
+  "Error 404": "त्रुटि 404",
+  "Oops, this page": "ओह, यह पेज",
+  "wandered off": "कहीं भटक गया",
+  "The page you’re looking for doesn’t exist or has moved.": "आप जो पेज ढूँढ रहे हैं वह मौजूद नहीं है या कहीं और चला गया है।",
+  "Back to home": "होम पर वापस जाएँ"
+ },
+ "_new": {
+  "amazon_button": {
+   "en": "Check price",
+   "hi": "कीमत देखें"
+  },
+  "hero_fcard": {
+   "en": "For moms-to-be · See price on Amazon.in",
+   "hi": "होने वाली माँओं के लिए · Amazon.in पर कीमत देखें"
+  },
+  "products_intro": {
+   "en": "Every Peppynose product, with a button for each pack size. Tap Amazon or Flipkart to see the latest price and buy.",
+   "hi": "हर Peppynose प्रोडक्ट, हर पैक साइज़ के लिए एक बटन के साथ। ताज़ा कीमत देखने और खरीदने के लिए Amazon या Flipkart पर टैप करें।"
+  },
+  "hero_alt": {
+   "en": "Baby chewing a Peppynose silicone teether ring",
+   "hi": "Peppynose सिलिकॉन टीथर रिंग चबाता बच्चा"
+  },
+  "trust_1": {
+   "en": "Ships via Flipkart & Amazon",
+   "hi": "Flipkart और Amazon से डिलीवरी"
+  },
+  "trust_2": {
+   "en": "Easy returns via Flipkart & Amazon",
+   "hi": "Flipkart और Amazon से आसान रिटर्न"
+  },
+  "trust_3": {
+   "en": "Made for Indian cars & babies",
+   "hi": "भारतीय कारों और बच्चों के लिए बना"
+  },
+  "trust_aria": {
+   "en": "Why shop Peppynose",
+   "hi": "Peppynose क्यों"
+  },
+  "ig_eyebrow": {
+   "en": "Instagram",
+   "hi": "Instagram"
+  },
+  "ig_heading": {
+   "en": "Follow us on Instagram",
+   "hi": "Instagram पर हमें फ़ॉलो करें"
+  },
+  "ig_sub": {
+   "en": "New products, tips and little moments from @peppynose_toystore.",
+   "hi": "@peppynose_toystore से नए प्रोडक्ट, टिप्स और छोटे-छोटे पल।"
+  },
+  "ig_cta": {
+   "en": "See more on Instagram",
+   "hi": "Instagram पर और देखें"
+  },
+  "ig_alt_1": {
+   "en": "Peppynose website launch post",
+   "hi": "Peppynose वेबसाइट लॉन्च पोस्ट"
+  },
+  "ig_alt_2": {
+   "en": "Peppynose Baby on Board & Bump on Board sign",
+   "hi": "Peppynose Baby on Board और Bump on Board साइन"
+  },
+  "ig_alt_3": {
+   "en": "Peppynose Mom on Board & Baby on Board sign",
+   "hi": "Peppynose Mom on Board और Baby on Board साइन"
+  },
+  "ig_alt_4": {
+   "en": "Peppynose crawling knee pads in five colours",
+   "hi": "पाँच रंगों में Peppynose नी पैड"
+  },
+  "ig_alt_5": {
+   "en": "Peppynose silicone and neem wood teethers",
+   "hi": "Peppynose सिलिकॉन और नीम की लकड़ी के टीथर"
+  },
+  "ig_alt_6": {
+   "en": "Peppynose Baby on Board sign, pack of 2 (Reel)",
+   "hi": "Peppynose Baby on Board साइन, 2 का पैक (Reel)"
+  },
+  "ig_link_aria": {
+   "en": "Open this post on Instagram (opens in a new tab)",
+   "hi": "यह पोस्ट Instagram पर खोलें (नए टैब में)"
+  },
+  "whatsapp_label": {
+   "en": "Chat with us",
+   "hi": "हमसे चैट करें"
+  },
+  "whatsapp_aria": {
+   "en": "Chat with us on WhatsApp (opens in a new tab)",
+   "hi": "WhatsApp पर हमसे चैट करें (नए टैब में)"
+  },
+  "whatsapp_prefill": {
+   "en": "Hi Peppynose, I have a question",
+   "hi": "नमस्ते Peppynose, मेरा एक सवाल है"
+  },
+  "lang_switch_aria": {
+   "en": "Choose language",
+   "hi": "भाषा चुनें"
+  },
+  "privacy_whatsapp_heading": {
+   "en": "Messages you send us on WhatsApp.",
+   "hi": "WhatsApp पर आपके भेजे संदेश।"
+  },
+  "privacy_whatsapp_body": {
+   "en": "We do not list a phone number on this website. If you message us using the “Chat with us” WhatsApp button, we receive your WhatsApp number, name and message and use them only to reply to you. WhatsApp handles the chat under its own privacy policy.",
+   "hi": "हम इस वेबसाइट पर कोई फ़ोन नंबर नहीं देते। अगर आप “हमसे चैट करें” WhatsApp बटन से हमें संदेश भेजते हैं, तो हमें आपका WhatsApp नंबर, नाम और संदेश मिलता है, जिनका इस्तेमाल हम सिर्फ़ आपको जवाब देने के लिए करते हैं। यह चैट WhatsApp अपनी प्राइवेसी पॉलिसी के तहत संभालता है।"
+  },
+  "privacy_summary_new": {
+   "en": "This website is an information site for Peppynose™ products. It has no user accounts, no shopping cart, no forms and no payments, and we do not use advertising or analytics cookies. We do not list a phone number; you can reach us by email or WhatsApp chat.",
+   "hi": "यह वेबसाइट Peppynose™ प्रोडक्ट की जानकारी देने वाली साइट है। इसमें कोई यूज़र अकाउंट, शॉपिंग कार्ट, फ़ॉर्म या पेमेंट नहीं है, और हम विज्ञापन या एनालिटिक्स कुकीज़ का इस्तेमाल नहीं करते। हम कोई फ़ोन नंबर नहीं देते; आप ईमेल या WhatsApp चैट से हमसे संपर्क कर सकते हैं।"
+  },
+  "privacy_last_updated_new": {
+   "en": "Last updated: <date of deploy>",
+   "hi": "आख़िरी अपडेट: <डिप्लॉय की तारीख>"
+  }
+ }
+}

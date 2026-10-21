@@ -1,8 +1,8 @@
 # Peppynose website: test cases
 
-Site: www.peppynose.com (files in `peppynose/`). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
+Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 21 October 2026, 229 passed, 0 failed** (3 skipped by design: tests that apply to only one screen size).
+**Last run: 21 October 2026 (website V2), 307 passed, 0 failed** (69 skipped by design: tests that apply to only one screen size). Run twice in a row, both green.
 
 ## How to run
 
@@ -24,7 +24,7 @@ The tests start a local web server for `peppynose/` and block all outside reques
 | ID | What is checked | Expected result |
 |---|---|---|
 | TC-SITE-01 | Page loads | Status 200, title contains "Peppynose", no script errors |
-| TC-SITE-02 | Header menu | Home, Shop, About, FAQ, Contact in order; current page underlined |
+| TC-SITE-02 | Header menu | Home, Shop, About, FAQ, Contact in order; current page underlined (the language switch is not counted as a menu link) |
 | TC-SITE-03 | Footer | Links to Shop, About, FAQ, Contact, Shipping, Returns, Privacy, Terms, Amazon store, Flipkart, Instagram (new tab); email and address shown (404 page uses site-root links) |
 | TC-SITE-04 | Images | Every image loads after scrolling (no broken images) |
 | TC-SITE-05 | Local links and files | Every link, stylesheet and image on the page exists (status 200) |
@@ -39,11 +39,11 @@ The tests start a local web server for `peppynose/` and block all outside reques
 
 | ID | What is checked | Expected result |
 |---|---|---|
-| TC-SEO-01 | Tags on every page | canonical and og:url = the page's own www.peppynose.com address; og:type "website"; twitter:card "summary_large_image"; og:image = banner; title and description present |
+| TC-SEO-01 | Tags on every page | canonical and og:url = the page's own www.peppynose.com address; og:type "website"; twitter:card "summary_large_image"; og:image = banner with `?v=2`; hreflang links for en, ta, hi and x-default; title and description present |
 | TC-SEO-02 | Unique titles | All 9 pages have different titles and descriptions |
 | TC-SEO-03 | Sharing banner | images/og-banner.jpg is exactly 1200 × 630 |
 | TC-SEO-04 | robots.txt | Allows all crawlers and points to sitemap.xml |
-| TC-SEO-05 | sitemap.xml | Lists exactly the 9 pages, and each one loads |
+| TC-SEO-05 | sitemap.xml | Lists exactly 27 pages (9 pages × English, Tamil, Hindi), each with 4 language links, and each one loads |
 | TC-SEO-06 | 404 page | Unknown address returns 404; 404 page shows "wandered off", is marked noindex, has no canonical, "Back to home" goes to the home page |
 
 ### Home page (TC-HOME)
@@ -51,11 +51,11 @@ The tests start a local web server for `peppynose/` and block all outside reques
 | ID | What is checked | Expected result |
 |---|---|---|
 | TC-HOME-01 | Hero | Heading "With you at every little stage."; Amazon store and Flipkart buttons; "4.4/5 from 140 ratings on Amazon.in" |
-| TC-HOME-02 | Hero image | Family image loads; Mom on Board card says "₹249 on Amazon.in" and links to B0GVZFQ2Y5 |
+| TC-HOME-02 | Hero image | Teether photo loads (16:9 on desktop, 4:5 on phones); old family image gone; Mom on Board card says "See price on Amazon.in" and links to B0GVZFQ2Y5 |
 | TC-HOME-03 | Scrolling banner | Says "Verified 4★ & 5★ reviews", never "Verified 5★ reviews" |
 | TC-HOME-04 | Reviews | Exactly 2: Bhaskar ★★★★★ (Amazon.in) and Pratik Kamble ★★★★☆ (Flipkart); no Ekta or Mitali |
 | TC-HOME-05 | Shop by age | 5 tiles with the right links; tapping "Crawling babies" opens the Shop with 5 knee pads |
-| TC-HOME-06 | Stage sections | 4 sections; Baby on Board and Mom on Board show Amazon ₹249 / Flipkart "Check price"; no Flipkart button on the home page shows a ₹ price |
+| TC-HOME-06 | Stage sections | 4 sections; every Amazon and Flipkart button says "Check price"; no ₹ price |
 | TC-HOME-07 | Best sellers | 4 products, each with an Amazon button |
 | TC-HOME-08 | Thumbnails | Product thumbnails have descriptive alt text |
 
@@ -69,7 +69,7 @@ The tests start a local web server for `peppynose/` and block all outside reques
 | TC-SHOP-04 | Large sign | "Coming soon 🔜" badge, disabled "Coming soon 🔜" button, no links, no price |
 | TC-SHOP-05 | LCD tablet multicolour | "Out of stock" badge, disabled button, no links, no price |
 | TC-SHOP-06 | Buy links | All 18 Amazon products and 15 Flipkart products are linked; B0H2QZDKN7, B0H2R147K2, B0DJKQ6NJT are gone |
-| TC-SHOP-07 | Prices per button | Baby on Board pack of 1: Amazon ₹249; pack of 2: Amazon ₹399; Mom on Board: Amazon ₹249; all 18 Amazon buttons show a ₹ price; all 15 Flipkart buttons say "Check price" (Flipkart prices change with offers); no shared single price |
+| TC-SHOP-07 | Buy buttons | All 18 Amazon buttons and all 15 Flipkart buttons say "Check price" (marketplace prices change with offers); no ₹ anywhere on the page; no shared single price |
 | TC-SHOP-08 | Category buttons | "Learning & Play" jumps to that section |
 | TC-SHOP-09 | Spelling | Mom on Board card says "moms-to-be" |
 
@@ -85,18 +85,43 @@ The tests start a local web server for `peppynose/` and block all outside reques
 | TC-CONTENT-07 | Privacy page | care.peppynose@gmail.com in "Emails you send us" is a mailto link |
 | TC-CONTENT-06 | Leftover text | No "mums", "Draft", "To be added", "goes here", "Ekta", "Mitali" or "Verified 5★" on any page |
 
+### Website V2: languages, WhatsApp, Instagram (TC-V2)
+
+Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
+
+| ID | What is checked | Expected result |
+|---|---|---|
+| TC-V2-01 | Every page, 3 languages | Loads, no script errors, every image loads, every local file exists, no sideways scrolling at 360, 390, 768 and 1440 px |
+| TC-V2-02 | Every page, 3 languages | No ₹ price; footer logo shown; WhatsApp button shown; phone number never visible, never a `tel:` link, only inside the wa.me link; buttons say "Check price" / "விலை அறிய" / "कीमत देखें" |
+| TC-V2-03 | Search engines | 27 pages each have their own canonical and en/ta/hi/x-default hreflang; 404 pages have none |
+| TC-V2-04 | Buy links | Amazon and Flipkart links are exactly the same in English, Tamil and Hindi |
+| TC-V2-05 | Hero photo | 16:9 shape on desktop, 4:5 on phones |
+| TC-V2-06 | Home pages | Trust badges row and Instagram section (6 posts, each opens Instagram in a new tab) on the 3 home pages |
+| TC-V2-07 | WhatsApp button | Hides near the footer, so it never covers a buy button or footer link while scrolling the shop |
+| TC-V2-08 | Footer on phones | Footer links at least 40 px tall and do not overlap |
+| TC-V2-09 | Language switch | Shown only on the 3 home pages |
+| TC-V2-10 | Remembered language | Choosing Tamil or Hindi is remembered on other pages and the next visit; choosing EN switches back |
+| TC-V2-11 | English default | With no saved choice, the site stays in English (no redirect) |
+| TC-V2-12 | Tamil browser | A Tamil-language browser still sees English, plus a one-time suggestion to view in Tamil (home page only, not shown again on reload); never an automatic redirect |
+| TC-V2-13 | Phone menu | Menu shows the language switch; still closes with Escape and outside tap |
+| TC-V2-14 | Privacy page | Mentions WhatsApp chat messages and says no phone number is listed (English, Tamil, Hindi) |
+
 ## Manual test cases (need the live site or a real phone)
 
 These can't be automated from the build environment, which cannot reach www.peppynose.com, Amazon or Flipkart.
 
 | ID | Steps | Expected result |
 |---|---|---|
-| TC-MAN-01 | Open https://www.peppynose.com on a phone and a computer | Padlock shows; home page loads with the family image |
+| TC-MAN-01 | Open https://www.peppynose.com on a phone and a computer | Padlock shows; home page loads with the baby teether photo |
 | TC-MAN-02 | Open http://peppynose.com (no www) | Redirects to https://www.peppynose.com |
 | TC-MAN-03 | On the Shop page, tap 3 Amazon and 3 Flipkart buttons | Each opens the correct product page in a new tab |
-| TC-MAN-04 | Compare the Amazon prices on the buttons with the live listings | Prices match (update the site if a price changed) |
+| TC-MAN-04 | Tap "Check price" on 3 products | Buttons say "Check price" and the listing shows the current price |
 | TC-MAN-05 | Look at the Pexels photos (home "Expecting" section, bottom shop band, About page) | Photos load and suit the brand |
-| TC-MAN-06 | Share https://www.peppynose.com in WhatsApp | Preview shows the family banner with the Peppynose logo and title |
+| TC-MAN-06 | Share https://www.peppynose.com in WhatsApp | Preview shows the new banner with the Peppynose logo and title (WhatsApp may keep an old preview for a few days) |
 | TC-MAN-07 | Open https://www.peppynose.com/anything | Peppynose 404 page with "Back to home" |
 | TC-MAN-08 | Tap the email address on the Contact page | Mail app opens to care.peppynose@gmail.com |
 | TC-MAN-09 | Tap "Instagram" in the footer | peppynose_toystore Instagram page opens in a new tab |
+| TC-MAN-10 | On a phone, tap "Chat with us" | WhatsApp opens a chat with Peppynose with "Hi Peppynose, I have a question" typed in |
+| TC-MAN-11 | Open the Tamil and Hindi home pages on a phone | Tamil and Hindi letters look clean (no boxes or broken letters) |
+| TC-MAN-12 | Tap each of the 6 Instagram pictures | Each opens the right Instagram post in a new tab |
+| TC-MAN-13 | Choose தமிழ், close the browser, open www.peppynose.com again | Opens in Tamil; tapping EN goes back to English |

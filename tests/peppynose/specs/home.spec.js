@@ -13,12 +13,18 @@ test('TC-HOME-01 hero shows the heading, rating and both store buttons', async (
 });
 
 test('TC-HOME-02 hero image and Mom on Board card are shown', async ({ page }) => {
-  const hero = page.locator('.hero3-art > img');
-  await expect(hero).toHaveAttribute('src', 'images/hero-family.webp');
+  const hero = page.locator('.hero3-art > picture > img');
+  await expect(hero).toHaveAttribute('src', 'images/hero-photo.webp');
+  await expect(page.locator('.hero3-art source')).toHaveAttribute('srcset', 'images/hero-photo-4x5.webp');
+  // phones get the 4:5 photo, desktop the 16:9 one
+  const shown = await hero.evaluate(i => i.currentSrc.split('/').pop());
+  const w = page.viewportSize().width;
+  expect(shown).toBe(w <= 760 ? 'hero-photo-4x5.webp' : 'hero-photo.webp');
   expect(await hero.evaluate(i => i.naturalWidth)).toBeGreaterThan(0);
+  expect(await page.content()).not.toContain('hero-family');
   const card = page.locator('.fc3');
   await expect(card).toContainText('Mom on Board sign');
-  await expect(card).toContainText('₹249 on Amazon.in');
+  await expect(card).toContainText('See price on Amazon.in');
   await expect(card).toHaveAttribute('href', 'https://www.amazon.in/dp/B0GVZFQ2Y5');
 });
 
@@ -54,13 +60,13 @@ test('TC-HOME-05 shop-by-age tiles open the shop already filtered', async ({ pag
   await expect(page.locator('.card:visible')).toHaveCount(5);
 });
 
-test('TC-HOME-06 stage sections show products with a price on each marketplace button', async ({ page }) => {
+test('TC-HOME-06 stage sections show products with "Check price" buttons', async ({ page }) => {
   await expect(page.locator('.stage')).toHaveCount(4);
   const bob = page.locator('.mini', { hasText: 'Baby on Board & Bump on Board Sign' });
-  await expect(bob.locator('a.amazon')).toContainText('₹249');
+  await expect(bob.locator('a.amazon')).toContainText('Check price');
   await expect(bob.locator('a.flipkart')).toContainText('Check price');
   const mob = page.locator('.mini', { hasText: 'Mom on Board & Baby on Board Sign' });
-  await expect(mob.locator('a.amazon')).toContainText('₹249');
+  await expect(mob.locator('a.amazon')).toContainText('Check price');
   await expect(mob.locator('a.flipkart')).toContainText('Check price');
   const knee = page.locator('.mini', { hasText: 'Blue Smiley' });
   await expect(knee.locator('a.flipkart')).toContainText('Check price');
