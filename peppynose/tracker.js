@@ -215,10 +215,12 @@ const PN_TRACKER_IMAGES = { ready: false, path: '/assets/tracker/week', ext: '.w
     // baby image or placeholder circle
     const pic = PN_TRACKER_IMAGES.ready && wk >= 4 ? await loadImg(imgUrl(wk)) : null;
     const cx = 540, cy = 395, r = 165;
-    if (pic) { x.save(); x.beginPath(); x.arc(cx, cy, r, 0, 7); x.clip(); x.drawImage(pic, cx - r, cy - r, 2 * r, 2 * r); x.restore(); }
+    // Rounded square, not a circle, so the whole picture shows (a circle cut off the baby's head and feet).
+    const frame = () => { x.beginPath(); if (x.roundRect) x.roundRect(cx - r, cy - r, 2 * r, 2 * r, 40); else x.rect(cx - r, cy - r, 2 * r, 2 * r); };
+    if (pic) { x.save(); frame(); x.clip(); x.drawImage(pic, cx - r, cy - r, 2 * r, 2 * r); x.restore(); }
     else {
-      const rg = x.createRadialGradient(cx - 50, cy - 60, 20, cx, cy, r); rg.addColorStop(0, '#ffe9df'); rg.addColorStop(1, '#f9c7b4');
-      x.fillStyle = rg; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill();
+      const rg = x.createRadialGradient(cx - 50, cy - 60, 20, cx, cy, r * 1.3); rg.addColorStop(0, '#ffe9df'); rg.addColorStop(1, '#f9c7b4');
+      x.fillStyle = rg; frame(); x.fill();
       x.fillStyle = '#9a4a33'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `700 130px ${serif}`; x.fillText(String(wk), cx, cy + 6);
     }
     x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = '#1d2b4f';
