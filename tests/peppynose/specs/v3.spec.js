@@ -158,8 +158,11 @@ test.describe('pregnancy tracker', () => {
     await expect(page.locator('#r-tip')).not.toBeEmpty();
     await expect(page.locator('#n-mob')).toBeVisible();      // weeks 14–33
     await expect(page.locator('#n-bob')).toBeHidden();
-    // share opens WhatsApp with no phone number; the visitor picks the chat
-    const share = await page.locator('#r-share').getAttribute('href');
+    // share opens WhatsApp with no phone number; the visitor picks the chat. The text is added on click, never kept in the href.
+    await expect(page.locator('#r-share')).toHaveAttribute('href', 'https://wa.me/');
+    await page.evaluate(() => { window.__opened = []; window.open = u => { window.__opened.push(u); return null; }; });
+    await page.click('#r-share');
+    const [share] = await page.evaluate(() => window.__opened);
     expect(share).toMatch(/^https:\/\/wa\.me\/\?text=/);
     expect(decodeURIComponent(share)).toContain("I'm 20 weeks pregnant");
     expect(share).not.toContain('7448704660');
@@ -203,7 +206,7 @@ test.describe('pregnancy tracker', () => {
       await page.fill('#trk-date', await day(page, 140));
       await page.click('#trk-form button[type="submit"]');
       await expect(page.locator('#r-week')).toContainText('20');
-      await expect(page.locator('#r-share')).toHaveAttribute('href', /^https:\/\/wa\.me\/\?text=/);
+      await expect(page.locator('#r-share')).toHaveAttribute('href', 'https://wa.me/');
       expect(errors).toEqual([]);
       await page.click('#r-clear');
     }

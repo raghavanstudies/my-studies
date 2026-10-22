@@ -580,3 +580,53 @@ test.describe('22 Oct: tracker pictures', () => {
     expect(ev).not.toMatch(/week|trimester|due|input_mode|assets\/tracker/);
   });
 });
+
+test.describe('22 Oct re-test fixes', () => {
+  test.beforeEach(async ({ page }) => { await noLoader(page); });
+
+  test('TC-V4-30 "Share my week": no share text in the link (EN/TA/HI); WhatsApp gets the text only on click; analytics never sees it', async ({ page }) => {
+    await consent(page, 'granted');
+    await page.addInitScript(() => { window.__opened = []; window.open = u => { window.__opened.push(u); return null; }; });
+    for (const d of Object.values(LANGS)) {
+      await open(page, d + 'pregnancy-tracker.html');
+      await page.fill('#trk-date', await day(page, 126));
+      await page.click('#trk-form button[type="submit"]');
+      await expect(page.locator('#r-week')).toContainText('22');
+      expect(await page.$$eval('a[href*="wa.me"]', as => as.map(a => a.getAttribute('href')).filter(h => /text=/.test(h) && !h.includes('917448704660')))).toEqual([]);
+      await expect(page.locator('#r-share')).toHaveAttribute('href', 'https://wa.me/');
+      await page.click('#r-share');
+      const opened = await page.evaluate(() => window.__opened);
+      expect(opened.length, d).toBe(1);
+      expect(opened[0]).toMatch(/^https:\/\/wa\.me\/\?text=.+/);
+      expect(decodeURIComponent(opened[0])).toContain('126');
+      expect(opened[0]).not.toContain('7448704660');
+      const ev = await page.evaluate(() => window.pnEvents.map(e => [e.name, e.params]));
+      expect(ev.find(e => e[0] === 'whatsapp_click')[1]).toMatchObject({ placement: 'tracker_share' });
+      expect(JSON.stringify(ev), d).not.toMatch(/text=|126|week|due/);
+      await page.click('#r-clear');
+      await page.evaluate(() => { window.__opened.length = 0; });
+    }
+  });
+
+  test('TC-V4-31 a week with no picture clears the previous picture: not zoomable, no label', async ({ page }) => {
+    await consent(page, 'denied');
+    await open(page, 'pregnancy-tracker.html');
+    await page.fill('#trk-date', await day(page, 126));
+    await page.click('#trk-form button[type="submit"]');
+    const box = page.locator('.trk-hero-img');
+    await expect(box).toHaveClass(/has-img/);
+    await expect(box).toHaveAttribute('aria-label', /week 22/);
+    for (const [mode, n, ph] of [['lmp', -14, '2'], ['lmp', -290, '40']]) {           // week 2 (too early) and past week 40
+      await page.click('#r-change');
+      await page.check(`input[name="mode"][value="${mode}"]`);
+      await page.fill('#trk-date', await day(page, n));
+      await page.click('#trk-form button[type="submit"]');
+      await expect(page.locator('#r-ph')).toBeVisible();
+      await expect(page.locator('#r-ph-n')).toHaveText(ph);
+      await expect(box).not.toHaveClass(/has-img/);
+      for (const attr of ['role', 'aria-label', 'tabindex']) expect(await box.getAttribute(attr), attr).toBeNull();
+      await box.click({ force: true });
+      await expect(page.locator('.trk-zoom')).toHaveCount(0);
+    }
+  });
+});
