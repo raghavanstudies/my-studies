@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 22 October 2026 (website V4.1), 411 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 22 October 2026 (tracker pictures live), 422 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -136,7 +136,7 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V4-04 | Real IDs | Before "Accept": 0 requests; after: Google Analytics and Clarity load (2 requests); ads consent always "denied" |
 | TC-V4-05 | Decline / change mind | "Decline": no banner on the next page, nothing loads; "Cookie settings" reopens the banner; declining after accepting reloads the page and stops all requests |
 | TC-V4-06 | Click events | Amazon, Flipkart, WhatsApp and buy-page events carry the product, language and page |
-| TC-V4-07 | Tracker first screen | Due date 126 days ahead: "Week 22", peach circle with 22, "Baby is about the size of a small papaya", "126 days to go", "Share with family"; form hidden; baby pictures not requested yet; disclaimer above and below |
+| TC-V4-07 | Tracker first screen | Due date 126 days ahead: "Week 22", the week 22 picture (only that one picture requested), "Baby is about the size of a small papaya", "126 days to go", "Share with family"; form hidden; baby pictures not requested yet; disclaimer above and below |
 | TC-V4-08 | Tracker tabs | Checkups: 7 reminders, the 18–22 week scan marked "Now"; To-do: a tick survives reload; "Clear my data" removes the date and ticks |
 | TC-V4-09 | Share card | "Share with family" saves a 1080 × 1080 PNG made on the device and opens WhatsApp with no phone number |
 | TC-V4-10 | Tracker in Tamil and Hindi | First screen, To-do ticks and reload work, no script errors |
@@ -152,6 +152,13 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V4-20 | V4.1: no sideways scroll with big text | Home EN/TA/HI at 320, 360, 390, 412 px with text at 100%, 115%, 130%, motion on and off: page never wider than the screen |
 | TC-V4-21 | V4.1: tablet and desktop unchanged | At 768, 1024 and 1280 px the home page layout is identical with and without the new phone-only CSS block |
 | TC-V4-22 | Real analytics IDs (G-TQ3T4P57SJ, z1i2qcz3dc) | IDs are live in analytics-config.js; nothing loads before "Accept"; after it Google Analytics and Clarity load; the 3 tracker pages load Google Analytics only |
+| TC-V4-23 | 37 tracker pictures | week04.webp … week40.webp all load from /assets/tracker/, WebP, 800 × 800 |
+| TC-V4-24 | Right picture per week | Weeks 4, 13 and 40 show their own picture; before week 4 the peach placeholder shows and no picture is requested |
+| TC-V4-25 | Whole picture, lazy-loaded | Rounded-square frame (not a circle), so the full illustration shows; loading="lazy"; result card stops below the sticky header |
+| TC-V4-26 | 3D tilt and zoom (computer) | Picture tilts towards the mouse (max 12°) and goes flat when the mouse leaves; click or Enter opens the zoom with the right picture and label; Escape and ✕ close it |
+| TC-V4-27 | 3D tilt and zoom (phone, Tamil and Hindi) | Phone motion tilts gently (max 8°); tap zooms, tap closes; Tamil/Hindi alt text; no sideways scroll |
+| TC-V4-28 | Reduced motion | No tilt at all; zoom still works |
+| TC-V4-29 | Share card with picture | The 1080 × 1080 card shows the week picture; analytics events still carry no pregnancy data |
 
 ## Manual test cases (need the live site or a real phone)
 
@@ -180,3 +187,4 @@ These can't be automated from the build environment, which cannot reach www.pepp
 | TC-MAN-19 | Pregnancy tracker on a phone: tap "Share with family" | Share sheet (or download) with the week card; WhatsApp opens with no phone number |
 | TC-MAN-20 | Tap the round blue "?" button, ask a question in English, Tamil and Hindi | Sensible answer, or "Chat on WhatsApp" if nothing fits |
 | TC-MAN-21 | After pasting the real IDs: open the site, tap Accept, tap an Amazon button | GA4 Realtime shows page_view and amazon_click within a minute; Clarity shows the visit within about 2 hours |
+| TC-MAN-22 | Pregnancy tracker on a phone: enter a due date, tilt the phone, drag the picture, tap it | The picture tilts gently and zooms on tap (iPhone asks once to allow motion); tap again to close |

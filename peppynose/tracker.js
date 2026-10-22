@@ -6,7 +6,7 @@
    WEEK IMAGES: the approved image set goes in /assets/tracker/week04.webp ... week40.webp (800x800).
    Until those files are uploaded, keep ready:false. A soft circle with the week number is shown instead
    (no 404s, no broken images). When the approved files are in the repo, set ready:true and, if needed, the credit line. */
-const PN_TRACKER_IMAGES = { ready: false, path: '/assets/tracker/week', ext: '.webp', credit: '' };
+const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.webp', credit: '' };
 (() => {
   const dataEl = document.getElementById('trk-data');
   if (!dataEl) return;

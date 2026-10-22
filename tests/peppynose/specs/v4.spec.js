@@ -118,15 +118,17 @@ test.describe('analytics consent', () => {
 test.describe('pregnancy tracker V4', () => {
   test.beforeEach(async ({ page }) => { await noLoader(page); await consent(page, 'denied'); });
 
-  test('TC-V4-07 first screen: week, picture circle, baby size, days to go, share button; tabs below', async ({ page }) => {
+  test('TC-V4-07 first screen: week, week picture, baby size, days to go, share button; tabs below', async ({ page }) => {
     const { errors } = await open(page, 'pregnancy-tracker.html');
     const imgReq = []; page.on('request', r => { if (r.url().includes('/assets/tracker/')) imgReq.push(r.url()); });
     await page.fill('#trk-date', await day(page, 126));
     await page.click('#trk-form button[type="submit"]');
     await expect(page.locator('#r-week')).toHaveText('Week 22');
-    await expect(page.locator('#r-ph')).toBeVisible();
-    await expect(page.locator('#r-ph-n')).toHaveText('22');
-    await expect(page.locator('#r-img')).toBeHidden();          // approved pictures not switched on yet
+    // the approved week picture replaces the peach placeholder
+    await expect(page.locator('#r-img')).toBeVisible();
+    await expect(page.locator('#r-img')).toHaveAttribute('src', '/assets/tracker/week22.webp');
+    await expect(page.locator('#r-img')).toHaveAttribute('alt', 'Illustration of baby at week 22 of pregnancy');
+    await expect(page.locator('#r-ph')).toBeHidden();
     await expect(page.locator('#r-size')).toContainText('Baby is about the size of a small papaya');
     await expect(page.locator('#r-left')).toHaveText('126 days to go');
     await expect(page.locator('#r-card')).toContainText('Share with family');
@@ -137,7 +139,7 @@ test.describe('pregnancy tracker V4', () => {
     await expect(page.locator('#r-tip')).not.toBeEmpty();
     await expect(page.locator('.disclaimer').first()).toContainText('not medical advice');
     await expect(page.locator('.trk-d2')).toContainText('not medical advice');
-    expect(imgReq).toEqual([]);
+    expect(imgReq.map(u => new URL(u).pathname)).toEqual(['/assets/tracker/week22.webp']);   // only this week's picture
     expect(errors).toEqual([]);
   });
 
@@ -435,5 +437,146 @@ test.describe('22 Oct: real analytics IDs', () => {
       await page.waitForTimeout(300);
       expect(hits.filter(u => u.includes('clarity.ms')), d).toEqual([]);
     }
+  });
+});
+
+test.describe('22 Oct: tracker pictures', () => {
+  test.beforeEach(async ({ page }) => { await noLoader(page); await consent(page, 'denied'); });
+  const go = async (page, mode, n) => {
+    if (await page.locator('#trk-form').isHidden()) await page.click('#r-change');
+    await page.check(`input[name="mode"][value="${mode}"]`);
+    await page.fill('#trk-date', await day(page, n)); await page.click('#trk-form button[type="submit"]');
+  };
+
+  test('TC-V4-23 all 37 approved pictures (week 4–40) are on the site, 800 × 800 WebP', async ({ page, request }, info) => {
+    desktopOnly(info);
+    await open(page, 'index.html');
+    for (let w = 4; w <= 40; w++) {
+      const p = `/assets/tracker/week${String(w).padStart(2, '0')}.webp`;
+      const res = await request.get(p);
+      expect(res.status(), p).toBe(200);
+      expect(res.headers()['content-type'], p).toContain('image/webp');
+      const size = await page.evaluate(async p => { const i = new Image(); i.src = p; await i.decode(); return [i.naturalWidth, i.naturalHeight]; }, p);
+      expect(size, p).toEqual([800, 800]);
+    }
+  });
+
+  test('TC-V4-24 each week shows its own picture; before week 4 the placeholder, no picture requested', async ({ page }) => {
+    await open(page, 'pregnancy-tracker.html');
+    for (const [days, w] of [[-28, 4], [-91, 13], [-280, 40]]) {
+      await go(page, 'lmp', days);
+      await expect(page.locator('#r-img')).toHaveAttribute('src', `/assets/tracker/week${String(w).padStart(2, '0')}.webp`);
+      await expect(page.locator('#r-img')).toBeVisible();
+      expect(await page.locator('#r-img').evaluate(i => i.complete && i.naturalWidth)).toBe(800);
+    }
+    await go(page, 'lmp', -14);                                                     // week 2
+    await expect(page.locator('#r-img')).toBeHidden();
+    await expect(page.locator('#r-ph')).toBeVisible();
+    await expect(page.locator('#r-ph-n')).toHaveText('2');
+  });
+
+  test('TC-V4-25 whole picture shows (rounded square, not cropped to a circle) and it is lazy-loaded', async ({ page }) => {
+    await open(page, 'pregnancy-tracker.html');
+    await go(page, 'due', 126);
+    const img = page.locator('#r-img');
+    await expect(img).toBeVisible();
+    await expect(img).toHaveAttribute('loading', 'lazy');
+    const st = await img.evaluate(i => { const c = getComputedStyle(i); const b = i.getBoundingClientRect(); return { r: c.borderTopLeftRadius, fit: c.objectFit, w: b.width, h: b.height }; });
+    expect(st.r).not.toBe('50%');
+    expect(parseFloat(st.r)).toBeLessThan(st.w * 0.3);
+    expect(st.w).toBeCloseTo(st.h, 0);                                              // square box, square picture: nothing cut
+    // the card is not hidden under the sticky header
+    await page.waitForTimeout(900);
+    const [top, head] = await page.evaluate(() => [document.querySelector('.trk-hero').getBoundingClientRect().top, document.querySelector('header').getBoundingClientRect().bottom]);
+    expect(top).toBeGreaterThanOrEqual(head - 1);
+  });
+
+  test('TC-V4-26 3D tilt follows the mouse; click or Enter zooms; Escape, ✕ or a tap closes', async ({ page }, info) => {
+    desktopOnly(info);
+    await open(page, 'pregnancy-tracker.html');
+    await go(page, 'due', 126);
+    const box = page.locator('.trk-hero-img');
+    await expect(box).toHaveClass(/has-img/);
+    await expect(box).toHaveAttribute('role', 'button');
+    await page.waitForTimeout(900);                                                 // let the smooth scroll to the result finish
+    const r = await box.boundingBox();
+    await page.mouse.move(r.x + r.width * .9, r.y + r.height * .2);
+    await page.waitForTimeout(200);
+    const t = await box.evaluate(b => [parseFloat(b.style.getPropertyValue('--rx')), parseFloat(b.style.getPropertyValue('--ry'))]);
+    expect(t[0]).toBeGreaterThan(3); expect(t[1]).toBeGreaterThan(3);            // tilted towards the pointer
+    expect(Math.max(...t.map(Math.abs))).toBeLessThanOrEqual(12);
+    await page.mouse.move(r.x - 60, r.y + r.height / 2);                            // leave: back to flat
+    await page.waitForTimeout(200);
+    expect(await box.evaluate(b => parseFloat(b.style.getPropertyValue('--ry')))).toBe(0);
+    await box.click();
+    const zoom = page.locator('.trk-zoom');
+    await expect(zoom).toHaveCount(1);
+    await expect(zoom.locator('img')).toHaveAttribute('src', /week22\.webp$/);
+    await expect(zoom).toHaveAttribute('aria-label', 'Illustration of baby at week 22 of pregnancy');
+    await page.keyboard.press('Escape');
+    await expect(zoom).toHaveCount(0);
+    await box.focus(); await page.keyboard.press('Enter');
+    await expect(zoom).toHaveCount(1);
+    await page.click('.trk-zoom-x');
+    await expect(zoom).toHaveCount(0);
+  });
+
+  test('TC-V4-27 phones: drag tilts, phone motion tilts gently, a tap zooms and a tap closes; Tamil and Hindi', async ({ page }, info) => {
+    test.skip(info.project.name !== 'mobile', 'phone only');
+    for (const [d, alt] of [['ta/', 'கர்ப்பத்தின் 22-ஆம் வாரத்தில் குழந்தையின் படம்'], ['hi/', 'प्रेग्नेंसी के हफ़्ते 22 में शिशु का चित्र']]) {
+      await open(page, d + 'pregnancy-tracker.html');
+      await go(page, 'due', 126);
+      const box = page.locator('.trk-hero-img');
+      await expect(box).toHaveClass(/has-img/);
+      await expect(page.locator('#r-img')).toHaveAttribute('alt', alt);
+      await page.evaluate(() => { for (const [b, g] of [[40, 0], [50, 15]]) dispatchEvent(Object.assign(new Event('deviceorientation'), { beta: b, gamma: g })); });
+      await page.waitForTimeout(200);
+      const t = await box.evaluate(b => [parseFloat(b.style.getPropertyValue('--rx')), parseFloat(b.style.getPropertyValue('--ry'))]);
+      expect(t[1]).toBeGreaterThan(2);
+      expect(Math.max(...t.map(Math.abs))).toBeLessThanOrEqual(8);               // gentle
+      await box.tap();
+      await expect(page.locator('.trk-zoom')).toHaveCount(1);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
+      await page.locator('.trk-zoom').tap({ position: { x: 20, y: 300 } });
+      await expect(page.locator('.trk-zoom')).toHaveCount(0);
+      await page.click('#r-clear');
+    }
+  });
+
+  test('TC-V4-28 reduced motion: no tilt, zoom still works', async ({ page }, info) => {
+    desktopOnly(info);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await open(page, 'pregnancy-tracker.html');
+    await go(page, 'due', 126);
+    const box = page.locator('.trk-hero-img');
+    await expect(box).toHaveClass(/has-img/);
+    const r = await box.boundingBox();
+    await page.mouse.move(r.x + r.width * .9, r.y + r.height * .2);
+    await page.waitForTimeout(200);
+    expect(await page.locator('#r-img').evaluate(i => getComputedStyle(i).transform)).toBe('none');
+    await box.click();
+    await expect(page.locator('.trk-zoom')).toHaveCount(1);
+  });
+
+  test('TC-V4-29 share card includes the week picture (made on the device); still no pregnancy data in analytics', async ({ page }) => {
+    await page.addInitScript(() => { window.open = () => null; });
+    await consent(page, 'granted');
+    await open(page, 'pregnancy-tracker.html');
+    await go(page, 'due', 126);
+    await expect(page.locator('#r-img')).toBeVisible();
+    const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#r-card')]);
+    const buf = require('fs').readFileSync(await dl.path());
+    // look at the picture area of the card: a real picture has many colours, the plain placeholder only a few
+    const colours = await page.evaluate(async b64 => {
+      const i = new Image(); i.src = 'data:image/png;base64,' + b64; await i.decode();
+      const c = document.createElement('canvas'); c.width = 330; c.height = 330; const x = c.getContext('2d');
+      x.drawImage(i, 375, 230, 330, 330, 0, 0, 330, 330);
+      const d = x.getImageData(0, 0, 330, 330).data, set = new Set();
+      for (let k = 0; k < d.length; k += 4 * 37) set.add((d[k] >> 3) + ',' + (d[k + 1] >> 3) + ',' + (d[k + 2] >> 3));
+      return set.size;
+    }, buf.toString('base64'));
+    expect(colours).toBeGreaterThan(150);
+    const ev = JSON.stringify(await page.evaluate(() => window.pnEvents.map(e => [e.name, e.params])));
+    expect(ev).not.toMatch(/week|trimester|due|input_mode|assets\/tracker/);
   });
 });
