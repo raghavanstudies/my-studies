@@ -29,6 +29,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const imgUrl = w => PN_TRACKER_IMAGES.path + String(w).padStart(2, '0') + PN_TRACKER_IMAGES.ext;
   let cur = null;   // { w, left } of the result on screen
+  let shareText = '';   // kept out of the link's href, so analytics never sees the week (opened on click instead)
 
   const setBounds = () => {
     const t = today();
@@ -40,6 +41,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
 
   // ---- Week image or neutral placeholder ----
   const showImage = w => {
+    pic.off();                                                   // also for weeks without a picture: no stale zoom or label
     const img = $('r-img'), ph = $('r-ph'), cr = $('r-credit');
     $('r-ph-n').textContent = String(Math.max(0, Math.min(w, 40)));
     img.hidden = true; ph.hidden = false; cr.hidden = true;
@@ -47,7 +49,6 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     // Lazy-loaded, so it must stay in the layout while loading: it sits invisible over the circle until it arrives.
     img.onload = () => { img.classList.remove('trk-loading'); ph.hidden = true; pic.on(); if (PN_TRACKER_IMAGES.credit) { cr.textContent = PN_TRACKER_IMAGES.credit; cr.hidden = false; } };
     img.onerror = () => { img.hidden = true; img.classList.remove('trk-loading'); ph.hidden = false; pic.off(); };
-    pic.off();
     img.loading = 'lazy'; img.alt = fmt(S.v4_img_alt, { w }); img.classList.add('trk-loading'); img.hidden = false; img.src = imgUrl(w);
   };
 
@@ -178,8 +179,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     $('n-mob').hidden = !(w >= 14 && w <= 33);
     $('n-bob').hidden = !(w >= 34);
     $('n-teeth').hidden = !(w >= 28);
-    const text = left > 0 ? fmt(S.tr_share_text, { w, n: left, url: D.url }) : fmt(S.tr_share_text_due, { url: D.url });
-    $('r-share').href = 'https://wa.me/?text=' + encodeURIComponent(text);
+    shareText = left > 0 ? fmt(S.tr_share_text, { w, n: left, url: D.url }) : fmt(S.tr_share_text_due, { url: D.url });
     renderChecks(w); renderTodo(w);
     form.hidden = true; res.hidden = false;
     if (store) track('tracker_used', {});   // V4.1: no pregnancy data in analytics
@@ -249,6 +249,9 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     track('share_card_created', { method: 'download_whatsapp' });
     window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
   });
+
+  // "Share my week": the href stays https://wa.me/ (no text); the message is added only when it is clicked.
+  $('r-share').addEventListener('click', e => { if (!shareText) return; e.preventDefault(); window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank', 'noopener'); });
 
   form.addEventListener('change', e => { if (e.target.name === 'mode') setBounds(); });
   form.addEventListener('submit', e => {

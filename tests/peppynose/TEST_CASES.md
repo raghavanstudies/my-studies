@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 22 October 2026 (tracker pictures live), 422 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 22 October 2026 (re-test fixes), 426 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -159,6 +159,8 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V4-27 | 3D tilt and zoom (phone, Tamil and Hindi) | Phone motion tilts gently (max 8°); tap zooms, tap closes; Tamil/Hindi alt text; no sideways scroll |
 | TC-V4-28 | Reduced motion | No tilt at all; zoom still works |
 | TC-V4-29 | Share card with picture | The 1080 × 1080 card shows the week picture; analytics events still carry no pregnancy data |
+| TC-V4-30 | "Share my week" privacy (EN/TA/HI) | The link's href is just https://wa.me/ (no share text); clicking opens WhatsApp with the message; analytics events carry no week, days or link text |
+| TC-V4-31 | Week without a picture | After week 22, choosing week 2 or past week 40 shows the placeholder; the old picture is no longer zoomable and has no label |
 
 ## Manual test cases (need the live site or a real phone)
 
