@@ -53,7 +53,9 @@ test.describe('analytics consent', () => {
 
   test('TC-V4-03 placeholder IDs + Accept: still nothing loads', async ({ page }) => {
     const hits = watch(page);
-    await open(page, 'index.html');
+    await blockExternal(page);
+    await page.route('**/analytics-config.js', r => r.fulfill({ contentType: 'text/javascript', body: "window.PN_ANALYTICS = { ga4: 'G-XXXXXXXXXX', clarity: 'CLARITY_PROJECT_ID' };" }));
+    await page.goto('/index.html');
     await page.click('.pn-consent .pn-c-yes');
     await expect(page.locator('.pn-consent')).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem('pn_consent'))).toBe('granted');
@@ -391,7 +393,7 @@ test.describe('V4.1 fixes', () => {
   test('TC-V4-21 the phone-only CSS block leaves tablet and desktop unchanged', async ({ page }, info) => {
     desktopOnly(info);
     await consent(page, 'denied');
-    // compare the layout with and without the V4.1 block (the last rule in styles.css)
+    // compare the layout with and without the V4.1 phone-only block in styles.css
     const snap = () => page.evaluate(() => [...document.querySelectorAll('.stage, .stage > *, .agegrid-p, .agegrid-p > a, .promise2, .promise2 > *, .sec-head > *, .mini > div, .mini .buy')]
       .map(e => { const c = getComputedStyle(e); return [c.gridTemplateColumns, c.minWidth, c.maxWidth, c.padding, c.flexWrap, c.overflowWrap, Math.round(e.getBoundingClientRect().width)].join('|'); }));
     for (const w of [768, 1024, 1280]) {
@@ -400,12 +402,38 @@ test.describe('V4.1 fixes', () => {
       const withBlock = await snap();
       const removed = await page.evaluate(() => {
         const sh = [...document.styleSheets].find(x => (x.href || '').endsWith('/styles.css'));
-        const last = sh.cssRules[sh.cssRules.length - 1];
-        if (!(last.conditionText || '').includes('max-width: 480px')) return false;
-        sh.deleteRule(sh.cssRules.length - 1); return true;
+        const i = [...sh.cssRules].findIndex(r => (r.conditionText || '').includes('max-width: 480px') && r.cssText.includes('.promise2'));
+        if (i < 0) return false;
+        sh.deleteRule(i); return true;
       });
       expect(removed).toBe(true);
       expect(await snap(), `${w}px`).toEqual(withBlock);
+    }
+  });
+});
+
+test.describe('22 Oct: real analytics IDs', () => {
+  test.beforeEach(async ({ page }) => { await noLoader(page); });
+
+  test('TC-V4-22 the live IDs are in place; nothing loads before Accept; after Accept GA4 + Clarity load (not Clarity on tracker pages)', async ({ page, request }, info) => {
+    desktopOnly(info);
+    const cfg = await (await request.get('/analytics-config.js')).text();
+    expect(cfg).toContain("ga4: 'G-TQ3T4P57SJ'");
+    expect(cfg).toContain("clarity: 'z1i2qcz3dc'");
+    const hits = watch(page);
+    await open(page, 'index.html');
+    await page.waitForTimeout(300);
+    expect(hits).toEqual([]);                                                       // banner shown, nothing sent yet
+    await page.click('.pn-consent .pn-c-yes');
+    await expect.poll(() => hits.length).toBe(2);
+    expect(hits.some(u => u.startsWith('https://www.googletagmanager.com/gtag/js?id=G-TQ3T4P57SJ'))).toBe(true);
+    expect(hits.some(u => u.startsWith('https://www.clarity.ms/tag/z1i2qcz3dc'))).toBe(true);
+    for (const d of Object.values(LANGS)) {
+      hits.length = 0;
+      await page.goto('/' + d + 'pregnancy-tracker.html');
+      await expect.poll(() => hits.length).toBe(1);
+      await page.waitForTimeout(300);
+      expect(hits.filter(u => u.includes('clarity.ms')), d).toEqual([]);
     }
   });
 });

@@ -885,3 +885,23 @@ html[lang="ta"] h1, html[lang="ta"] h2, html[lang="hi"] h1, html[lang="hi"] h2, 
   .mini .buy { flex-wrap: wrap; }
   .stage-txt h3, .stage-txt p, .sec-head h2, .sec-head p, .promise2 h3, .promise2 p, .agegrid-p b, .agegrid-p small, .eyebrow { overflow-wrap: anywhere; }
 }
+
+/* V4.2 Tracker week picture: light 3D tilt (mouse, drag, phone motion) and tap to zoom. Transform/opacity only. */
+.trk-hero-img { perspective: 700px; }
+.trk-hero-img.has-img { cursor: zoom-in; touch-action: pan-y; -webkit-tap-highlight-color: transparent; border-radius: 50%; }
+.trk-hero-img.has-img img, .trk-hero-img.has-img::after { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .6s cubic-bezier(.2, .7, .2, 1); will-change: transform; }
+.trk-hero-img.has-img img { box-shadow: var(--sx, 0px) var(--sy, 10px) 26px rgba(154, 74, 51, .22); transition: transform .6s cubic-bezier(.2, .7, .2, 1), box-shadow .6s; }
+.trk-hero-img.has-img::after { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 40%), rgba(255, 255, 255, .32), rgba(255, 255, 255, 0) 55%); opacity: .6; }
+.trk-hero-img.tilting img, .trk-hero-img.tilting::after { transition-duration: .12s; }
+.trk-hero-img img.trk-loading { position: absolute; inset: 0; opacity: 0; }
+.trk-hero-img.has-img:focus-visible { outline: 3px solid #1f8f4e; outline-offset: 4px; }
+.trk-zoom { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 16px; background: rgba(28, 20, 24, .84); cursor: zoom-out; animation: trkZoomIn .25s ease-out; }
+.trk-zoom img { width: min(92vw, 86vh, 800px); height: auto; border-radius: 28px; box-shadow: 0 20px 60px rgba(0, 0, 0, .35); }
+.trk-zoom-x { position: absolute; top: 12px; right: 12px; width: 48px; height: 48px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); color: #2e2a33; font-size: 1.2rem; cursor: pointer; }
+html.trk-zoom-open { overflow: hidden; }
+@keyframes trkZoomIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .trk-hero-img.has-img img, .trk-hero-img.has-img::after { transform: none; transition: none; }
+  .trk-zoom { animation: none; }
+}

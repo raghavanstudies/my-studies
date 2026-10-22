@@ -44,10 +44,89 @@ const PN_TRACKER_IMAGES = { ready: false, path: '/assets/tracker/week', ext: '.w
     $('r-ph-n').textContent = String(Math.max(0, Math.min(w, 40)));
     img.hidden = true; ph.hidden = false; cr.hidden = true;
     if (!PN_TRACKER_IMAGES.ready || w < 4 || w > 40) return;
-    img.onload = () => { img.hidden = false; ph.hidden = true; if (PN_TRACKER_IMAGES.credit) { cr.textContent = PN_TRACKER_IMAGES.credit; cr.hidden = false; } };
-    img.onerror = () => { img.hidden = true; ph.hidden = false; };
-    img.alt = fmt(S.v4_img_alt, { w }); img.src = imgUrl(w);
+    // Lazy-loaded, so it must stay in the layout while loading: it sits invisible over the circle until it arrives.
+    img.onload = () => { img.classList.remove('trk-loading'); ph.hidden = true; pic.on(); if (PN_TRACKER_IMAGES.credit) { cr.textContent = PN_TRACKER_IMAGES.credit; cr.hidden = false; } };
+    img.onerror = () => { img.hidden = true; img.classList.remove('trk-loading'); ph.hidden = false; pic.off(); };
+    pic.off();
+    img.loading = 'lazy'; img.alt = fmt(S.v4_img_alt, { w }); img.classList.add('trk-loading'); img.hidden = false; img.src = imgUrl(w);
   };
+
+  // ---- Week picture: light 3D tilt (mouse, drag, phone motion) and tap to zoom ----
+  // Plain JS, transform/opacity only, one requestAnimationFrame per change. Off with reduced motion (zoom still works).
+  const pic = (() => {
+    const box = document.querySelector('.trk-hero-img'), img = $('r-img');
+    const still = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+    const T = { en: ['Tap to zoom', 'Close'], ta: ['பெரிதாக்க தட்டவும்', 'மூடு'], hi: ['बड़ा करने के लिए टैप करें', 'बंद करें'] }[lang] || ['Tap to zoom', 'Close'];
+    const MAX = 12, PHONE = 8;                                     // max tilt in degrees (pointer / phone motion)
+    let rx = 0, ry = 0, raf = 0, active = false, down = null, moved = false, base = null, inView = true, listening = false;
+    const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+    const paint = () => {
+      raf = 0;
+      box.style.setProperty('--rx', rx.toFixed(2) + 'deg'); box.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      box.style.setProperty('--gx', (50 + ry * 3).toFixed(1) + '%'); box.style.setProperty('--gy', (50 - rx * 3).toFixed(1) + '%');
+      box.style.setProperty('--sx', (-ry * .9).toFixed(1) + 'px'); box.style.setProperty('--sy', (10 + rx * .9).toFixed(1) + 'px');
+    };
+    const tilt = (x, y) => { if (still || !active) return; rx = clamp(x, MAX); ry = clamp(y, MAX); if (!raf) raf = requestAnimationFrame(paint); };
+    const reset = () => { box.classList.remove('tilting'); rx = ry = 0; if (!raf) raf = requestAnimationFrame(paint); };
+    const fromPointer = e => {
+      const r = box.getBoundingClientRect();
+      tilt(-((e.clientY - r.top) / r.height - .5) * 2 * MAX, ((e.clientX - r.left) / r.width - .5) * 2 * MAX);
+    };
+    box.addEventListener('pointermove', e => {
+      if (!active) return;
+      if (down) { if (Math.abs(e.clientX - down.x) + Math.abs(e.clientY - down.y) > 6) moved = true; }
+      else if (e.pointerType !== 'mouse') return;                  // touch tilts only while dragging
+      box.classList.add('tilting'); fromPointer(e);
+    });
+    box.addEventListener('pointerdown', e => { if (!active) return; down = { x: e.clientX, y: e.clientY }; moved = false; if (e.pointerType !== 'mouse') { box.classList.add('tilting'); fromPointer(e); } });
+    box.addEventListener('pointerup', e => { if (!down) return; down = null; if (e.pointerType !== 'mouse') reset(); });
+    // Open on click (not pointerup): on phones the click that follows a tap would otherwise land on the new layer and close it.
+    box.addEventListener('click', () => { if (!active || moved) return; motion(); zoom(); });
+    box.addEventListener('pointercancel', () => { down = null; reset(); });   // the page scrolled instead
+    box.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') { down = null; reset(); } });
+    box.addEventListener('keydown', e => { if (active && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); zoom(); } });
+
+    // Phone motion: a gentle tilt that follows how the phone is held (relative to the first reading).
+    const onTurn = e => {
+      if (down || e.beta == null || e.gamma == null) return;
+      if (!base) base = { b: e.beta, g: e.gamma };
+      rx = clamp((base.b - e.beta) * .35, PHONE); ry = clamp((e.gamma - base.g) * .35, PHONE);
+      if (active && !raf) raf = requestAnimationFrame(paint);
+    };
+    const listen = on => {
+      if (on === listening || !coarse || still || !('DeviceOrientationEvent' in window)) return;
+      listening = on; base = null;
+      if (on) addEventListener('deviceorientation', onTurn); else { removeEventListener('deviceorientation', onTurn); reset(); }
+    };
+    let asked = false;
+    const motion = () => {                                          // iPhone asks permission once, on the first tap
+      const D = window.DeviceOrientationEvent;
+      if (asked || !coarse || still || !D || typeof D.requestPermission !== 'function') return;
+      asked = true; D.requestPermission().then(r => { if (r === 'granted') listen(active && inView); }).catch(() => {});
+    };
+    const needsAsk = () => window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function';
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => { inView = es[0].isIntersecting; if (!needsAsk() || asked) listen(active && inView); }).observe(box);
+
+    // Tap to zoom: the same picture, large, over the page. Tap anywhere, the ✕ button or Escape closes it.
+    let layer = null;
+    const close = () => { if (!layer) return; layer.remove(); layer = null; document.documentElement.classList.remove('trk-zoom-open'); box.focus({ preventScroll: true }); };
+    const zoom = () => {
+      if (!active || layer) return;
+      layer = document.createElement('div');
+      layer.className = 'trk-zoom'; layer.setAttribute('role', 'dialog'); layer.setAttribute('aria-modal', 'true'); layer.setAttribute('aria-label', img.alt);
+      const big = document.createElement('img'); big.src = img.currentSrc || img.src; big.alt = img.alt; big.width = 800; big.height = 800;
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'trk-zoom-x'; x.setAttribute('aria-label', T[1]); x.textContent = '✕';
+      layer.append(big, x); layer.addEventListener('click', close);
+      document.body.appendChild(layer); document.documentElement.classList.add('trk-zoom-open'); x.focus();
+    };
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+    return {
+      on() { active = true; box.classList.add('has-img'); box.tabIndex = 0; box.setAttribute('role', 'button'); box.setAttribute('aria-label', img.alt + ' · ' + T[0]); reset(); if (!needsAsk() || asked) listen(inView); },
+      off() { active = false; down = null; listen(false); box.classList.remove('has-img', 'tilting'); box.removeAttribute('tabindex'); box.removeAttribute('role'); box.removeAttribute('aria-label'); close(); }
+    };
+  })();
 
   // ---- Checkups tab ----
   const renderChecks = w => {
