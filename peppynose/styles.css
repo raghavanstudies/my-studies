@@ -905,3 +905,9 @@ html.trk-zoom-open { overflow: hidden; }
   .trk-hero-img.has-img img, .trk-hero-img.has-img::after { transform: none; transition: none; }
   .trk-zoom { animation: none; }
 }
+
+/* Tracker picture frame: rounded square instead of a circle, so the whole illustration shows (head, feet, cord).
+   The placeholder uses the same frame. The result card stops below the sticky header when it scrolls into view. */
+.trk-hero-img img, .trk-ph, .trk-hero-img.has-img, .trk-hero-img.has-img::after { border-radius: 22%; }
+.trk-ph { background: radial-gradient(circle at 38% 34%, #ffe9df 0, #fbd6c6 60%, #f6c0aa 100%); }
+.trk .trk-card, .trk #trk-form { scroll-margin-top: 92px; }
