@@ -132,7 +132,7 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 |---|---|---|
 | TC-V4-01 | All 72 pages | Load analytics-config.js, analytics.js and chatbot.js; motion.js on all but the buy pages; "Cookie settings" link in the footer; no tracking code written into any page |
 | TC-V4-02 | Cookie banner | Shows on a first visit in the page language (EN/TA/HI) with a link to that language's privacy page; nothing is requested from Google or Microsoft before "Accept" |
-| TC-V4-03 | Placeholder IDs | With G-XXXXXXXXXX / CLARITY_PROJECT_ID still in place, "Accept" loads nothing |
+| TC-V4-03 | Placeholder IDs | With the placeholder IDs G-XXXXXXXXXX / CLARITY_PROJECT_ID (served by the test), "Accept" loads nothing |
 | TC-V4-04 | Real IDs | Before "Accept": 0 requests; after: Google Analytics and Clarity load (2 requests); ads consent always "denied" |
 | TC-V4-05 | Decline / change mind | "Decline": no banner on the next page, nothing loads; "Cookie settings" reopens the banner; declining after accepting reloads the page and stops all requests |
 | TC-V4-06 | Click events | Amazon, Flipkart, WhatsApp and buy-page events carry the product, language and page |
@@ -151,6 +151,7 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V4-19 | V4.1: no Clarity on tracker pages | With real IDs and "Accept", the 3 tracker pages load Google Analytics only, never Microsoft Clarity; other pages load both; tracker section keeps data-clarity-mask |
 | TC-V4-20 | V4.1: no sideways scroll with big text | Home EN/TA/HI at 320, 360, 390, 412 px with text at 100%, 115%, 130%, motion on and off: page never wider than the screen |
 | TC-V4-21 | V4.1: tablet and desktop unchanged | At 768, 1024 and 1280 px the home page layout is identical with and without the new phone-only CSS block |
+| TC-V4-22 | Real analytics IDs (G-TQ3T4P57SJ, z1i2qcz3dc) | IDs are live in analytics-config.js; nothing loads before "Accept"; after it Google Analytics and Clarity load; the 3 tracker pages load Google Analytics only |
 
 ## Manual test cases (need the live site or a real phone)
 

@@ -3,6 +3,6 @@
    2) Microsoft Clarity: paste the Project ID (about 10 letters/numbers, e.g. k8abc12xyz) instead of CLARITY_PROJECT_ID.
    While a value is left as the placeholder, that tool is NOT loaded at all. Nothing loads before the visitor taps "Accept". */
 window.PN_ANALYTICS = {
-  ga4: 'G-XXXXXXXXXX',
-  clarity: 'CLARITY_PROJECT_ID'
+  ga4: 'G-TQ3T4P57SJ',
+  clarity: 'z1i2qcz3dc'
 };

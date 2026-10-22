@@ -69,5 +69,5 @@ UI = {  # key: (en, ta, hi)
  'v4_card_text':('Week {w}! {meet} Make your own card: {url}','வாரம் {w}! {meet} உங்கள் கார்டை உருவாக்குங்கள்: {url}','हफ़्ता {w}! {meet} अपना कार्ड बनाएँ: {url}'),
  'v4_card_saved':('Card saved to your phone. Now attach it in WhatsApp.','கார்டு உங்கள் போனில் சேமிக்கப்பட்டது. இப்போது WhatsApp-இல் இணைத்து அனுப்புங்கள்.','कार्ड आपके फ़ोन में सेव हो गया। अब इसे WhatsApp में जोड़कर भेजें।'),
  'v4_card_private':('The card is made on your phone. Nothing is uploaded.','கார்டு உங்கள் போனிலேயே உருவாகிறது. எதுவும் பதிவேற்றப்படுவதில்லை.','कार्ड आपके फ़ोन पर ही बनता है। कुछ भी अपलोड नहीं होता।'),
- 'v4_img_alt':('Illustration of a baby at week {w} of pregnancy','கர்ப்பத்தின் {w}-ஆம் வாரத்தில் குழந்தையின் படம்','प्रेग्नेंसी के हफ़्ते {w} में शिशु का चित्र'),
+ 'v4_img_alt':('Illustration of baby at week {w} of pregnancy','கர்ப்பத்தின் {w}-ஆம் வாரத்தில் குழந்தையின் படம்','प्रेग्नेंसी के हफ़्ते {w} में शिशु का चित्र'),
 }
