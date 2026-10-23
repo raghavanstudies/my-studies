@@ -9,7 +9,7 @@ on:
 # Which folder goes live. "peppynose-offline" = the "back soon" page (site offline).
 # To bring the full site back, change it to "peppynose" and push to main.
 env:
-  SITE_DIR: peppynose-offline
+  SITE_DIR: peppynose
 
 permissions:
   contents: read

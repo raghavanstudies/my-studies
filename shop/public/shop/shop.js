@@ -4,6 +4,13 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const rupees = p => '₹' + (p / 100).toLocaleString('en-IN', { minimumFractionDigits: p % 100 ? 2 : 0 });
   const MAX = 10, KEY = 'pn_cart';
+  // Page text in this page's language (written into each page by scripts/build.mjs).
+  const T = window.PN_SHOP_T || {}, L = T.lang || 'en', ROOT = T.root || '../';
+  const t = (k, o = {}) => String(T[k] ?? k).replace(/\{(\w+)\}/g, (m, x) => (x in o ? o[x] : m));
+  const n = o => (o && (o[L] || o.en)) || '';
+  // Server messages are English; other languages show their own words for the same problem.
+  const msg = e => L === 'en' ? e.message : t(e.status === 409 ? 'err_stock' : e.status === 404 ? 'err_notfound' : e.data && e.data.fields ? 'err_fields' : 'err_generic');
+  document.querySelectorAll('.sh-langs a').forEach(a => { a.href += location.hash; });   // keep the order link when switching language
 
   // ---- site header bits (the live pages do this inline) ----
   const yr = $('year'); if (yr) yr.textContent = new Date().getFullYear();
@@ -23,7 +30,7 @@
   function badge() {
     let a = $('sh-cart-link');
     if (!a && nav) { a = document.createElement('a'); a.id = 'sh-cart-link'; a.className = 'sh-cart-link'; a.href = 'cart.html'; nav.appendChild(a); }
-    if (a) { const n = count(); a.textContent = n ? `Cart (${n})` : 'Cart'; }
+    if (a) { const c = count(); a.textContent = c ? t('cart_n', { n: c }) : t('cart'); }
   }
   badge();
 
@@ -38,7 +45,7 @@
   const cat = () => catP || (catP = api('/api/catalogue'));
   const bySku = c => { const m = new Map(); c.products.forEach(p => p.variants.forEach(v => m.set(v.sku, { p, v }))); return m; };
   const hash = () => new URLSearchParams(location.hash.slice(1));
-  const fail = (el, e) => { el.innerHTML = `<p class="sh-err">${esc(e.message)}</p>`; };
+  const fail = (el, e) => { el.innerHTML = `<p class="sh-err">${esc(msg(e))}</p>`; };
 
   // ---- shop home: live "from" prices ----
   if (document.querySelector('[data-from]')) cat().then(c => c.products.forEach(p => {
@@ -57,7 +64,7 @@
       const s = stock[sku()];
       if (s === undefined) return;
       add.disabled = s === 0;
-      note.textContent = s === 0 ? 'Out of stock for now.' : s <= 5 ? `Only ${s} left.` : 'In stock. Ships in 1–2 working days.';
+      note.textContent = s === 0 ? t('stock_out') : s <= 5 ? t('stock_low', { n: s }) : t('stock_ok');
       note.classList.toggle('low', s <= 5);
     };
     form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => { qty.value = clamp() + +b.dataset.step; clamp(); }));
@@ -68,14 +75,14 @@
       if (!p) return;
       p.variants.forEach(v => { stock[v.sku] = v.stock; const el = form.querySelector(`[data-price="${CSS.escape(v.sku)}"]`); if (el) el.textContent = rupees(v.price); });
       refresh();
-    }).catch(() => { note.textContent = 'Could not check stock right now.'; });
+    }).catch(() => { note.textContent = t('stock_err'); });
     form.addEventListener('submit', e => {
       e.preventDefault();
       const s = sku(), n = clamp(), c = read(), line = c.find(i => i.sku === s);
       const max = Math.min(MAX, stock[s] ?? MAX);
       if (line) line.qty = Math.min(max, line.qty + n); else c.push({ sku: s, qty: Math.min(max, n) });
       write(c);
-      $('added').innerHTML = `Added to your cart. <a href="cart.html">View cart (${count()})</a>`;
+      $('added').innerHTML = `${esc(t('added'))} <a href="cart.html">${esc(t('view_cart', { n: count() }))}</a>`;
     });
   }
 
@@ -86,30 +93,31 @@
     const ship = sub >= c.shipping.free_above ? 0 : c.shipping.fee;
     return { sub, ship, total: sub + ship };
   }
-  const totalRows = (c, t) => `<div class="sh-tot"><span>Items</span><b>${rupees(t.sub)}</b></div>
-    <div class="sh-tot"><span>Delivery</span><b>${t.ship ? rupees(t.ship) : 'Free'}</b></div>
-    ${t.ship ? `<p class="sh-hint">Free delivery on orders of ${rupees(c.shipping.free_above)} or more.</p>` : ''}
-    <div class="sh-tot sh-grand"><span>Total (incl. GST)</span><b>${rupees(t.total)}</b></div>`;
+  const totalRows = (c, x, hint = true) => `<div class="sh-tot"><span>${esc(t('items'))}</span><b>${rupees(x.sub)}</b></div>
+    <div class="sh-tot"><span>${esc(t('delivery'))}</span><b>${x.ship ? rupees(x.ship) : esc(t('free'))}</b></div>
+    ${x.ship && hint ? `<p class="sh-hint">${esc(t('free_hint', { p: rupees(c.shipping.free_above) }))}</p>` : ''}
+    <div class="sh-tot sh-grand"><span>${esc(t('total'))}</span><b>${rupees(x.total)}</b></div>`;
   function cartLines(c) {
     const m = bySku(c), out = [];
     read().forEach(i => { const x = m.get(i.sku); if (x) out.push({ ...x, qty: Math.min(i.qty, MAX) }); });
     write(out.map(l => ({ sku: l.v.sku, qty: l.qty })));   // drops items that are no longer sold
     return out;
   }
+  const empty = () => `<p>${esc(t('empty'))}</p><p><a class="btn" href="index.html">${esc(t('shop_now'))}</a></p>`;
   function drawCart(c) {
     const lines = cartLines(c);
-    if (!lines.length) { cartEl.innerHTML = '<p>Your cart is empty.</p><p><a class="btn" href="index.html">Shop now</a></p>'; return; }
-    const t = totals(c, lines), short = lines.some(l => l.qty > l.v.stock);
+    if (!lines.length) { cartEl.innerHTML = empty(); return; }
+    const tot = totals(c, lines), short = lines.some(l => l.qty > l.v.stock);
     cartEl.innerHTML = `<ul class="sh-lines">${lines.map(l => `<li class="sh-line" data-sku="${esc(l.v.sku)}">
-      <img src="../${esc(l.p.img)}" alt="" width="72" height="72">
-      <div class="sh-line-info"><a href="${esc(l.p.slug)}.html">${esc(l.p.name.en)}</a><span>${esc(l.v.label.en)} · ${rupees(l.v.price)} each</span>
-      ${l.qty > l.v.stock ? `<span class="sh-err">${l.v.stock ? `Only ${l.v.stock} left` : 'Out of stock'}</span>` : ''}</div>
-      <div class="sh-qty small"><button type="button" data-d="-1" aria-label="One less ${esc(l.p.name.en)}">−</button><span aria-live="polite">${l.qty}</span><button type="button" data-d="1" aria-label="One more ${esc(l.p.name.en)}"${l.qty >= Math.min(MAX, l.v.stock) ? ' disabled' : ''}>+</button></div>
+      <img src="${ROOT}${esc(l.p.img)}" alt="" width="72" height="72">
+      <div class="sh-line-info"><a href="${esc(l.p.slug)}.html">${esc(n(l.p.name))}</a><span>${esc(n(l.v.label))} · ${esc(t('each', { p: rupees(l.v.price) }))}</span>
+      ${l.qty > l.v.stock ? `<span class="sh-err">${esc(l.v.stock ? t('left', { n: l.v.stock }) : t('out'))}</span>` : ''}</div>
+      <div class="sh-qty small"><button type="button" data-d="-1" aria-label="${esc(t('one_less'))}: ${esc(n(l.p.name))}">−</button><span aria-live="polite">${l.qty}</span><button type="button" data-d="1" aria-label="${esc(t('one_more'))}: ${esc(n(l.p.name))}"${l.qty >= Math.min(MAX, l.v.stock) ? ' disabled' : ''}>+</button></div>
       <b class="sh-line-price">${rupees(l.v.price * l.qty)}</b>
-      <button type="button" class="sh-remove" data-rm aria-label="Remove ${esc(l.p.name.en)}">Remove</button></li>`).join('')}</ul>
-      <div class="sh-summary">${totalRows(c, t)}</div>
-      ${short ? '<p class="sh-err">Please lower the quantity of the items marked above.</p>' : ''}
-      <a class="btn sh-pay${short ? ' disabled' : ''}" href="checkout.html"${short ? ' aria-disabled="true" tabindex="-1"' : ''}>Checkout</a>`;
+      <button type="button" class="sh-remove" data-rm aria-label="${esc(t('remove'))}: ${esc(n(l.p.name))}">${esc(t('remove'))}</button></li>`).join('')}</ul>
+      <div class="sh-summary">${totalRows(c, tot)}</div>
+      ${short ? `<p class="sh-err">${esc(t('lower_qty'))}</p>` : ''}
+      <a class="btn sh-pay${short ? ' disabled' : ''}" href="checkout.html"${short ? ' aria-disabled="true" tabindex="-1"' : ''}>${esc(t('checkout'))}</a>`;
   }
   if (cartEl) {
     cartEl.addEventListener('click', e => {
@@ -131,10 +139,10 @@
       co.querySelectorAll('.sh-field-err').forEach(x => x.remove());
       co.querySelectorAll('[aria-invalid]').forEach(x => x.removeAttribute('aria-invalid'));
       let first;
-      Object.entries(f || {}).forEach(([k, msg]) => {
+      Object.entries(f || {}).forEach(([k, text]) => {
         const el = co.elements[k]; if (!el) return;
         el.setAttribute('aria-invalid', 'true');
-        const p = document.createElement('span'); p.className = 'sh-field-err'; p.id = 'e-' + k; p.textContent = msg;
+        const p = document.createElement('span'); p.className = 'sh-field-err'; p.id = 'e-' + k; p.textContent = L === 'en' ? text : t('f_' + k);
         el.setAttribute('aria-describedby', p.id); el.after(p); first = first || el;
       });
       if (first) first.focus();
@@ -143,20 +151,20 @@
       const sel = co.elements.state;
       c.states.forEach(s => sel.add(new Option(s, s)));
       const lines = cartLines(c);
-      if (!lines.length) { co.innerHTML = '<p>Your cart is empty.</p><p><a class="btn" href="index.html">Shop now</a></p>'; return; }
-      sum.innerHTML = `<h2>Your order</h2><ul class="sh-mini">${lines.map(l => `<li><span>${esc(l.p.name.en)} — ${esc(l.v.label.en)} × ${l.qty}</span><b>${rupees(l.v.price * l.qty)}</b></li>`).join('')}</ul>${totalRows(c, totals(c, lines))}<p class="sh-hint"><a href="cart.html">Change cart</a></p>`;
-    }).catch(e => { err.textContent = e.message; });
+      if (!lines.length) { co.innerHTML = empty(); return; }
+      sum.innerHTML = `<h2>${esc(t('order_title'))}</h2><ul class="sh-mini">${lines.map(l => `<li><span>${esc(n(l.p.name))} — ${esc(n(l.v.label))} × ${l.qty}</span><b>${rupees(l.v.price * l.qty)}</b></li>`).join('')}</ul>${totalRows(c, totals(c, lines))}<p class="sh-hint"><a href="cart.html">${esc(t('change_cart'))}</a></p>`;
+    }).catch(e => { err.textContent = msg(e); });
     co.addEventListener('submit', async e => {
       e.preventDefault();
       err.textContent = ''; showErrs({}); btn.disabled = true;
       const f = co.elements, customer = {};
       ['name', 'phone', 'email', 'address1', 'address2', 'city', 'pincode', 'state'].forEach(k => { customer[k] = f[k].value; });
       try {
-        const r = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ items: read(), customer, lang: 'en' }) });
+        const r = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ items: read(), customer, lang: L }) });
         location.href = `pay.html#o=${r.order}&t=${r.token}`;
       } catch (x) {
-        err.textContent = x.message; showErrs(x.data && x.data.fields); btn.disabled = false;
-        if (x.status === 409) err.innerHTML = `${esc(x.message)} <a href="cart.html">Go to cart</a>`;
+        err.textContent = msg(x); showErrs(x.data && x.data.fields); btn.disabled = false;
+        if (x.status === 409) err.innerHTML = `${esc(msg(x))} <a href="cart.html">${esc(t('go_cart'))}</a>`;
       }
     });
   }
@@ -164,20 +172,20 @@
   // ---- test payment page ----
   const ok = $('pay-ok');
   if (ok) {
-    const h = hash(), o = h.get('o'), t = h.get('t'), err = $('err'), bad = $('pay-fail');
-    const q = `o=${encodeURIComponent(o)}&t=${encodeURIComponent(t)}`;
-    const go = () => { location.href = `order.html#o=${o}&t=${t}`; };
+    const h = hash(), o = h.get('o'), tk = h.get('t'), err = $('err'), bad = $('pay-fail');
+    const q = `o=${encodeURIComponent(o)}&t=${encodeURIComponent(tk)}`;
+    const go = () => { location.href = `order.html#o=${o}&t=${tk}`; };
     api('/api/order?' + q).then(d => {
       if (!d.can_pay) return go();
-      $('pay-amount').textContent = `Order ${d.number} · Amount ${rupees(d.total)}`;
-    }).catch(e => { err.textContent = e.message; ok.disabled = bad.disabled = true; });
+      $('pay-amount').textContent = t('order_amount', { o: d.number, p: rupees(d.total) });
+    }).catch(e => { err.textContent = msg(e); ok.disabled = bad.disabled = true; });
     const pay = outcome => async () => {
       ok.disabled = bad.disabled = true; err.textContent = '';
       try {
-        const r = await api('/api/pay/mock', { method: 'POST', body: JSON.stringify({ order: o, token: t, outcome }) });
+        const r = await api('/api/pay/mock', { method: 'POST', body: JSON.stringify({ order: o, token: tk, outcome }) });
         if (r.status === 'paid' || r.status === 'paid_review') write([]);
         go();
-      } catch (e) { err.textContent = e.message; ok.disabled = bad.disabled = false; }
+      } catch (e) { err.textContent = msg(e); ok.disabled = bad.disabled = false; }
     };
     ok.addEventListener('click', pay('success'));
     bad.addEventListener('click', pay('fail'));
@@ -186,30 +194,20 @@
   // ---- order page ----
   const ord = $('order');
   if (ord) {
-    const h = hash(), o = h.get('o'), t = h.get('t');
-    const q = `o=${encodeURIComponent(o || '')}&t=${encodeURIComponent(t || '')}`;
-    const WORDS = {
-      pending_payment: ['Waiting for payment', 'Your order is saved. Please complete the payment.'],
-      payment_failed: ['Payment did not go through', 'No money was taken. You can try again.'],
-      paid: ['Thank you! Order confirmed', 'We received your payment. We will pack your order soon.'],
-      paid_review: ['Payment received', 'We are checking stock for your order and will contact you shortly.'],
-      packed: ['Packed', 'Your order is packed and will be shipped soon.'],
-      shipped: ['Shipped', 'Your order is on the way.'],
-      delivered: ['Delivered', 'Your order was delivered. Enjoy!'],
-      cancelled: ['Cancelled', 'This order was cancelled. No money was taken.'],
-      refunded: ['Refunded', 'We have refunded this order. It can take 5–7 working days to reach your account.']
-    };
-    api('/api/order?' + q).then(d => {
-      const [title, line] = WORDS[d.status] || [d.status, ''];
+    const h = hash(), o = h.get('o'), tk = h.get('t');
+    const q = `o=${encodeURIComponent(o || '')}&t=${encodeURIComponent(tk || '')}`;
+    Promise.all([api('/api/order?' + q), cat().catch(() => null)]).then(([d, cg]) => {
+      const m = cg ? bySku(cg) : new Map();   // product names in this page's language; the order keeps the English ones
+      const [title, line] = T['st_' + d.status] || [d.status, ''];
       const c = d.customer;
-      ord.innerHTML = `<p class="sh-eyebrow">Order ${esc(d.number)}</p><h1>${esc(title)}</h1><p class="sh-status s-${esc(d.status)}">${esc(line)}</p>
-        ${d.tracking ? `<p><b>Tracking number:</b> ${esc(d.tracking)}</p>` : ''}
-        ${d.can_pay ? `<p><a class="btn sh-pay" href="pay.html#o=${esc(o)}&t=${esc(t)}">Pay now</a></p>` : ''}
-        <div class="sh-summary"><ul class="sh-mini">${d.items.map(i => `<li><span>${esc(i.name)} — ${esc(i.label)} × ${i.qty}</span><b>${rupees(i.unit_price * i.qty)}</b></li>`).join('')}</ul>
-        ${totalRows({ shipping: { free_above: Infinity } }, { sub: d.subtotal, ship: d.shipping, total: d.total }).replace(/<p class="sh-hint">[\s\S]*?<\/p>/, '')}</div>
-        <h2>Delivery to</h2><p>${esc(c.name)}<br>${esc(c.address1)}${c.address2 ? '<br>' + esc(c.address2) : ''}<br>${esc(c.city)} - ${esc(c.pincode)}, ${esc(c.state)}<br>Mobile: ${esc(c.phone)}</p>
-        ${d.invoice ? `<p><a class="btn plain" href="/api/invoice?${q}" target="_blank" rel="noopener">View invoice</a></p>` : ''}
-        <p class="sh-hint">Keep this page's link to check your order later. Questions? <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></p>`;
+      ord.innerHTML = `<p class="sh-eyebrow">${esc(t('order_no', { o: d.number }))}</p><h1>${esc(title)}</h1><p class="sh-status s-${esc(d.status)}">${esc(line)}</p>
+        ${d.tracking ? `<p><b>${esc(t('tracking'))}</b> ${esc(d.tracking)}</p>` : ''}
+        ${d.can_pay ? `<p><a class="btn sh-pay" href="pay.html#o=${esc(o)}&t=${esc(tk)}">${esc(t('pay_now'))}</a></p>` : ''}
+        <div class="sh-summary"><ul class="sh-mini">${d.items.map(i => { const x = m.get(i.sku); return `<li><span>${esc(x ? n(x.p.name) : i.name)} — ${esc(x ? n(x.v.label) : i.label)} × ${i.qty}</span><b>${rupees(i.unit_price * i.qty)}</b></li>`; }).join('')}</ul>
+        ${totalRows(null, { sub: d.subtotal, ship: d.shipping, total: d.total }, false)}</div>
+        <h2>${esc(t('delivery_to'))}</h2><p>${esc(c.name)}<br>${esc(c.address1)}${c.address2 ? '<br>' + esc(c.address2) : ''}<br>${esc(c.city)} - ${esc(c.pincode)}, ${esc(c.state)}<br>${esc(t('mobile'))} ${esc(c.phone)}</p>
+        ${d.invoice ? `<p><a class="btn plain" href="/api/invoice?${q}" target="_blank" rel="noopener">${esc(t('invoice'))}</a></p>` : ''}
+        <p class="sh-hint">${esc(t('keep_link'))} <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></p>`;
     }).catch(e => fail(ord, e));
   }
 

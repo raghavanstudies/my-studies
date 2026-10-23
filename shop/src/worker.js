@@ -152,6 +152,8 @@ async function loadOrder(env, id, token) {
   if (!o || !(await same(o.token, token, env.ORDER_SECRET))) throw new HttpError(404, 'Order not found.');
   return o;
 }
+// The customer's order page, in the language they ordered in.
+const orderLink = o => `${o.lang === 'en' ? '' : '/' + o.lang}/shop/order.html#o=${o.id}&t=${o.token}`;
 const items = (env, id) => env.DB.prepare('SELECT sku, name, label, qty, unit_price, gst_rate, hsn FROM order_items WHERE order_id = ?').bind(id).all().then(r => r.results);
 const outbox = (env, order, kind, to, subject, text) =>
   env.DB.prepare('INSERT INTO outbox (order_id, kind, to_addr, subject, body, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(order, kind, to, subject, text, now());
@@ -163,7 +165,7 @@ async function finalize(env, o, ref) {
     .bind(nonce, ref, o.id).run();
   if (!claim.meta.changes) return (await env.DB.prepare('SELECT status FROM orders WHERE id = ?').bind(o.id).first()).status;
   const list = await items(env, o.id), cust = JSON.parse(o.customer), s = await settings(env.DB);
-  const link = `/shop/order.html#o=${o.id}&t=${o.token}`;
+  const link = orderLink(o);
   try {
     await env.DB.batch([   // one transaction: if any stock would go below 0 (CHECK), nothing here is saved
       ...list.map(i => env.DB.prepare('UPDATE variants SET stock = stock - ? WHERE sku = ?').bind(i.qty, i.sku)),
@@ -213,7 +215,7 @@ async function orderView(url, env) {
   const [list, ev] = await Promise.all([items(env, o.id), env.DB.prepare('SELECT at, status, note FROM order_events WHERE order_id = ? ORDER BY at').bind(o.id).all()]);
   return json({
     number: 'PN-' + o.number, status: o.status, created_at: o.created_at, paid_at: o.paid_at, customer: JSON.parse(o.customer),
-    items: list.map(i => ({ name: i.name, label: i.label, qty: i.qty, unit_price: i.unit_price })),
+    items: list.map(i => ({ sku: i.sku, name: i.name, label: i.label, qty: i.qty, unit_price: i.unit_price })),
     subtotal: o.subtotal, shipping: o.shipping, total: o.total, tracking: o.tracking, events: ev.results,
     pay_mode: o.payment_mode, can_pay: ['pending_payment', 'payment_failed'].includes(o.status) && !o.finalize_nonce, invoice: INVOICE_OK.includes(o.status)
   });
@@ -288,7 +290,7 @@ async function adminOrder(url, env) {
   const [list, ev] = await Promise.all([items(env, o.id), env.DB.prepare('SELECT at, status, note FROM order_events WHERE order_id = ? ORDER BY at').bind(o.id).all()]);
   return json({ id: o.id, number: 'PN-' + o.number, status: o.status, created_at: o.created_at, paid_at: o.paid_at, customer: JSON.parse(o.customer), items: list,
     subtotal: o.subtotal, shipping: o.shipping, total: o.total, payment_mode: o.payment_mode, payment_ref: o.payment_ref, tracking: o.tracking, note: o.admin_note,
-    events: ev.results, next: NEXT[o.status] || [], link: `/shop/order.html#o=${o.id}&t=${o.token}` });
+    events: ev.results, next: NEXT[o.status] || [], link: orderLink(o) });
 }
 
 async function setStatus(req, env) {
@@ -307,7 +309,7 @@ async function setStatus(req, env) {
   if (o.status === 'paid_review' && to === 'paid') list.forEach(i => stmts.push(env.DB.prepare('UPDATE variants SET stock = MAX(stock - ?, 0) WHERE sku = ?').bind(i.qty, i.sku)));
   // Refund before it left the shop: the items go back on the shelf.
   if (to === 'refunded' && ['paid', 'packed'].includes(o.status)) list.forEach(i => stmts.push(env.DB.prepare('UPDATE variants SET stock = stock + ? WHERE sku = ?').bind(i.qty, i.sku)));
-  const link = `/shop/order.html#o=${o.id}&t=${o.token}`;
+  const link = orderLink(o);
   if (to === 'shipped') stmts.push(outbox(env, o.id, 'shipped', c.email, `Your Peppynose order PN-${o.number} is on the way`, `Hi ${c.name},\n\nYour order PN-${o.number} has been shipped.\nTracking number: ${tracking}\n\nSee your order: ${link}\n\n— Peppynose`));
   if (to === 'refunded') stmts.push(outbox(env, o.id, 'refunded', c.email, `Refund for Peppynose order PN-${o.number}`, `Hi ${c.name},\n\nWe have refunded ${rupees(o.total)} for order PN-${o.number}. It can take 5–7 working days to reach your account.\n\n— Peppynose`));
   const r = await env.DB.batch(stmts);
