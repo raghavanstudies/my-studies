@@ -19,122 +19,144 @@ mkdirSync(DB, { recursive: true });
 cpSync(SITE, DIST, { recursive: true });
 cpSync(join(HERE, 'public'), DIST, { recursive: true });
 
-// Header and footer come from the live Shop page, so the shop looks exactly like the site.
-const live = readFileSync(join(SITE, 'products.html'), 'utf8');
-const up = html => html.replace(/(href|src)="(?!https?:|mailto:|#|\/|data:)([^"]*)"/g, '$1="../$2"');   // /shop/x.html → ../
-const header = up(live.match(/<header[\s\S]*?<\/header>/)[0]).replace(/ aria-current="page"/g, '');
-const footer = up(live.match(/<footer[\s\S]*?<\/footer>/)[0]);
-const fonts = (live.match(/<link[^>]*fonts\.googleapis\.com\/css2[^>]*>/g) || []).join('\n  ');
+// Shop pages in English (/shop/), Tamil (/ta/shop/) and Hindi (/hi/shop/). Text lives in data/shop-strings.json.
+const STR = JSON.parse(readFileSync(join(HERE, 'data', 'shop-strings.json'), 'utf8'));
+const LANGS = ['en', 'ta', 'hi'];
+const fill = (s, o) => s.replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m));
+const up = html => html.replace(/(href|src)="(?!https?:|mailto:|#|\/|data:)([^"]*)"/g, '$1="../$2"');   // page moves one folder down: x.html → ../x.html
 
-const page = (file, title, desc, main, extraHead = '') => writeFileSync(join(DIST, 'shop', file), `<!doctype html>
-<html lang="en">
+for (const L of LANGS) {
+  const T = STR[L], R = L === 'en' ? '../' : '../../';   // R = from a shop page back to the site root
+  const src = L === 'en' ? SITE : join(SITE, L), out = L === 'en' ? join(DIST, 'shop') : join(DIST, L, 'shop');
+  mkdirSync(out, { recursive: true });
+  // Header and footer come from the live Shop page of the same language, so the shop looks exactly like the site.
+  const live = readFileSync(join(src, 'products.html'), 'utf8');
+  const header = up(live.match(/<header[\s\S]*?<\/header>/)[0]).replace(/ aria-current="page"/g, '');
+  const footer = up(live.match(/<footer[\s\S]*?<\/footer>/)[0]);
+  const fonts = (live.match(/<link[^>]*fonts\.googleapis\.com\/css2[^>]*>/g) || []).join('\n  ');
+  const js = JSON.stringify({ ...T, lang: L, root: R }).replace(/</g, '\\u003c');
+  const n = o => o[L] || o.en;
+
+  const page = (file, title, desc, main) => {
+    const langs = LANGS.map(x => x === L   // same page in the other languages
+      ? `<span aria-current="true">${STR[x].lang_name}</span>`
+      : `<a href="${R}${x === 'en' ? '' : x + '/'}shop/${file}" lang="${x}" hreflang="${x}">${STR[x].lang_name}</a>`).join('');
+    writeFileSync(join(out, file), `<!doctype html>
+<html lang="${L}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(desc)}">
   <meta name="robots" content="noindex">
-  <link rel="icon" href="../favicon.png" type="image/png">
+  <link rel="icon" href="${R}favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   ${fonts}
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="shop.css">${extraHead}
+  <link rel="stylesheet" href="${R}styles.css">
+  <link rel="stylesheet" href="${R}shop/shop.css">
 </head>
 <body class="shop">
 ${header}
-<div class="shop-test" role="note">Test shop — no real orders or payments yet.</div>
+<div class="shop-test" role="note">${esc(T.test_banner)}</div>
+${file === 'admin.html' ? '' : `<nav class="wrap sh-langs" aria-label="Language">${langs}</nav>`}
 <main class="shop-main">
 ${main}
 </main>
 ${footer}
-<script src="shop.js" defer></script>
+<script>window.PN_SHOP_T = ${js};</script>
+<script src="${R}shop/shop.js" defer></script>
 </body>
 </html>
 `);
+  };
 
-// Product pages: built from the catalogue (fast, readable without JavaScript); price and stock are refreshed live by shop.js.
-for (const p of C.products) {
-  const v0 = p.variants[0];
-  const opts = p.variants.map((v, i) => `<label class="sh-opt"><input type="radio" name="sku" value="${esc(v.sku)}"${i ? '' : ' checked'}><span>${esc(v.label.en)}</span><b data-price="${esc(v.sku)}">${rupees(v.price)}</b></label>`).join('');
-  const market = p.variants.filter(v => v.amazon || v.flipkart).length ? `<p class="sh-also">Also on <a href="${esc(v0.amazon)}" target="_blank" rel="noopener">Amazon.in</a>${v0.flipkart ? ` and <a href="${esc(v0.flipkart)}" target="_blank" rel="noopener">Flipkart</a>` : ''}.</p>` : '';
-  page(`${p.slug}.html`, `${p.name.en} — Peppynose shop`, `Buy Peppynose ${p.name.en} directly from Peppynose.`, `
+  // Product pages: built from the catalogue (fast, readable without JavaScript); price and stock are refreshed live by shop.js.
+  for (const p of C.products) {
+    const v0 = p.variants[0];
+    const opts = p.variants.map((v, i) => `<label class="sh-opt"><input type="radio" name="sku" value="${esc(v.sku)}"${i ? '' : ' checked'}><span>${esc(n(v.label))}</span><b data-price="${esc(v.sku)}">${rupees(v.price)}</b></label>`).join('');
+    const links = [v0.amazon && `<a href="${esc(v0.amazon)}" target="_blank" rel="noopener">Amazon.in</a>`, v0.flipkart && `<a href="${esc(v0.flipkart)}" target="_blank" rel="noopener">Flipkart</a>`].filter(Boolean);
+    const market = links.length ? `<p class="sh-also">${fill(esc(T.also_on), { links: links.join(` ${esc(T.and)} `) })}</p>` : '';
+    page(`${p.slug}.html`, `${n(p.name)} — ${T.shop_title}`, T.shop_desc, `
 <div class="wrap sh-product" data-slug="${esc(p.slug)}">
-  <figure class="sh-ph"><img src="../${esc(p.img)}" alt="${esc(p.alt.en)}" width="700" height="700"></figure>
+  <figure class="sh-ph"><img src="${R}${esc(p.img)}" alt="${esc(n(p.alt))}" width="700" height="700"></figure>
   <div class="sh-info">
-    <a class="sh-back" href="index.html">← All products</a>
-    <h1>${esc(p.name.en)}</h1>
-    <p class="sh-desc">${esc(p.desc.en)}</p>
+    <a class="sh-back" href="index.html">${esc(T.back_all)}</a>
+    <h1>${esc(n(p.name))}</h1>
+    <p class="sh-desc">${esc(n(p.desc))}</p>
     <form class="sh-buy" id="buy-form">
-      <fieldset><legend>Choose a pack</legend>${opts}</fieldset>
-      <div class="sh-qty"><label for="qty">Quantity</label><button type="button" data-step="-1" aria-label="One less">−</button><input id="qty" name="qty" type="number" min="1" max="10" value="1" inputmode="numeric"><button type="button" data-step="1" aria-label="One more">+</button></div>
+      <fieldset><legend>${esc(T.choose_pack)}</legend>${opts}</fieldset>
+      <div class="sh-qty"><label for="qty">${esc(T.qty)}</label><button type="button" data-step="-1" aria-label="${esc(T.one_less)}">−</button><input id="qty" name="qty" type="number" min="1" max="10" value="1" inputmode="numeric"><button type="button" data-step="1" aria-label="${esc(T.one_more)}">+</button></div>
       <p class="sh-stock" id="stock-note" aria-live="polite"></p>
-      <button class="btn sh-add" type="submit">Add to cart</button>
+      <button class="btn sh-add" type="submit">${esc(T.add_to_cart)}</button>
       <p class="sh-added" id="added" role="status"></p>
     </form>
-    <p class="sh-note">Price includes GST. Delivery charges are shown in the cart.</p>
+    <p class="sh-note">${esc(T.price_note)}</p>
     ${market}
   </div>
 </div>`);
-}
+  }
 
-// Shop home: every product with its starting price.
-const cards = C.categories.map(c => {
-  const list = C.products.filter(p => p.category === c.id).map(p => {
-    const from = Math.min(...p.variants.map(v => v.price));
-    return `<a class="sh-card" href="${esc(p.slug)}.html"><img src="../${esc(p.img)}" alt="${esc(p.alt.en)}" width="700" height="700" loading="lazy"><span class="sh-card-name">${esc(p.name.en)}</span><span class="sh-card-price">${p.variants.length > 1 ? 'from ' : ''}<b data-from="${esc(p.slug)}">${rupees(from)}</b></span></a>`;
-  }).join('');
-  return `<section class="sh-cat"><h2>${esc(c.name.en)}</h2><div class="sh-grid">${list}</div></section>`;
-}).join('\n');
-page('index.html', 'Peppynose shop', 'Buy Peppynose products directly from Peppynose.', `
-<div class="wrap"><div class="sh-head"><h1>Peppynose shop</h1><p>Order directly from us. Pay by UPI, card or net banking.</p></div>
+  // Shop home: every product with its starting price.
+  const cards = C.categories.map(c => {
+    const list = C.products.filter(p => p.category === c.id).map(p => {
+      const price = `<b data-from="${esc(p.slug)}">${rupees(Math.min(...p.variants.map(v => v.price)))}</b>`;
+      return `<a class="sh-card" href="${esc(p.slug)}.html"><img src="${R}${esc(p.img)}" alt="${esc(n(p.alt))}" width="700" height="700" loading="lazy"><span class="sh-card-name">${esc(n(p.name))}</span><span class="sh-card-price">${p.variants.length > 1 ? fill(esc(T.from), { p: price }) : price}</span></a>`;
+    }).join('');
+    return `<section class="sh-cat"><h2>${esc(n(c.name))}</h2><div class="sh-grid">${list}</div></section>`;
+  }).join('\n');
+  page('index.html', T.shop_title, T.shop_desc, `
+<div class="wrap"><div class="sh-head"><h1>${esc(T.shop_title)}</h1><p>${esc(T.shop_lead)}</p></div>
 ${cards}</div>`);
 
-page('cart.html', 'Your cart — Peppynose shop', 'Your Peppynose shopping cart.', `
-<div class="wrap sh-narrow"><h1>Your cart</h1><div id="cart" aria-live="polite"><p>Loading…</p></div></div>`);
+  page('cart.html', `${T.cart_title} — ${T.shop_title}`, T.shop_desc, `
+<div class="wrap sh-narrow"><h1>${esc(T.cart_title)}</h1><div id="cart" aria-live="polite"><p>${esc(T.loading)}</p></div></div>`);
 
-page('checkout.html', 'Checkout — Peppynose shop', 'Delivery details and payment.', `
-<div class="wrap sh-narrow"><h1>Delivery details</h1>
+  const field = (k, attrs) => `<label>${esc(T['l_' + k])}<input name="${k}" ${attrs}></label>`;
+  page('checkout.html', `${T.checkout_title} — ${T.shop_title}`, T.checkout_desc, `
+<div class="wrap sh-narrow"><h1>${esc(T.checkout_title)}</h1>
 <form id="checkout" class="sh-form" novalidate>
-  <label>Full name<input name="name" autocomplete="name" required maxlength="80"></label>
-  <label>Mobile number (10 digits)<input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" required maxlength="10"></label>
-  <label>Email (for your receipt)<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
-  <label>House / flat, street<input name="address1" autocomplete="address-line1" required maxlength="120"></label>
-  <label>Area, landmark (optional)<input name="address2" autocomplete="address-line2" maxlength="120"></label>
-  <div class="sh-row"><label>Town / city<input name="city" autocomplete="address-level2" required maxlength="60"></label>
-  <label>PIN code<input name="pincode" inputmode="numeric" autocomplete="postal-code" required maxlength="6"></label></div>
-  <label>State<select name="state" required autocomplete="address-level1"><option value="">Choose your state</option></select></label>
+  ${field('name', 'autocomplete="name" required maxlength="80"')}
+  ${field('phone', 'type="tel" inputmode="numeric" autocomplete="tel-national" required maxlength="10"')}
+  ${field('email', 'type="email" autocomplete="email" required maxlength="120"')}
+  ${field('address1', 'autocomplete="address-line1" required maxlength="120"')}
+  ${field('address2', 'autocomplete="address-line2" maxlength="120"')}
+  <div class="sh-row">${field('city', 'autocomplete="address-level2" required maxlength="60"')}
+  ${field('pincode', 'inputmode="numeric" autocomplete="postal-code" required maxlength="6"')}</div>
+  <label>${esc(T.l_state)}<select name="state" required autocomplete="address-level1"><option value="">${esc(T.choose_state)}</option></select></label>
   <div id="summary" class="sh-summary" aria-live="polite"></div>
   <p class="sh-err" id="err" role="alert"></p>
-  <button class="btn sh-pay" type="submit">Continue to payment</button>
-  <p class="sh-note">We use your details only to deliver this order and send your receipt.</p>
+  <button class="btn sh-pay" type="submit">${esc(T.continue_pay)}</button>
+  <p class="sh-note">${esc(T.privacy_note)}</p>
 </form></div>`);
 
-page('pay.html', 'Test payment — Peppynose shop', 'Test payment page.', `
-<div class="wrap sh-narrow"><h1>Test payment</h1>
-<div class="sh-mockpay"><p><b>This is a pretend payment page for testing.</b> No money is taken. In the real shop, Razorpay opens here (UPI, cards, net banking).</p>
+  page('pay.html', `${T.pay_title} — ${T.shop_title}`, T.pay_title, `
+<div class="wrap sh-narrow"><h1>${esc(T.pay_title)}</h1>
+<div class="sh-mockpay"><p><b>${esc(T.pay_note_b)}</b> ${esc(T.pay_note)}</p>
 <p id="pay-amount" class="sh-total"></p>
-<button class="btn sh-pay" id="pay-ok" type="button">Pay (test: success)</button>
-<button class="btn plain" id="pay-fail" type="button">Test: payment fails</button>
+<button class="btn sh-pay" id="pay-ok" type="button">${esc(T.pay_ok)}</button>
+<button class="btn plain" id="pay-fail" type="button">${esc(T.pay_fail)}</button>
 <p class="sh-err" id="err" role="alert"></p></div></div>`);
 
-page('order.html', 'Your order — Peppynose shop', 'Order status.', `
-<div class="wrap sh-narrow" id="order" aria-live="polite"><p>Loading…</p></div>`);
+  page('order.html', `${T.order_title} — ${T.shop_title}`, T.order_title, `
+<div class="wrap sh-narrow" id="order" aria-live="polite"><p>${esc(T.loading)}</p></div>`);
 
-page('admin.html', 'Shop admin — Peppynose', 'Peppynose shop admin.', `
+  if (L === 'en') page('admin.html', 'Shop admin — Peppynose', 'Peppynose shop admin.', `
 <div class="wrap" id="admin"><h1>Shop admin</h1>
 <form id="login" class="sh-form sh-narrow" hidden><label>Admin password<input name="password" type="password" autocomplete="current-password" required></label><p class="sh-err" id="login-err" role="alert"></p><button class="btn" type="submit">Log in</button></form>
 <div id="panel" hidden></div></div>`);
 
-// Shop link + "Buy from Peppynose" buttons on the COPY of the Shop page only (the live site is not changed).
-let prod = readFileSync(join(DIST, 'products.html'), 'utf8'), added = 0;
-prod = prod.replace(/(<a class="pn-qr" href="buy\/([a-z0-9-]+)\.html")/g, (m, a, slug) => {
-  if (!C.products.some(p => p.slug === slug)) return m;
-  added++; return `<a class="btn sh-direct" href="shop/${slug}.html">Buy from Peppynose</a>` + a;
-});
-prod = prod.replace('</head>', '  <link rel="stylesheet" href="shop/shop.css">\n</head>');
-writeFileSync(join(DIST, 'products.html'), prod);
-if (added !== C.products.length) throw new Error(`added ${added} "Buy from Peppynose" buttons, expected ${C.products.length}`);
+  // "Buy from Peppynose" buttons on the COPY of this language's Shop page only (the live site is not changed).
+  const pf = L === 'en' ? join(DIST, 'products.html') : join(DIST, L, 'products.html');
+  let prod = readFileSync(pf, 'utf8'), added = 0;
+  prod = prod.replace(/(<a class="pn-qr" href="buy\/([a-z0-9-]+)\.html")/g, (m, a, slug) => {
+    if (!C.products.some(p => p.slug === slug)) return m;
+    added++; return `<a class="btn sh-direct" href="shop/${slug}.html">${esc(T.buy_direct)}</a>` + a;
+  });
+  prod = prod.replace('</head>', `  <link rel="stylesheet" href="${L === 'en' ? '' : '../'}shop/shop.css">\n</head>`);
+  writeFileSync(pf, prod);
+  if (added !== C.products.length) throw new Error(`${L}: added ${added} "Buy from Peppynose" buttons, expected ${C.products.length}`);
+}
 
 // ---- 2. seed data for the local database ----
 const q = s => `'${String(s).replace(/'/g, "''")}'`;
@@ -154,4 +176,4 @@ writeFileSync(join(DB, 'seed.sql'), sql.join('\n') + '\n');
 // ---- 3. local secrets (only for this computer; never committed) ----
 const vars = join(HERE, '.dev.vars');
 if (!existsSync(vars)) writeFileSync(vars, `PAYMENT_MODE=mock\nADMIN_PASSWORD=${randomBytes(9).toString('base64url')}\nSESSION_SECRET=${randomBytes(32).toString('hex')}\nORDER_SECRET=${randomBytes(32).toString('hex')}\n`);
-console.log(`built dist/ (${C.products.length} product pages) and dist-db/seed.sql`);
+console.log(`built dist/ (${C.products.length} product pages × ${LANGS.length} languages) and dist-db/seed.sql`);

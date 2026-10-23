@@ -10,6 +10,10 @@ body.shop { overflow-x: hidden; }
 .shop [hidden] { display: none !important; }
 .shop-test { background: var(--sh-warn-bg); color: var(--sh-warn-ink); text-align: center; font-size: .9rem; font-weight: 700; padding: 8px 16px; }
 .shop-main { padding: 36px 0 72px; min-height: 50vh; }
+.sh-langs { display: flex; justify-content: flex-end; gap: 14px; padding-top: 12px; font-size: .9rem; }
+.sh-langs a { color: var(--muted); }
+.sh-langs [aria-current] { font-weight: 700; }
+.shop-main { padding-top: 20px; }
 .shop-main h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 14px; }
 .shop-main h2 { font-size: 1.25rem; margin: 22px 0 10px; }
 .sh-narrow { max-width: 720px; }
@@ -120,3 +124,6 @@ body.shop { overflow-x: hidden; }
   .sh-line { grid-template-columns: 60px minmax(0, 1fr) auto; grid-template-areas: "img info info" "img qty price" "rm rm rm"; }
   .sh-line img { width: 60px; height: 60px; }
 }
+
+/* Tamil and Hindi: no capitals or wide letter spacing (they break the script) */
+:lang(ta) .sh-eyebrow, :lang(hi) .sh-eyebrow { text-transform: none; letter-spacing: 0; font-size: .9rem; }

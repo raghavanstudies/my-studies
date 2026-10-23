@@ -12,7 +12,7 @@ npm run dev          # builds, makes a fresh test database, starts http://localh
 - Shop: http://localhost:8787/shop/  (also "Buy from Peppynose" buttons on http://localhost:8787/products.html)
 - Admin: http://localhost:8787/shop/admin.html — the password is `ADMIN_PASSWORD` in `shop/.dev.vars`
   (made automatically on first build, random, never committed).
-- Tests: `npm test` (26 checks, phone + desktop).
+- Tests: `npm test` (30 checks, phone + desktop).
 
 ## How it works
 - `data/catalogue.json` — 13 products, prices in paise (₹249 = 24900), stock 25 each (test).
@@ -28,4 +28,4 @@ npm run dev          # builds, makes a fresh test database, starts http://localh
 - Delivery ₹49, free from ₹499 — test values.
 - GST rate (18%) and HSN codes — to confirm with the CA; GSTIN to add.
 - Emails are only saved (admin → Messages), not sent yet.
-- Tamil / Hindi shop pages are not made yet.
+- Tamil (/ta/shop/) and Hindi (/hi/shop/) pages: text is in `data/shop-strings.json` — needs a native-speaker check. Emails and the invoice are still English.

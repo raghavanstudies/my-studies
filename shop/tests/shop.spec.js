@@ -210,3 +210,44 @@ test('TC-SHOP-13 no sideways scroll on product, checkout, order and admin pages'
     expect(await noSideScroll(page), p).toBe(true);
   }
 });
+
+test('TC-SHOP-14 Tamil and Hindi shops: own text, Buy buttons on the Shop page copies, language switch keeps the page', async ({ page }) => {
+  for (const [L, add, title] of [['ta', 'கார்ட்டில் சேர்', 'Peppynose கடை'], ['hi', 'कार्ट में डालें', 'Peppynose शॉप']]) {
+    await page.goto(`/${L}/products.html`);
+    await expect(page.locator('a.sh-direct')).toHaveCount(13);
+    await page.goto(`/${L}/shop/`);
+    await expect(page.locator('html')).toHaveAttribute('lang', L);
+    await expect(page.locator('h1')).toHaveText(title);
+    await expect(page.locator('.sh-card')).toHaveCount(13);
+    await page.goto(`/${L}/shop/foam-mat.html`);
+    await expect(page.locator('.sh-ph img')).toHaveJSProperty('complete', true);
+    expect(await page.locator('.sh-ph img').evaluate(i => i.naturalWidth)).toBeGreaterThan(0);
+    await page.getByRole('button', { name: add }).click();
+    await expect(page.locator('#added a')).toHaveAttribute('href', 'cart.html');
+    expect(await noSideScroll(page)).toBe(true);
+    await page.locator('.sh-langs a[hreflang="en"]').click();
+    await expect(page).toHaveURL(/\/shop\/foam-mat/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  }
+});
+
+test('TC-SHOP-15 Tamil order: checkout errors in Tamil, paid order page in Tamil, email link opens the Tamil page', async ({ page, request }) => {
+  await page.goto('/ta/shop/teether-gift-set.html');
+  await page.getByRole('button', { name: 'கார்ட்டில் சேர்' }).click();
+  await page.goto('/ta/shop/checkout.html');
+  const f = page.locator('#checkout');
+  for (const k of ['name', 'email', 'address1', 'city', 'pincode']) await f.locator(`[name=${k}]`).fill(CUST[k]);
+  await f.locator('[name=phone]').fill('123');
+  await f.locator('[name=state]').selectOption('Tamil Nadu');
+  await page.locator('#checkout button[type=submit]').click();
+  await expect(page.locator('#e-phone')).toHaveText('10 இலக்க இந்திய மொபைல் எண்ணை உள்ளிடவும்.');
+  await f.locator('[name=phone]').fill(CUST.phone);
+  await page.locator('#checkout button[type=submit]').click();
+  await expect(page).toHaveURL(/\/ta\/shop\/pay(\.html)?#o=o_/);
+  await page.locator('#pay-ok').click();
+  await expect(page.locator('h1')).toHaveText('நன்றி! ஆர்டர் உறுதி செய்யப்பட்டது');
+  await expect(page.locator('#order')).toContainText('டீதர் Complete Gift Set');   // product name in Tamil, from the catalogue
+  await adminLogin(request);
+  const box = await (await request.get('/api/admin/outbox', { headers: ADMIN })).json();
+  expect(box.messages.find(m => m.kind === 'order_paid').body).toContain('/ta/shop/order.html#o=');
+});
