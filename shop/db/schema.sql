@@ -16,7 +16,6 @@ CREATE TABLE products (
   gst_rate      REAL NOT NULL,              -- percent, e.g. 18
   hsn           TEXT NOT NULL DEFAULT '',
   gst_confirmed INTEGER NOT NULL DEFAULT 0, -- 1 once the CA has confirmed rate + HSN
-  weight_g      INTEGER NOT NULL DEFAULT 0,
   active        INTEGER NOT NULL DEFAULT 1,
   sort          INTEGER NOT NULL DEFAULT 0
 );
@@ -27,9 +26,13 @@ CREATE TABLE variants (
   label        TEXT NOT NULL,               -- JSON: en, ta, hi
   price        INTEGER NOT NULL CHECK (price > 0),
   stock        INTEGER NOT NULL CHECK (stock >= 0),   -- a sale can never take stock below 0
+  mrp          INTEGER,                    -- printed MRP in paise (NULL = not known yet); price can never be above it
+  net_qty      TEXT NOT NULL DEFAULT '',
+  weight_g     INTEGER NOT NULL DEFAULT 0,
   amazon       TEXT,
   flipkart     TEXT,
-  sort         INTEGER NOT NULL DEFAULT 0
+  sort         INTEGER NOT NULL DEFAULT 0,
+  CHECK (mrp IS NULL OR price <= mrp)
 );
 
 CREATE TABLE orders (

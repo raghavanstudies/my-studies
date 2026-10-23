@@ -251,3 +251,19 @@ test('TC-SHOP-15 Tamil order: checkout errors in Tamil, paid order page in Tamil
   const box = await (await request.get('/api/admin/outbox', { headers: ADMIN })).json();
   expect(box.messages.find(m => m.kind === 'order_paid').body).toContain('/ta/shop/order.html#o=');
 });
+
+test('TC-SHOP-16 product page shows MRP, net quantity, country of origin and marketer; admin cannot set a price above MRP', async ({ page, request }) => {
+  await page.goto('/shop/knee-pads-blue-smiley.html');
+  await expect(page.locator('.sh-opt').first().locator('.sh-mrp')).toHaveText('MRP ₹349');
+  await page.locator('.sh-details summary').click();
+  await expect(page.locator('.sh-details')).toContainText('China');
+  await expect(page.locator('.sh-details')).toContainText('Pack of 4');
+  await expect(page.locator('.sh-details')).toContainText('Musiri');
+  await page.goto('/hi/shop/foam-mat.html');
+  await page.locator('.sh-details summary').click();
+  await expect(page.locator('.sh-details')).toContainText('भारत');
+  await adminLogin(request);
+  const r = await request.post('/api/admin/variant', { headers: ADMIN, data: { sku: 'foam-mat-1', price: 29901, stock: 25 } });
+  expect(r.status()).toBe(400);
+  expect((await r.json()).error).toContain('MRP');
+});

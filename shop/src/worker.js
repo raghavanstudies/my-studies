@@ -57,13 +57,13 @@ async function settings(db) {
 async function catalogue(env) {
   const [p, v, s] = await Promise.all([
     env.DB.prepare('SELECT slug, category, data FROM products WHERE active = 1 ORDER BY sort').all(),
-    env.DB.prepare('SELECT sku, product_slug, label, price, stock FROM variants ORDER BY sort').all(),
+    env.DB.prepare('SELECT sku, product_slug, label, price, stock, mrp FROM variants ORDER BY sort').all(),
     settings(env.DB)
   ]);
   return {
     products: p.results.map(r => ({
       slug: r.slug, category: r.category, ...JSON.parse(r.data),
-      variants: v.results.filter(x => x.product_slug === r.slug).map(x => ({ sku: x.sku, label: JSON.parse(x.label), price: x.price, stock: Math.min(x.stock, MAX_QTY) }))
+      variants: v.results.filter(x => x.product_slug === r.slug).map(x => ({ sku: x.sku, label: JSON.parse(x.label), price: x.price, mrp: x.mrp, stock: Math.min(x.stock, MAX_QTY) }))
     })),
     shipping: { fee: +s.shipping_fee, free_above: +s.free_shipping_above },
     states: STATES
@@ -318,15 +318,18 @@ async function setStatus(req, env) {
 }
 
 async function adminProducts(env) {
-  const [p, v] = await Promise.all([env.DB.prepare('SELECT slug, data, gst_rate, hsn, gst_confirmed FROM products ORDER BY sort').all(), env.DB.prepare('SELECT sku, product_slug, label, price, stock FROM variants ORDER BY sort').all()]);
+  const [p, v] = await Promise.all([env.DB.prepare('SELECT slug, data, gst_rate, hsn, gst_confirmed FROM products ORDER BY sort').all(), env.DB.prepare('SELECT sku, product_slug, label, price, stock, mrp FROM variants ORDER BY sort').all()]);
   return json({ products: p.results.map(r => ({ slug: r.slug, name: JSON.parse(r.data).name.en, gst_rate: r.gst_rate, hsn: r.hsn, gst_confirmed: !!r.gst_confirmed,
-    variants: v.results.filter(x => x.product_slug === r.slug).map(x => ({ sku: x.sku, label: JSON.parse(x.label).en, price: x.price, stock: x.stock })) })) });
+    variants: v.results.filter(x => x.product_slug === r.slug).map(x => ({ sku: x.sku, label: JSON.parse(x.label).en, price: x.price, mrp: x.mrp, stock: x.stock })) })) });
 }
 
 async function setVariant(req, env) {
   const b = await body(req), sku = str(b.sku, 80), price = int(b.price), stock = int(b.stock);
   if (!(price >= 100 && price <= 10000000)) throw new HttpError(400, 'Price must be between ₹1 and ₹1,00,000.');
   if (!(stock >= 0 && stock <= 100000)) throw new HttpError(400, 'Stock must be 0 or more.');
+  const cur = await env.DB.prepare('SELECT mrp FROM variants WHERE sku = ?').bind(sku).first();
+  if (!cur) throw new HttpError(404, 'Item not found.');
+  if (cur.mrp && price > cur.mrp) throw new HttpError(400, `Price cannot be above the MRP (${rupees(cur.mrp)}).`);
   const r = await env.DB.prepare('UPDATE variants SET price = ?, stock = ? WHERE sku = ?').bind(price, stock, sku).run();
   if (!r.meta.changes) throw new HttpError(404, 'Item not found.');
   return json({ ok: true });

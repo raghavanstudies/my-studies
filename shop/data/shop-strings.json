@@ -115,7 +115,15 @@
   "f_address1": "Please enter your house / street.",
   "f_city": "Please enter your town or city.",
   "f_pincode": "Please enter a 6-digit PIN code.",
-  "f_state": "Please choose your state."
+  "f_state": "Please choose your state.",
+  "mrp": "MRP {p}",
+  "mrp_note": "MRP includes all taxes.",
+  "details": "Product details",
+  "net_qty": "Net quantity",
+  "origin": "Country of origin",
+  "marketed_by": "Marketed by",
+  "country_India": "India",
+  "country_China": "China"
  },
  "ta": {
   "lang_name": "தமிழ்",
@@ -232,7 +240,15 @@
   "f_address1": "உங்கள் வீடு / தெருவை உள்ளிடவும்.",
   "f_city": "உங்கள் ஊர் அல்லது நகரத்தை உள்ளிடவும்.",
   "f_pincode": "6 இலக்க PIN கோடை உள்ளிடவும்.",
-  "f_state": "உங்கள் மாநிலத்தைத் தேர்ந்தெடுக்கவும்."
+  "f_state": "உங்கள் மாநிலத்தைத் தேர்ந்தெடுக்கவும்.",
+  "mrp": "MRP {p}",
+  "mrp_note": "MRP-இல் அனைத்து வரிகளும் அடங்கும்.",
+  "details": "பொருள் விவரங்கள்",
+  "net_qty": "நிகர அளவு",
+  "origin": "பிறப்பிட நாடு",
+  "marketed_by": "சந்தைப்படுத்துபவர்",
+  "country_India": "இந்தியா",
+  "country_China": "சீனா"
  },
  "hi": {
   "lang_name": "हिन्दी",
@@ -349,6 +365,14 @@
   "f_address1": "अपना मकान / गली लिखें।",
   "f_city": "अपना शहर या कस्बा लिखें।",
   "f_pincode": "6 अंकों का पिन कोड लिखें।",
-  "f_state": "अपना राज्य चुनें।"
+  "f_state": "अपना राज्य चुनें।",
+  "mrp": "MRP {p}",
+  "mrp_note": "MRP में सभी टैक्स शामिल हैं।",
+  "details": "उत्पाद की जानकारी",
+  "net_qty": "शुद्ध मात्रा",
+  "origin": "मूल देश",
+  "marketed_by": "विपणनकर्ता",
+  "country_India": "भारत",
+  "country_China": "चीन"
  }
 }
