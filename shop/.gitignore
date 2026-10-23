@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-db/
+.wrangler/
+.dev.vars
+test-results/
+playwright-report/

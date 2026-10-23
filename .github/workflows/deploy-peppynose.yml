@@ -3,8 +3,13 @@ name: Deploy Peppynose site
 on:
   push:
     branches: [main]
-    paths: ["peppynose/**", ".github/workflows/deploy-peppynose.yml"]
+    paths: ["peppynose/**", "peppynose-offline/**", ".github/workflows/deploy-peppynose.yml"]
   workflow_dispatch:
+
+# Which folder goes live. "peppynose-offline" = the "back soon" page (site offline).
+# To bring the full site back, change it to "peppynose" and push to main.
+env:
+  SITE_DIR: peppynose-offline
 
 permissions:
   contents: read
@@ -26,6 +31,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: peppynose
+          path: ${{ env.SITE_DIR }}
       - id: deployment
         uses: actions/deploy-pages@v4
