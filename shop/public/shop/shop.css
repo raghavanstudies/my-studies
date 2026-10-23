@@ -1,0 +1,122 @@
+/* Peppynose test shop — sits on top of ../styles.css and uses its colour tokens (light + dark already defined there). */
+:root { --sh-ok: #1f7a55; --sh-bad: #b3261e; --sh-warn-bg: #fff3cd; --sh-warn-ink: #5c4600; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sh-ok: #6fd3a6; --sh-bad: #ff8a80; --sh-warn-bg: #3d3214; --sh-warn-ink: #f3dd9a; } }
+:root[data-theme="dark"] { --sh-ok: #6fd3a6; --sh-bad: #ff8a80; --sh-warn-bg: #3d3214; --sh-warn-ink: #f3dd9a; }
+
+/* "Buy from Peppynose" on the copy of the Shop page */
+.btn.sh-direct { background: var(--accent); color: #fff; margin: 0 0 12px; width: 100%; }
+
+body.shop { overflow-x: hidden; }
+.shop [hidden] { display: none !important; }
+.shop-test { background: var(--sh-warn-bg); color: var(--sh-warn-ink); text-align: center; font-size: .9rem; font-weight: 700; padding: 8px 16px; }
+.shop-main { padding: 36px 0 72px; min-height: 50vh; }
+.shop-main h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 14px; }
+.shop-main h2 { font-size: 1.25rem; margin: 22px 0 10px; }
+.sh-narrow { max-width: 720px; }
+.sh-head p { color: var(--muted); margin-top: 0; }
+.sh-cart-link { font-weight: 700; color: var(--ink) !important; }
+.shop .btn { background: var(--ink); color: var(--cream); cursor: pointer; font: inherit; font-weight: 700; }
+.shop .btn.plain { background: transparent; color: var(--ink); border-color: var(--line); }
+.shop .btn:disabled, .shop .btn.disabled { opacity: .45; pointer-events: none; }
+.sh-err { color: var(--sh-bad); font-weight: 600; }
+.sh-hint, .sh-note { color: var(--muted); font-size: .9rem; }
+
+/* shop home */
+.sh-cat { margin-top: 30px; }
+.sh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 18px; }
+.sh-card { display: flex; flex-direction: column; gap: 6px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; text-decoration: none; color: var(--ink); transition: transform .15s, box-shadow .15s; }
+.sh-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.sh-card img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 16px; background: var(--sand); }
+.sh-card-name { font-weight: 700; line-height: 1.3; }
+.sh-card-price { color: var(--muted); }
+.sh-card-price b { color: var(--ink); }
+
+/* product page */
+.sh-product { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 44px; align-items: start; }
+.sh-ph { margin: 0; }
+.sh-ph img { width: 100%; height: auto; border-radius: var(--radius); background: var(--white); border: 1px solid var(--line); }
+.sh-back { color: var(--muted); font-size: .9rem; }
+.sh-desc { color: var(--muted); }
+.sh-buy fieldset { border: 0; padding: 0; margin: 0 0 16px; display: grid; gap: 10px; }
+.sh-buy legend { font-weight: 700; margin-bottom: 8px; }
+.sh-opt { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 14px; background: var(--white); cursor: pointer; }
+.sh-opt:has(input:checked) { border-color: var(--ink); }
+.sh-opt input { accent-color: var(--ink); width: 18px; height: 18px; margin: 0; }
+.sh-opt span { flex: 1; }
+.sh-qty { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.sh-qty label { margin-right: 6px; font-weight: 700; }
+.sh-qty button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); color: var(--ink); font-size: 1.2rem; cursor: pointer; }
+.sh-qty button:disabled { opacity: .4; cursor: default; }
+.sh-qty input { width: 56px; height: 40px; text-align: center; font: inherit; border: 1px solid var(--line); border-radius: 10px; background: var(--white); color: var(--ink); }
+.sh-qty.small { margin: 0; }
+.sh-qty.small button { width: 32px; height: 32px; font-size: 1rem; }
+.sh-qty.small span { min-width: 22px; text-align: center; font-weight: 700; }
+.sh-stock { color: var(--sh-ok); font-weight: 600; min-height: 1.6em; margin: 0 0 10px; }
+.sh-stock.low { color: var(--sh-bad); }
+.sh-add { width: 100%; }
+.sh-added { min-height: 1.6em; font-weight: 600; }
+.sh-also { font-size: .9rem; color: var(--muted); }
+
+/* cart + summary */
+.sh-lines { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 12px; }
+.sh-line { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto auto; grid-template-areas: "img info qty price" "img info rm rm"; gap: 4px 14px; align-items: center; background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 12px; }
+.sh-line img { grid-area: img; width: 72px; height: 72px; object-fit: cover; border-radius: 12px; }
+.sh-line-info { grid-area: info; display: flex; flex-direction: column; min-width: 0; }
+.sh-line-info a { font-weight: 700; color: var(--ink); text-decoration: none; }
+.sh-line-info span { color: var(--muted); font-size: .9rem; }
+.sh-line .sh-qty { grid-area: qty; }
+.sh-line-price { grid-area: price; text-align: right; }
+.sh-remove { grid-area: rm; justify-self: end; background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font: inherit; font-size: .85rem; }
+.sh-summary { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 16px 20px; margin: 18px 0; }
+.sh-summary h2 { margin-top: 0; }
+.sh-tot { display: flex; justify-content: space-between; padding: 4px 0; }
+.sh-grand { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 10px; font-size: 1.1rem; }
+.sh-mini { list-style: none; padding: 0; margin: 0 0 8px; }
+.sh-mini li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; }
+.sh-pay { width: 100%; }
+
+/* forms */
+.sh-form { display: grid; gap: 14px; }
+.sh-form label { display: grid; gap: 6px; font-weight: 600; }
+.sh-form input, .sh-form select { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--ink); width: 100%; box-sizing: border-box; }
+.sh-form input:focus, .sh-form select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sh-form [aria-invalid="true"] { border-color: var(--sh-bad); }
+.sh-field-err { color: var(--sh-bad); font-size: .88rem; font-weight: 600; }
+.sh-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* pay + order */
+.sh-mockpay { background: var(--white); border: 1px dashed var(--peach); border-radius: 18px; padding: 20px; display: grid; gap: 12px; }
+.sh-total { font-size: 1.3rem; font-weight: 700; margin: 0; }
+.sh-eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 700; color: var(--muted); margin: 0; }
+.sh-status { font-size: 1.05rem; }
+
+/* admin */
+.sh-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+.sh-tabs button { font: inherit; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); color: var(--ink); cursor: pointer; }
+.sh-tabs button[aria-selected="true"] { background: var(--ink); color: var(--cream); }
+.sh-tabs .sh-logout { margin-left: auto; }
+.sh-filter { display: inline-flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.sh-filter select { font: inherit; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--white); color: var(--ink); }
+.sh-table { overflow-x: auto; background: var(--white); border: 1px solid var(--line); border-radius: 16px; }
+.sh-table table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.sh-table th, .sh-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.sh-table input { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--cream); color: var(--ink); max-width: 90px; }
+.sh-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.sh-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; background: var(--sand); text-transform: capitalize; white-space: nowrap; }
+.sh-pill.s-paid, .sh-pill.s-delivered { background: var(--mint); color: #1d3b30; }
+.sh-pill.s-paid_review, .sh-pill.s-payment_failed { background: var(--peach); color: #4a2414; }
+.sh-pill.s-shipped, .sh-pill.s-packed { background: var(--sky); color: #1d3049; }
+.sh-card-admin { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 20px; scroll-margin-top: 92px; }
+.sh-card-admin h2 { margin-top: 0; }
+.sh-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sh-saved { font-size: .85rem; }
+.sh-msg { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; }
+.sh-msg summary { cursor: pointer; }
+.sh-msg pre { white-space: pre-wrap; font: inherit; font-size: .92rem; margin: 10px 0 0; }
+
+@media (max-width: 760px) {
+  .sh-product { grid-template-columns: 1fr; gap: 20px; }
+  .sh-row { grid-template-columns: 1fr; }
+  .sh-line { grid-template-columns: 60px minmax(0, 1fr) auto; grid-template-areas: "img info info" "img qty price" "rm rm rm"; }
+  .sh-line img { width: 60px; height: 60px; }
+}

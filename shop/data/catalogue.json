@@ -1,0 +1,593 @@
+{
+ "_note": "Peppynose own-shop catalogue (TEST DATA). Prices = Amazon.in catalogue prices, GST-inclusive, in paise. gst_rate / hsn must be confirmed by the CA before going live (gst_confirmed:false). Stock numbers are test values.",
+ "categories": [
+  {
+   "id": "car-signs",
+   "name": {
+    "en": "Car Safety Signs",
+    "ta": "கார் பாதுகாப்பு சைன்கள்",
+    "hi": "कार सेफ़्टी साइन"
+   }
+  },
+  {
+   "id": "teethers",
+   "name": {
+    "en": "Teethers",
+    "ta": "டீதர்கள்",
+    "hi": "टीदर"
+   }
+  },
+  {
+   "id": "knee-pads",
+   "name": {
+    "en": "Baby Knee Pads",
+    "ta": "குழந்தை முழங்கால் பேட்கள்",
+    "hi": "बेबी नी पैड"
+   }
+  },
+  {
+   "id": "play",
+   "name": {
+    "en": "Learning & Play",
+    "ta": "கற்றல் & விளையாட்டு",
+    "hi": "सीखना और खेलना"
+   }
+  }
+ ],
+ "products": [
+  {
+   "slug": "baby-on-board-sign",
+   "category": "car-signs",
+   "name": {
+    "en": "Baby on Board & Bump on Board Sign",
+    "ta": "Baby on Board & Bump on Board சைன்",
+    "hi": "Baby on Board & Bump on Board साइन"
+   },
+   "desc": {
+    "en": "2-in-1 reversible, 14.5 × 14.5 cm, 300 GSM laminated board with suction cup.",
+    "ta": "2-in-1 இருபக்கம், 14.5 × 14.5 செ.மீ., சக்ஷன் கப்புடன் 300 GSM லேமினேட்டட் போர்டு.",
+    "hi": "2-in-1 दोनों तरफ़, 14.5 × 14.5 सेमी, सक्शन कप के साथ 300 GSM लैमिनेटेड बोर्ड।"
+   },
+   "alt": {
+    "en": "Peppynose Baby on Board & Bump on Board Sign",
+    "ta": "Peppynose Baby on Board & Bump on Board சைன்",
+    "hi": "Peppynose Baby on Board & Bump on Board साइन"
+   },
+   "img": "images/bob-1.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "baby-on-board-sign-1",
+     "label": {
+      "en": "Pack of 1",
+      "ta": "1 பேக்",
+      "hi": "1 का पैक"
+     },
+     "price": 24900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0GP6XP68R",
+     "flipkart": "https://www.flipkart.com/peppynose-sticker-decal-car/p/itmfd1ff36559f4c?pid=CSKHMN38K2PKU5HZ"
+    },
+    {
+     "sku": "baby-on-board-sign-2",
+     "label": {
+      "en": "Pack of 2",
+      "ta": "2 பேக்",
+      "hi": "2 का पैक"
+     },
+     "price": 39900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H2QVVDRX",
+     "flipkart": "https://www.flipkart.com/peppynose-sticker-decal-car/p/itmfd1ff36559f4c?pid=CSKHRUTAZSWZJGWS"
+    }
+   ]
+  },
+  {
+   "slug": "mom-on-board-sign",
+   "category": "car-signs",
+   "name": {
+    "en": "Mom on Board & Baby on Board Sign",
+    "ta": "Mom on Board & Baby on Board சைன்",
+    "hi": "Mom on Board & Baby on Board साइन"
+   },
+   "desc": {
+    "en": "2-in-1 reversible, \"Mom on Board\" for moms-to-be, 14.5 cm, with suction cup.",
+    "ta": "2-in-1 இருபக்கம், கர்ப்பிணி அம்மாக்களுக்கு \"Mom on Board\", 14.5 செ.மீ., சக்ஷன் கப்புடன்.",
+    "hi": "2-in-1 दोनों तरफ़, होने वाली माँओं के लिए \"Mom on Board\", 14.5 सेमी, सक्शन कप के साथ।"
+   },
+   "alt": {
+    "en": "Peppynose Mom on Board & Baby on Board Sign",
+    "ta": "Peppynose Mom on Board & Baby on Board சைன்",
+    "hi": "Peppynose Mom on Board & Baby on Board साइन"
+   },
+   "img": "images/mob.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "mom-on-board-sign-1",
+     "label": {
+      "en": "Pack of 1",
+      "ta": "1 பேக்",
+      "hi": "1 का पैक"
+     },
+     "price": 24900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0GVZFQ2Y5",
+     "flipkart": "https://www.flipkart.com/peppynose-sticker-decal-car/p/itm8b858189d10ff?pid=CSKHRM5DRQMEJKVE"
+    }
+   ]
+  },
+  {
+   "slug": "teether-gift-set",
+   "category": "teethers",
+   "name": {
+    "en": "Teether Complete Gift Set (6 pieces)",
+    "ta": "டீதர் Complete Gift Set (6 துண்டுகள்)",
+    "hi": "टीथर Complete Gift Set (6 पीस)"
+   },
+   "desc": {
+    "en": "Silicone teether ring with 5 neem wood shapes. A lovely baby gift.",
+    "ta": "5 வேப்ப மர வடிவங்களுடன் சிலிகான் டீதர் வளையம். குழந்தைக்கு அழகான பரிசு.",
+    "hi": "नीम की लकड़ी की 5 आकृतियों के साथ सिलिकॉन टीथर रिंग। बच्चे के लिए प्यारा तोहफ़ा।"
+   },
+   "alt": {
+    "en": "Peppynose Teether Complete Gift Set (6 pieces)",
+    "ta": "Peppynose டீதர் Complete Gift Set (6 துண்டுகள்)",
+    "hi": "Peppynose टीथर Complete Gift Set (6 पीस)"
+   },
+   "img": "images/teether-gift.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "teether-gift-set-1",
+     "label": {
+      "en": "Gift set of 6",
+      "ta": "6 துண்டு பரிசுத் தொகுப்பு",
+      "hi": "6 का गिफ़्ट सेट"
+     },
+     "price": 64900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H8FF5D9M",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-silicone-neem-wood-teether-combo-complete-gift-set-6-pieces/p/itm64326c77f02d7?pid=TSOHRUVTHASV6DWJ"
+    }
+   ]
+  },
+  {
+   "slug": "teether-fish-bird",
+   "category": "teethers",
+   "name": {
+    "en": "Teether Fish & Bird Combo (3 pieces)",
+    "ta": "டீதர் Fish & Bird Combo (3 துண்டுகள்)",
+    "hi": "टीथर Fish & Bird Combo (3 पीस)"
+   },
+   "desc": {
+    "en": "Silicone teether ring with neem wood fish and bird.",
+    "ta": "வேப்ப மர மீன் மற்றும் பறவையுடன் சிலிகான் டீதர் வளையம்.",
+    "hi": "नीम की लकड़ी की मछली और चिड़िया के साथ सिलिकॉन टीथर रिंग।"
+   },
+   "alt": {
+    "en": "Peppynose Teether Fish & Bird Combo (3 pieces)",
+    "ta": "Peppynose டீதர் Fish & Bird Combo (3 துண்டுகள்)",
+    "hi": "Peppynose टीथर Fish & Bird Combo (3 पीस)"
+   },
+   "img": "images/teether-fishbird.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "teether-fish-bird-1",
+     "label": {
+      "en": "Combo of 3",
+      "ta": "3 துண்டு காம்போ",
+      "hi": "3 का कॉम्बो"
+     },
+     "price": 29900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H8FFYVTG",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-silicone-neem-wood-teether-combo-fish-bird-3-pieces/p/itm8bc9988a3b215?pid=TSOHRUVVFP3F6WMH"
+    }
+   ]
+  },
+  {
+   "slug": "teether-car-cloud",
+   "category": "teethers",
+   "name": {
+    "en": "Teether Car & Cloud Combo (3 pieces)",
+    "ta": "டீதர் Car & Cloud Combo (3 துண்டுகள்)",
+    "hi": "टीथर Car & Cloud Combo (3 पीस)"
+   },
+   "desc": {
+    "en": "Silicone teether ring with neem wood car and cloud.",
+    "ta": "வேப்ப மர கார் மற்றும் மேகத்துடன் சிலிகான் டீதர் வளையம்.",
+    "hi": "नीम की लकड़ी की कार और बादल के साथ सिलिकॉन टीथर रिंग।"
+   },
+   "alt": {
+    "en": "Peppynose Teether Car & Cloud Combo (3 pieces)",
+    "ta": "Peppynose டீதர் Car & Cloud Combo (3 துண்டுகள்)",
+    "hi": "Peppynose टीथर Car & Cloud Combo (3 पीस)"
+   },
+   "img": "images/teether-carcloud.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "teether-car-cloud-1",
+     "label": {
+      "en": "Combo of 3",
+      "ta": "3 துண்டு காம்போ",
+      "hi": "3 का कॉम्बो"
+     },
+     "price": 29900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H8FGM8R3",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-silicone-neem-wood-teether-combo-car-cloud-3-pieces/p/itmfb77118dc08e6?pid=TSOHRUVWQN5HEWYG"
+    }
+   ]
+  },
+  {
+   "slug": "knee-pads-blue-smiley",
+   "category": "knee-pads",
+   "name": {
+    "en": "Knee Pads — Blue Smiley",
+    "ta": "முழங்கால் பேட் — Blue Smiley",
+    "hi": "नी पैड — Blue Smiley"
+   },
+   "desc": {
+    "en": "Soft cotton knee & elbow protector with a smiley face.",
+    "ta": "ஸ்மைலி முகத்துடன் மென்மையான பருத்தி முழங்கால் & முழங்கை பாதுகாப்பு.",
+    "hi": "स्माइली चेहरे वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+   },
+   "alt": {
+    "en": "Peppynose Knee Pads — Blue Smiley",
+    "ta": "Peppynose முழங்கால் பேட் — Blue Smiley",
+    "hi": "Peppynose नी पैड — Blue Smiley"
+   },
+   "img": "images/knee-blue.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "knee-pads-blue-smiley-1",
+     "label": {
+      "en": "Pack of 2",
+      "ta": "2 பேக்",
+      "hi": "2 का पैक"
+     },
+     "price": 17900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SN9GGM",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-blue/p/itm85e14399640f4?pid=BNPHRUYHVEGTVF3Q"
+    },
+    {
+     "sku": "knee-pads-blue-smiley-2",
+     "label": {
+      "en": "Pack of 4",
+      "ta": "4 பேக்",
+      "hi": "4 का पैक"
+     },
+     "price": 34000,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SFL34Q",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-blue/p/itm55dda0db13dad?pid=BNPHRUYGJHYMAQKG"
+    }
+   ]
+  },
+  {
+   "slug": "knee-pads-yellow-smiley",
+   "category": "knee-pads",
+   "name": {
+    "en": "Knee Pads — Yellow Smiley",
+    "ta": "முழங்கால் பேட் — Yellow Smiley",
+    "hi": "नी पैड — Yellow Smiley"
+   },
+   "desc": {
+    "en": "Soft cotton knee & elbow protector with a smiley face.",
+    "ta": "ஸ்மைலி முகத்துடன் மென்மையான பருத்தி முழங்கால் & முழங்கை பாதுகாப்பு.",
+    "hi": "स्माइली चेहरे वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+   },
+   "alt": {
+    "en": "Peppynose Knee Pads — Yellow Smiley",
+    "ta": "Peppynose முழங்கால் பேட் — Yellow Smiley",
+    "hi": "Peppynose नी पैड — Yellow Smiley"
+   },
+   "img": "images/knee-yellow.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "knee-pads-yellow-smiley-1",
+     "label": {
+      "en": "Pack of 2",
+      "ta": "2 பேக்",
+      "hi": "2 का पैक"
+     },
+     "price": 17900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SSTPH3",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-yellow/p/itm85e14399640f4?pid=BNPHRUYJCAVBNDET"
+    },
+    {
+     "sku": "knee-pads-yellow-smiley-2",
+     "label": {
+      "en": "Pack of 4",
+      "ta": "4 பேக்",
+      "hi": "4 का पैक"
+     },
+     "price": 34000,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SVQ5JL",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-yellow/p/itm55dda0db13dad?pid=BNPHRUYKZPGK93DQ"
+    }
+   ]
+  },
+  {
+   "slug": "knee-pads-mint-dotted",
+   "category": "knee-pads",
+   "name": {
+    "en": "Knee Pads — Mint Dotted",
+    "ta": "முழங்கால் பேட் — Mint Dotted",
+    "hi": "नी पैड — Mint Dotted"
+   },
+   "desc": {
+    "en": "Soft cotton knee & elbow protector with dotted grip.",
+    "ta": "புள்ளி கிரிப்புடன் மென்மையான பருத்தி முழங்கால் & முழங்கை பாதுகாப்பு.",
+    "hi": "डॉटेड ग्रिप वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+   },
+   "alt": {
+    "en": "Peppynose Knee Pads — Mint Dotted",
+    "ta": "Peppynose முழங்கால் பேட் — Mint Dotted",
+    "hi": "Peppynose नी पैड — Mint Dotted"
+   },
+   "img": "images/knee-mint.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "knee-pads-mint-dotted-1",
+     "label": {
+      "en": "Pack of 4",
+      "ta": "4 பேக்",
+      "hi": "4 का पैक"
+     },
+     "price": 34000,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H757K755",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-mint/p/itm55dda0db13dad?pid=BNPHRUYFVV4VSYPM"
+    }
+   ]
+  },
+  {
+   "slug": "knee-pads-gray-dotted",
+   "category": "knee-pads",
+   "name": {
+    "en": "Knee Pads — Gray Dotted",
+    "ta": "முழங்கால் பேட் — Gray Dotted",
+    "hi": "नी पैड — Gray Dotted"
+   },
+   "desc": {
+    "en": "Soft cotton knee & elbow protector with dotted grip.",
+    "ta": "புள்ளி கிரிப்புடன் மென்மையான பருத்தி முழங்கால் & முழங்கை பாதுகாப்பு.",
+    "hi": "डॉटेड ग्रिप वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+   },
+   "alt": {
+    "en": "Peppynose Knee Pads — Gray Dotted",
+    "ta": "Peppynose முழங்கால் பேட் — Gray Dotted",
+    "hi": "Peppynose नी पैड — Gray Dotted"
+   },
+   "img": "images/knee-gray.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "knee-pads-gray-dotted-1",
+     "label": {
+      "en": "Pack of 2",
+      "ta": "2 பேக்",
+      "hi": "2 का पैक"
+     },
+     "price": 17900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SNM4ZR",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-gray/p/itm85e14399640f4?pid=BNPHRUYFGBRBG9ZD"
+    },
+    {
+     "sku": "knee-pads-gray-dotted-2",
+     "label": {
+      "en": "Pack of 4",
+      "ta": "4 பேக்",
+      "hi": "4 का पैक"
+     },
+     "price": 34000,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SMPC3J",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-gray/p/itm55dda0db13dad?pid=BNPHRUYFN7CCEAB4"
+    }
+   ]
+  },
+  {
+   "slug": "knee-pads-black-dotted",
+   "category": "knee-pads",
+   "name": {
+    "en": "Knee Pads — Black Dotted",
+    "ta": "முழங்கால் பேட் — Black Dotted",
+    "hi": "नी पैड — Black Dotted"
+   },
+   "desc": {
+    "en": "Soft cotton knee & elbow protector with dotted grip.",
+    "ta": "புள்ளி கிரிப்புடன் மென்மையான பருத்தி முழங்கால் & முழங்கை பாதுகாப்பு.",
+    "hi": "डॉटेड ग्रिप वाला मुलायम कॉटन घुटना और कोहनी प्रोटेक्टर।"
+   },
+   "alt": {
+    "en": "Peppynose Knee Pads — Black Dotted",
+    "ta": "Peppynose முழங்கால் பேட் — Black Dotted",
+    "hi": "Peppynose नी पैड — Black Dotted"
+   },
+   "img": "images/knee-black.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "knee-pads-black-dotted-1",
+     "label": {
+      "en": "Pack of 2",
+      "ta": "2 பேக்",
+      "hi": "2 का पैक"
+     },
+     "price": 17900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SH8ZVQ",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-black/p/itm85e14399640f4?pid=BNPHRUYF9WQQNTSM"
+    },
+    {
+     "sku": "knee-pads-black-dotted-2",
+     "label": {
+      "en": "Pack of 4",
+      "ta": "4 பேக்",
+      "hi": "4 का पैक"
+     },
+     "price": 34000,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0H6SSPWSR",
+     "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-black/p/itm55dda0db13dad?pid=BNPHRUYFVHK8F7HZ"
+    }
+   ]
+  },
+  {
+   "slug": "wooden-kitchen-set",
+   "category": "play",
+   "name": {
+    "en": "Wooden Kitchen Play Set",
+    "ta": "மரச் சமையல் விளையாட்டுத் தொகுப்பு",
+    "hi": "लकड़ी का किचन प्ले सेट"
+   },
+   "desc": {
+    "en": "Eco-friendly, non-toxic, 15 pieces for pretend play.",
+    "ta": "சுற்றுச்சூழலுக்கு உகந்தது, நச்சற்றது, பாவனை விளையாட்டுக்கு 15 துண்டுகள்.",
+    "hi": "पर्यावरण के अनुकूल, बिना ज़हरीले तत्व, नकली खेल के लिए 15 पीस।"
+   },
+   "alt": {
+    "en": "Peppynose Wooden Kitchen Play Set",
+    "ta": "Peppynose மரச் சமையல் விளையாட்டுத் தொகுப்பு",
+    "hi": "Peppynose लकड़ी का किचन प्ले सेट"
+   },
+   "img": "images/kitchen.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "wooden-kitchen-set-1",
+     "label": {
+      "en": "Set of 15",
+      "ta": "15 துண்டுத் தொகுப்பு",
+      "hi": "15 का सेट"
+     },
+     "price": 39900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0DJKLV73B",
+     "flipkart": null
+    }
+   ]
+  },
+  {
+   "slug": "foam-mat",
+   "category": "play",
+   "name": {
+    "en": "Alphabet & Number Foam Mat",
+    "ta": "எழுத்து & எண் ஃபோம் மேட்",
+    "hi": "अक्षर और अंक फोम मैट"
+   },
+   "desc": {
+    "en": "36 interlocking foam pieces for learning through play.",
+    "ta": "விளையாடிக்கொண்டே கற்க 36 இணைக்கும் ஃபோம் துண்டுகள்.",
+    "hi": "खेल-खेल में सीखने के लिए 36 जुड़ने वाले फोम पीस।"
+   },
+   "alt": {
+    "en": "Peppynose Alphabet & Number Foam Mat",
+    "ta": "Peppynose எழுத்து & எண் ஃபோம் மேட்",
+    "hi": "Peppynose अक्षर और अंक फोम मैट"
+   },
+   "img": "images/foam-mat.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "foam-mat-1",
+     "label": {
+      "en": "36 pieces",
+      "ta": "36 துண்டுகள்",
+      "hi": "36 पीस"
+     },
+     "price": 22900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0DJRKW3T9",
+     "flipkart": null
+    }
+   ]
+  },
+  {
+   "slug": "lcd-tablet-blue",
+   "category": "play",
+   "name": {
+    "en": "LCD Writing Tablet — Blue",
+    "ta": "LCD எழுதும் டேப்லெட் — Blue",
+    "hi": "LCD राइटिंग टैबलेट — Blue"
+   },
+   "desc": {
+    "en": "8.5-inch reusable LCD screen for mess-free drawing.",
+    "ta": "குப்பையில்லா ஓவியத்துக்கு மீண்டும் பயன்படுத்தக்கூடிய 8.5-இன்ச் LCD திரை.",
+    "hi": "बिना गंदगी की ड्रॉइंग के लिए दोबारा इस्तेमाल होने वाली 8.5-इंच LCD स्क्रीन।"
+   },
+   "alt": {
+    "en": "Peppynose LCD Writing Tablet — Blue",
+    "ta": "Peppynose LCD எழுதும் டேப்லெட் — Blue",
+    "hi": "Peppynose LCD राइटिंग टैबलेट — Blue"
+   },
+   "img": "images/lcd-blue.webp",
+   "gst_rate": 18,
+   "hsn": "",
+   "gst_confirmed": false,
+   "weight_g": 150,
+   "variants": [
+    {
+     "sku": "lcd-tablet-blue-1",
+     "label": {
+      "en": "1 tablet",
+      "ta": "1 டேப்லெட்",
+      "hi": "1 टैबलेट"
+     },
+     "price": 19900,
+     "stock": 25,
+     "amazon": "https://www.amazon.in/dp/B0DK17XHX3",
+     "flipkart": null
+    }
+   ]
+  }
+ ]
+}
