@@ -55,7 +55,7 @@
    },
    "img": "images/bob-1.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "4810",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -105,7 +105,7 @@
    },
    "img": "images/mob.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "4810",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -257,7 +257,7 @@
    },
    "img": "images/knee-blue.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "61119090",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -307,7 +307,7 @@
    },
    "img": "images/knee-yellow.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "61119090",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -357,7 +357,7 @@
    },
    "img": "images/knee-mint.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "61119090",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -395,7 +395,7 @@
    },
    "img": "images/knee-gray.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "61119090",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -445,7 +445,7 @@
    },
    "img": "images/knee-black.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "61119090",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -495,7 +495,7 @@
    },
    "img": "images/kitchen.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "950300",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [
@@ -571,7 +571,7 @@
    },
    "img": "images/lcd-blue.webp",
    "gst_rate": 18,
-   "hsn": "",
+   "hsn": "950300",
    "gst_confirmed": false,
    "weight_g": 150,
    "variants": [

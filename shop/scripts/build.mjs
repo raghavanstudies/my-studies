@@ -145,8 +145,8 @@ C.products.forEach((p, i) => {
 });
 const settings = {
   shipping_fee: '4900', free_shipping_above: '49900',          // TEST values: ₹49 delivery, free from ₹499 (owner to decide)
-  seller_name: 'Peppynose', seller_address: 'T-pet road, Musiri - 621211, Trichy, Tamil Nadu', seller_state: 'Tamil Nadu',
-  seller_gstin: '', seller_email: 'care.peppynose@gmail.com', next_order_number: '1001'
+  seller_name: 'Peppynose', seller_address: '8/3, Pari Vallal Street, T-pet Road, Musiri, Tiruchirappalli, Tamil Nadu - 621211', seller_state: 'Tamil Nadu',
+  seller_gstin: '33DQIPM3353P1ZD', seller_email: 'care.peppynose@gmail.com', next_order_number: '1001'
 };
 for (const [k, v] of Object.entries(settings)) sql.push(`INSERT INTO settings (key, value) VALUES (${q(k)}, ${q(v)});`);
 writeFileSync(join(DB, 'seed.sql'), sql.join('\n') + '\n');
