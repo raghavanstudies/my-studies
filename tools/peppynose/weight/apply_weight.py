@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Peppynose: "My weight" tab on the pregnancy tracker (EN / TA / HI). Safe to run twice (checks for 'p-weight').
+"""Peppynose pregnancy tracker: "My weight" card and the no-tabs layout (EN / TA / HI). Safe to run twice.
+After this script the result shows, one below the other: week + picture, My weight, This week, Checkups, To-do.
 The logic is in peppynose/weight.js; weights are kept ONLY in the browser (localStorage "pn_weight").
 Rebuild chain:  python3 -I tools/peppynose/gen_site.py peppynose && python3 -I tools/peppynose/v3/apply_v3.py peppynose
                 && python3 -I tools/peppynose/v4/tools/apply_v4.py peppynose && python3 -I tools/peppynose/weight/apply_weight.py peppynose
@@ -57,6 +58,17 @@ W = {  # key: (en, ta, hi)
  'w_note': ('A general guide for one baby, based on the US Institute of Medicine (2009). Your doctor may suggest different numbers, especially for twins. Talk to your doctor about your weight.',
             'ஒரு குழந்தைக்கான பொதுவான வழிகாட்டி (US Institute of Medicine, 2009). உங்கள் மருத்துவர் வேறு எண்களைச் சொல்லலாம், குறிப்பாக இரட்டைக் குழந்தைகளுக்கு. உங்கள் எடை பற்றி மருத்துவரிடம் பேசுங்கள்.',
             'एक बच्चे के लिए सामान्य गाइड (US Institute of Medicine, 2009)। आपके डॉक्टर अलग संख्या बता सकते हैं, ख़ासकर जुड़वाँ बच्चों में। अपने वज़न के बारे में डॉक्टर से बात करें।'),
+ 'w_setup_intro': ('Tell us two things once. Then add your weight every week in one tap.',
+                   'இரண்டு விவரங்களை ஒருமுறை சொல்லுங்கள். பிறகு ஒவ்வொரு வாரமும் உங்கள் எடையை எளிதாகச் சேர்க்கலாம்.',
+                   'दो बातें एक बार बताएँ। फिर हर हफ़्ते आसानी से अपना वज़न डालें।'),
+ 'w_today': ("Today's weight (kg)", 'இன்றைய எடை (கி.கி.)', 'आज का वज़न (किलो)'),
+ 'w_for_week': ('for week {w}', 'வாரம் {w}-க்கு', 'हफ़्ता {w} के लिए'),
+ 'w_change_week': ('Different week?', 'வேறு வாரமா?', 'कोई और हफ़्ता?'),
+ 'w_see_all': ('See all weights (week-wise / month-wise)', 'எல்லா எடைகளையும் பார்க்க (வாரவாரியாக / மாதவாரியாக)', 'सभी वज़न देखें (हफ़्ते / महीने के हिसाब से)'),
+ 'w_tile_latest': ('Latest', 'கடைசி எடை', 'आख़िरी वज़न'),
+ 'w_tile_gain': ('Gained so far', 'இதுவரை அதிகரிப்பு', 'अब तक बढ़ा'),
+ 'w_tile_status': ('Healthy range', 'ஆரோக்கிய வரம்பு', 'स्वस्थ सीमा'),
+ 'w_week_of': ('week {w}', 'வாரம் {w}', 'हफ़्ता {w}'),
  'w_saved': ('Your weights are saved on this phone only.', 'உங்கள் எடைகள் இந்த போனில் மட்டுமே சேமிக்கப்படும்.', 'आपका वज़न सिर्फ़ इसी फ़ोन में सेव होता है।'),
 }
 
@@ -76,35 +88,51 @@ PRIV = {
 }
 
 def panel(S):
-    return f'''<div class="trk-card trk-panel" id="p-weight" role="tabpanel" aria-labelledby="t-weight" hidden><h2>{S['w_h']}</h2><p class="trk-sub">{S['w_intro']}</p>
-<form class="wt-form" id="wt-setup" novalidate><h3>{S['w_setup_h']}</h3><div class="wt-row"><label>{S['w_height']}<input id="wt-h" type="number" inputmode="decimal" min="120" max="220" step="0.1" required></label><label>{S['w_pre']}<input id="wt-pre" type="number" inputmode="decimal" min="30" max="200" step="0.1" required></label></div><button class="btn" type="submit">{S['w_setup_btn']}</button><p class="wt-err" id="wt-setup-err" role="alert"></p></form>
-<div id="wt-main" hidden><p class="wt-bmi" id="wt-bmi"></p>
-<form class="wt-form" id="wt-add" novalidate><h3>{S['w_add_h']}</h3><div class="wt-row"><label>{S['w_week']}<input id="wt-week" type="number" inputmode="numeric" min="1" max="42" step="1" required></label><label>{S['w_kg']}<input id="wt-kg" type="number" inputmode="decimal" min="30" max="200" step="0.1" required></label><button class="btn" type="submit">{S['w_add_btn']}</button></div><p class="wt-err" id="wt-err" role="alert"></p></form>
+    return f'''<!--wt--><section class="trk-card wt-card" id="p-weight" aria-labelledby="wt-title"><h2 id="wt-title"><span class="trk-ico" aria-hidden="true">⚖️</span> {S['w_h']}</h2>
+<form class="wt-form" id="wt-setup" novalidate><p class="trk-sub">{S['w_setup_intro']}</p><div class="wt-row"><label>{S['w_height']}<input id="wt-h" type="number" inputmode="decimal" min="120" max="220" step="0.1" required></label><label>{S['w_pre']}<input id="wt-pre" type="number" inputmode="decimal" min="30" max="200" step="0.1" required></label></div><button class="btn" type="submit">{S['w_setup_btn']}</button><p class="wt-err" id="wt-setup-err" role="alert"></p></form>
+<div id="wt-main" hidden>
+<form class="wt-form wt-today" id="wt-add" novalidate><label class="wt-big-l" for="wt-kg">{S['w_today']} <span id="wt-forweek"></span></label><div class="wt-row"><input id="wt-kg" type="number" inputmode="decimal" min="30" max="200" step="0.1" required><button class="btn" type="submit">{S['w_add_btn']}</button></div>
+<button type="button" class="wt-link" id="wt-wk-btn">{S['w_change_week']}</button><label class="wt-wk" id="wt-wk-l" hidden>{S['w_week']}<input id="wt-week" type="number" inputmode="numeric" min="1" max="42" step="1" required></label><p class="wt-err" id="wt-err" role="alert"></p></form>
+<div class="wt-stats" id="wt-stats" aria-live="polite"></div>
 <figure class="wt-chart"><svg id="wt-svg" viewBox="0 0 340 220" role="img" aria-label="{S['w_chart_label']}"></svg><figcaption class="wt-legend"><span class="wt-l-you">{S['w_legend_you']}</span><span class="wt-l-range">{S['w_legend_range']}</span></figcaption></figure>
+<details class="wt-all" id="wt-all"><summary>{S['w_see_all']}</summary>
 <div class="wt-views" role="group"><button type="button" aria-pressed="true" data-view="week">{S['w_view_week']}</button><button type="button" aria-pressed="false" data-view="month">{S['w_view_month']}</button></div>
-<div id="wt-table" aria-live="polite"></div>
-<button type="button" class="wt-link" id="wt-edit">{S['w_edit_setup']}</button></div>
-<p class="trk-note">{S['w_note']}</p><p class="trk-note">{S['w_saved']}</p></div>'''
+<div id="wt-table"></div><p class="wt-bmi" id="wt-bmi"></p><button type="button" class="wt-link" id="wt-edit">{S['w_edit_setup']}</button></details></div>
+<p class="trk-note">{S['w_note']}</p><p class="trk-note">{S['w_saved']}</p></section><!--/wt-->'''
+
+OLD_PANEL = re.compile(r'<!--wt-->.*?<!--/wt-->|<div class="trk-card trk-panel" id="p-weight".*?<p class="trk-note">[^<]*</p></div>', re.S)
+def block(s, id_):   # one tracker panel: <div class="trk-card trk-panel…" id="p-…"> … up to the next panel / disclaimer
+    m = re.search(r'<div class="trk-card trk-panel[^"]*" id="%s".*?(?=\n<div class="trk-card trk-panel|\n<!--wt-->|\n<p class="disclaimer trk-d2")' % id_, s, re.S)
+    return m.group(0)
+def unpanel(html):   # a tab panel becomes a plain card that is always shown
+    return re.sub(r'^(<div class="trk-card) trk-panel([^"]*" id="p-\w+") role="tabpanel" aria-labelledby="t-\w+"( hidden)?>', r'\1 trk-sec\2>', html)
 
 for lang, i in L.items():
-    p = os.path.join(REPO, ('' if lang == 'en' else lang + '/') + 'pregnancy-tracker.html'); s = rd(p)
-    if 'p-weight' in s: continue
+    p = os.path.join(REPO, ('' if lang == 'en' else lang + '/') + 'pregnancy-tracker.html'); s = o = rd(p)
     m = re.search(r'<script type="application/json" id="trk-data">(.*?)</script>', s, re.S); D = json.loads(m.group(1)); S = D['s']
+    for k in [k for k in S if k.startswith('w_')]: del S[k]   # same key order on a fresh build and a re-run
     for k, v in W.items(): S[k] = v[i]
     s = re.sub(r'(<script type="application/json" id="trk-data">).*?(</script>)', lambda mm: mm.group(1) + json.dumps(D, ensure_ascii=False) + mm.group(2), s, count=1, flags=re.S)
-    todo_tab = re.search(r'<button type="button" role="tab" id="t-todo"[^>]*>[^<]*</button>', s).group(0)
-    s = s.replace(todo_tab, todo_tab + f'<button type="button" role="tab" id="t-weight" aria-controls="p-weight" aria-selected="false" tabindex="-1">{S["w_tab"]}</button>', 1)
-    todo_panel = re.search(r'<div class="trk-card trk-panel" id="p-todo".*?</div>', s, re.S).group(0)
-    s = s.replace(todo_panel, todo_panel + '\n' + panel(S), 1)
-    s = re.sub(r'(<script src="(?:\.\./)?tracker\.js" defer></script>)', lambda mm: mm.group(1) + mm.group(1).replace('tracker.js', 'weight.js'), s, count=1)
+    s = re.sub(r'\n?' + OLD_PANEL.pattern, '', s, count=1, flags=re.S)   # take out the old weight tab / card; it is put back below
+    if 'trk-tabs' in s:   # no tabs: every part is its own card, the weight card right under the week
+        s = re.sub(r'<div class="trk-tabs" role="tablist".*?</div>\n', '', s, count=1, flags=re.S)
+        wk, ck, td = (block(s, x) for x in ('p-week', 'p-checks', 'p-todo'))
+        new = '\n'.join([unpanel(wk).replace('>\n<div class="trk-week">', f'>\n<h2><span class="trk-ico" aria-hidden="true">📅</span> {S["v4_tab_week"]}</h2>\n<div class="trk-week">', 1),
+                         unpanel(ck).replace('><h2>', f'><h2><span class="trk-ico" aria-hidden="true">🩺</span> ', 1),
+                         unpanel(td).replace('><h2 id="r-todo-h">', '><h2><span class="trk-ico" aria-hidden="true">✅</span> <span id="r-todo-h"></span>', 1)])
+        s = s.replace(wk + '\n' + ck + '\n' + td, new, 1)
+    s = s.replace('\n\n<p class="disclaimer trk-d2"', '\n<p class="disclaimer trk-d2"')
+    s = re.sub(r'(<div class="trk-card trk-sec[^"]*" id="p-week">)', lambda mm: panel(S) + '\n' + mm.group(1), s, count=1)
+    if 'weight.js' not in s:
+        s = re.sub(r'(<script src="(?:\.\./)?tracker\.js" defer></script>)', lambda mm: mm.group(1) + mm.group(1).replace('tracker.js', 'weight.js'), s, count=1)
     old, new = TRK_PRIV[lang]
-    assert old in s, (lang, 'tracker privacy line'); s = s.replace(old, new, 1)
-    assert 'weight.js' in s and 'id="t-weight"' in s
-    wr(p, s); LOG.append('weight tab added: ' + os.path.relpath(p, REPO))
+    if new not in s: assert old in s, (lang, 'tracker privacy line'); s = s.replace(old, new, 1)
+    assert 'trk-tabs' not in s and s.count('id="p-weight"') == 1 and 'weight.js' in s and 'id="p-todo"' in s
+    if s != o: wr(p, s); LOG.append('tracker layout + weight card: ' + os.path.relpath(p, REPO))
 
-    p = os.path.join(REPO, ('' if lang == 'en' else lang + '/') + 'privacy.html'); s = rd(p)
+    p = os.path.join(REPO, ('' if lang == 'en' else lang + '/') + 'privacy.html'); s = o = rd(p)
     for old, new in PRIV[lang]:
         if new in s: continue
         assert old in s, (lang, old); s = s.replace(old, new, 1)
-    wr(p, s); LOG.append('privacy updated: ' + os.path.relpath(p, REPO))
+    if s != o: wr(p, s); LOG.append('privacy updated: ' + os.path.relpath(p, REPO))
 print('\n'.join(LOG)); print(len(LOG), 'changes')
