@@ -30,7 +30,8 @@ test('TC-WT-01 no tabs: week, My weight, This week, Checkups, To-do in that orde
     expect(at.every((v, i) => v > 0 && (i === 0 || v > at[i - 1])), `${l} order ${at}`).toBe(true);
     expect(html).toContain(words[l][0]);
     expect(html).toContain(words[l][1]);
-    expect(html).toContain(`<script src="${d ? '../' : ''}weight.js" defer></script>`);
+    expect(html).toMatch(new RegExp(`<script src="${d ? '\\.\\./' : ''}weight\\.js\\?v=[0-9a-f]{10}" defer></script>`));   // ?v= makes phones fetch a new copy
+    expect(html).toMatch(/styles\.css\?v=[0-9a-f]{10}"/);
     const priv = await (await request.get('/' + d + 'privacy.html')).text();
     expect(priv).toContain({ en: 'the date and weights you enter', ta: 'தேதியும் எடைகளும்,', hi: 'तारीख़ और वज़न,' }[l]);
   }

@@ -72,7 +72,7 @@ test('TC-SEO-06 404 page is styled, not indexed and links home', async ({ page, 
   await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
   await expect(page.locator('main a', { hasText: 'Back to home' })).toHaveAttribute('href', '/');
   // assets use site-root paths so the page works at any missing URL
-  await expect(page.locator('link[rel="stylesheet"][href="/styles.css"]')).toHaveCount(1);
+  await expect(page.locator('link[rel="stylesheet"][href^="/styles.css"]')).toHaveCount(1);
   await page.locator('main a', { hasText: 'Back to home' }).click();
   await expect(page.locator('h1')).toContainText('little');
 });

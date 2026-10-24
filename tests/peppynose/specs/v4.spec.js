@@ -398,7 +398,7 @@ test.describe('V4.1 fixes', () => {
       await open(page, 'index.html');
       const withBlock = await snap();
       const removed = await page.evaluate(() => {
-        const sh = [...document.styleSheets].find(x => (x.href || '').endsWith('/styles.css'));
+        const sh = [...document.styleSheets].find(x => /\/styles\.css(\?|$)/.test(x.href || ''));
         const i = [...sh.cssRules].findIndex(r => (r.conditionText || '').includes('max-width: 480px') && r.cssText.includes('.promise2'));
         if (i < 0) return false;
         sh.deleteRule(i); return true;
