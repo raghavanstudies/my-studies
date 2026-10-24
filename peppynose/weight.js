@@ -49,7 +49,7 @@
       + (pts.length > 1 ? `<polyline class="wt-line" points="${pts.join(' ')}"/>` : '')
       + list.map((e, i) => `<circle class="wt-dot wt-${status(B, e.w, e.k, d.pre)}" style="--i:${i}" cx="${x(e.w).toFixed(1)}" cy="${y(e.k).toFixed(1)}" r="4"><title>${esc(S.w_col_week)} ${e.w}: ${kg(e.k)} kg</title></circle>`).join('');
     const line = $('wt-svg').querySelector('.wt-line');   // the line draws itself (CSS, only when motion is on)
-    if (line && line.getTotalLength) line.style.setProperty('--len', Math.ceil(line.getTotalLength()));
+    if (line) line.style.setProperty('--len', Math.ceil(list.reduce((t, e, i) => i ? t + Math.hypot(x(e.w) - x(list[i - 1].w), y(e.k) - y(list[i - 1].k)) : 0, 0)));   // works while the card is hidden too
   };
 
   const row = (B, d, label, e, del) => {
@@ -82,7 +82,7 @@
   const render = () => {
     const d = get(), ok = d.h >= 120 && d.h <= 220 && d.pre >= 30 && d.pre <= 200;
     $('wt-setup').hidden = ok; $('wt-main').hidden = !ok;
-    if (!ok) { $('wt-h').value = d.h || ''; $('wt-pre').value = d.pre || ''; return; }
+    if (!ok) { $('wt-h').value = d.h || ''; $('wt-pre').value = d.pre || ''; window.pnWeightSum = null; document.dispatchEvent(new CustomEvent('pn-weight')); return; }
     const B = band(d), list = entries(d);
     $('wt-bmi').textContent = fmt(S.w_bmi, { b: nf.format(B.bmi), c: S['w_cat_' + B.cat], lo: B.lo, hi: B.hi });
     const wk = $('wt-week'), now = window.pnWeek >= 1 ? Math.min(42, window.pnWeek) : 0;
@@ -90,6 +90,9 @@
     $('wt-wk-l').hidden = !(wkOpen || !wk.value);           // the week box shows only when asked for (or no week is known)
     $('wt-wk-btn').hidden = !$('wt-wk-l').hidden;
     weekLabel(); tiles(d, B, list); chart(d, B, list); table(d, B, list);
+    const last = list[list.length - 1];   // for the dashboard tile (dash.js)
+    window.pnWeightSum = last ? { kg: kg(last.k), st: status(B, last.w, last.k, d.pre) } : null;
+    document.dispatchEvent(new CustomEvent('pn-weight'));
   };
 
   // A few little hearts float up from "Add" (only when motion is on).
@@ -130,5 +133,6 @@
   $('wt-edit').addEventListener('click', () => { const d = get(); $('wt-all').open = false; $('wt-setup').hidden = false; $('wt-main').hidden = true; $('wt-h').value = d.h || ''; $('wt-pre').value = d.pre || ''; $('wt-h').focus(); });
   const clr = $('r-clear'); if (clr) clr.addEventListener('click', () => { wkOpen = false; $('wt-week').value = ''; render(); });   // tracker.js already removed the data
   document.addEventListener('pn-week', render);
+  document.addEventListener('pn-panel', e => { if (e.detail === 'p-weight') render(); });   // dashboard opened the card: draw the chart again
   render();
 })();

@@ -155,9 +155,11 @@ test.describe('pregnancy tracker', () => {
     await expect(page.locator('#r-tri')).toHaveText('Second trimester');
     await expect(page.locator('#r-age')).toHaveText('You are 20 weeks and 0 days pregnant');
     await expect(page.locator('#r-left')).toHaveText('140 days to go');
+    await page.click('.dash-tile[data-open="p-week"]');     // dashboard: the week details open as a panel
     await expect(page.locator('#r-tip')).not.toBeEmpty();
     await expect(page.locator('#n-mob')).toBeVisible();      // weeks 14–33
     await expect(page.locator('#n-bob')).toBeHidden();
+    await page.click('#p-week .dash-back');
     // share opens WhatsApp with no phone number; the visitor picks the chat. The text is added on click, never kept in the href.
     await expect(page.locator('#r-share')).toHaveAttribute('href', 'https://wa.me/');
     await page.evaluate(() => { window.__opened = []; window.open = u => { window.__opened.push(u); return null; }; });
@@ -176,8 +178,10 @@ test.describe('pregnancy tracker', () => {
     await page.click('#trk-form button[type="submit"]');
     await expect(page.locator('#r-week')).toHaveText('Week 35');
     await expect(page.locator('#r-tri')).toHaveText('Third trimester');
+    await page.click('.dash-tile[data-open="p-week"]');
     await expect(page.locator('#n-bob')).toBeVisible();      // week 34+
     await expect(page.locator('#n-teeth')).toBeVisible();    // week 28+
+    await page.click('#p-week .dash-back');
     // remembered after a reload
     await page.reload();
     await expect(page.locator('#r-week')).toHaveText('Week 35');
@@ -257,9 +261,11 @@ test('TC-V3-14 tracker edge cases: due today, 5 weeks ahead, 300 days ahead; not
   await expect(page.locator('#r-left')).toHaveText('Due date reached');
   await go(35);
   await expect(page.locator('#r-week')).toHaveText('Week 35');
+  await page.click('.dash-tile[data-open="p-week"]');
   await expect(page.locator('#n-bob')).toBeVisible();
   await expect(page.locator('#n-teeth')).toBeVisible();
   await expect(page.locator('#n-mob')).toBeHidden();
+  await page.click('#p-week .dash-back');
   await go(300);
   await expect(page.locator('#trk-err')).toContainText("doesn't look right");
   await expect(page.locator('#trk-result')).toBeHidden();
