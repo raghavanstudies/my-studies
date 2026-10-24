@@ -152,11 +152,12 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
   };
 
   // The week number counts up from 0 (only when motion is on; see motion.js).
+  const motionOK = () => document.documentElement.classList.contains('pn-motion') || (!!window.matchMedia && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window);   // same rule as motion.js (which loads later)
   let countRaf = 0;
   const countWeek = w => {
-    const el = $('r-week'), put = n => { el.textContent = fmt(S.tr_week_big, { w: n }); };
+    const el = $('r-week'), ring = $('r-ring-n'), put = n => { el.textContent = fmt(S.tr_week_big, { w: n }); if (ring) ring.textContent = n; };
     cancelAnimationFrame(countRaf);
-    if (!document.documentElement.classList.contains('pn-motion') || w < 2) return put(w);
+    if (!motionOK() || w < 2) return put(w);
     const t0 = performance.now(), ms = Math.min(900, 300 + w * 15);
     const step = t => { const k = Math.min(1, (t - t0) / ms); put(Math.round(w * (1 - Math.pow(1 - k, 3)))); if (k < 1) countRaf = requestAnimationFrame(step); };
     put(0); countRaf = requestAnimationFrame(step);
@@ -173,7 +174,6 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     if (store) jset(KEY, { mode: m, date: v });
     const w = Math.floor(ga / 7), dd = ga % 7, left = diff(due, today());
     cur = { w, left };
-    window.pnWeek = w; document.dispatchEvent(new CustomEvent('pn-week'));   // the "My weight" tab (weight.js) suggests this week
     // First screen: week, image, size, days to go
     countWeek(w);
     $('r-size').textContent = sizeLine(w) + (D.emoji[String(w)] ? ' ' + D.emoji[String(w)] : '');
@@ -194,6 +194,8 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     $('n-teeth').hidden = !(w >= 28);
     shareText = left > 0 ? fmt(S.tr_share_text, { w, n: left, url: D.url }) : fmt(S.tr_share_text_due, { url: D.url });
     renderChecks(w); renderTodo(w);
+    window.pnWeek = w; window.pnTrk = { w, left, ga, due };   // for weight.js (this week) and dash.js (ring and tiles)
+    document.dispatchEvent(new CustomEvent('pn-week'));
     form.hidden = true; res.hidden = false;
     if (store) track('tracker_used', {});   // V4.1: no pregnancy data in analytics
     return true;
@@ -266,7 +268,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
   $('r-change').addEventListener('click', () => { form.hidden = false; dateIn.focus(); form.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
   $('r-clear').addEventListener('click', () => {
     try { localStorage.removeItem(KEY); localStorage.removeItem(TODO_KEY); localStorage.removeItem('pn_weight'); } catch (e) {}
-    res.hidden = true; form.hidden = false; dateIn.value = ''; err.textContent = ''; cur = null; dateIn.focus();
+    res.hidden = true; form.hidden = false; dateIn.value = ''; err.textContent = ''; cur = null; window.pnTrk = null; dateIn.focus();
   });
 
   const saved = jget(KEY);

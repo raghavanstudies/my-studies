@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 24 October 2026 (tracker without tabs + simpler weight card), 436 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 24 October 2026 (tracker dashboard), 442 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -171,6 +171,14 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-WT-03 | Weekly weights | Wrong week or weight is refused; same week replaces; the list under "See all weights" shows gain and In/Below/Above range; chart dots and band; month view shows the latest weight per month; delete works; kept after reload |
 | TC-WT-04 | Privacy | No request carries the height or weights; they are only in localStorage; "Clear my data" deletes them |
 | TC-WT-05 | Tamil and Hindi on a 320 px phone | Own words in the table; no sideways scroll; no JS errors |
+
+### Tracker dashboard (`specs/dash.spec.js`)
+
+| ID | Test | Expected |
+|---|---|---|
+| TC-DASH-01 | Dashboard after the date | Week ring (22, 55% of the way), big "Add today's weight" button, 6 tiles (weight + status, baby size, next checkup, to-do count, due date, tip); detail panels closed; page title hidden |
+| TC-DASH-02 | Panels | A tile opens a full-screen panel (dialog, #hash in the address); Back, the phone's back button and Escape close it; the to-do and weight tiles update |
+| TC-DASH-03 | Tamil and Hindi on a 320 px phone | Own tile words; no sideways scroll, also with a panel open; no JS errors |
 
 ## Manual test cases (need the live site or a real phone)
 

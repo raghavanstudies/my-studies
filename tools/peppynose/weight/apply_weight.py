@@ -123,7 +123,7 @@ for lang, i in L.items():
                          unpanel(td).replace('><h2 id="r-todo-h">', '><h2><span class="trk-ico" aria-hidden="true">✅</span> <span id="r-todo-h"></span>', 1)])
         s = s.replace(wk + '\n' + ck + '\n' + td, new, 1)
     s = s.replace('\n\n<p class="disclaimer trk-d2"', '\n<p class="disclaimer trk-d2"')
-    s = re.sub(r'(<div class="trk-card trk-sec[^"]*" id="p-week">)', lambda mm: panel(S) + '\n' + mm.group(1), s, count=1)
+    s = re.sub(r'(<div class="trk-card trk-sec[^"]*" id="p-week"[^>]*>)', lambda mm: panel(S) + '\n' + mm.group(1), s, count=1)
     if 'weight.js' not in s:
         s = re.sub(r'(<script src="(?:\.\./)?tracker\.js" defer></script>)', lambda mm: mm.group(1) + mm.group(1).replace('tracker.js', 'weight.js'), s, count=1)
     old, new = TRK_PRIV[lang]

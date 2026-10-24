@@ -10,6 +10,7 @@ const setup = async (page, path, days = 126) => {   // due date in 126 days = we
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   await blockExternal(page);
   await page.goto('/' + path);
+  await page.click('.dash-add');   // dashboard: "Add today's weight" opens the weight panel
   return errors;
 };
 const start = async (page, h = '158', pre = '55') => {
@@ -97,6 +98,7 @@ test('TC-WT-04 weights never leave the phone, and "Clear my data" deletes them',
   await setup(page, 'pregnancy-tracker.html');
   await start(page, '163.5', '71.3');
   await add(page, 22, 79.4);
+  await page.click('#p-weight .dash-back');
   expect(sent.filter(s => /163\.5|71\.3|79\.4/.test(s))).toEqual([]);
   const saved = JSON.parse(await page.evaluate(() => localStorage.getItem('pn_weight')));
   expect(saved).toEqual({ h: 163.5, pre: 71.3, e: { 22: 79.4 } });

@@ -133,10 +133,14 @@ test.describe('pregnancy tracker V4', () => {
     await expect(page.locator('#r-left')).toHaveText('126 days to go');
     await expect(page.locator('#r-card')).toContainText('Share with family');
     await expect(page.locator('#trk-form')).toBeHidden();
-    // no tabs: the V3 details are shown right away
+    // dashboard: the V3 details open from the "Baby size" tile as a full-screen panel
+    await expect(page.locator('#p-week')).toBeHidden();
+    await page.click('.dash-tile[data-open="p-week"]');
     await expect(page.locator('#p-week')).toBeVisible();
     await expect(page.locator('#r-tri')).toHaveText('Second trimester');
     await expect(page.locator('#r-tip')).not.toBeEmpty();
+    await page.click('#p-week .dash-back');
+    await expect(page.locator('#p-week')).toBeHidden();
     await expect(page.locator('.disclaimer').first()).toContainText('not medical advice');
     await expect(page.locator('.trk-d2')).toContainText('not medical advice');
     expect(imgReq.map(u => new URL(u).pathname)).toEqual(['/assets/tracker/week22.webp']);   // only this week's picture
@@ -147,17 +151,21 @@ test.describe('pregnancy tracker V4', () => {
     await open(page, 'pregnancy-tracker.html');
     await page.fill('#trk-date', await day(page, 126));
     await page.click('#trk-form button[type="submit"]');
+    await page.click('.dash-tile[data-open="p-checks"]');
     await expect(page.locator('#p-checks')).toBeVisible();
-    await expect(page.locator('#p-week')).toBeVisible();   // all parts on one page, no tabs
+    await expect(page.locator('#p-week')).toBeHidden();    // one panel at a time
     await expect(page.locator('#r-checks li')).toHaveCount(7);
     await expect(page.locator('#r-checks li.ck-now')).toHaveCount(1);
     await expect(page.locator('#r-checks li.ck-now')).toContainText('18–22');
+    await page.click('#p-checks .dash-back');
+    await page.click('.dash-tile[data-open="p-todo"]');
     await expect(page.locator('#r-todo-h')).toHaveText('Your to-do for week 22');
     const boxes = page.locator('#r-todo input[type="checkbox"]');
     expect(await boxes.count()).toBeGreaterThanOrEqual(3);
     await boxes.nth(1).check();
     await page.reload();
-    await expect(page.locator('#r-todo input[type="checkbox"]').nth(1)).toBeChecked();
+    await expect(page.locator('#r-todo input[type="checkbox"]').nth(1)).toBeChecked();   // the panel is open again after a reload
+    await page.click('#p-todo .dash-back');
     await page.click('#r-clear');
     expect(await page.evaluate(() => [localStorage.getItem('pn_preg'), localStorage.getItem('pn_todo')])).toEqual([null, null]);
     await page.reload();
@@ -190,10 +198,12 @@ test.describe('pregnancy tracker V4', () => {
       await page.click('#trk-form button[type="submit"]');
       await expect(page.locator('#r-week')).toContainText('22');
       await expect(page.locator('#r-size')).not.toBeEmpty();
+      await page.click('.dash-tile[data-open="p-todo"]');
       await page.locator('#r-todo input[type="checkbox"]').first().check();
       await page.reload();
       await expect(page.locator('#r-todo input[type="checkbox"]').first()).toBeChecked();
       expect(errors).toEqual([]);
+      await page.click('#p-todo .dash-back');
       await page.click('#r-clear');
     }
   });
