@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 22 October 2026 (re-test fixes), 426 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 24 October 2026 (weight tracker), 436 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -162,6 +162,16 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-V4-30 | "Share my week" privacy (EN/TA/HI) | The link's href is just https://wa.me/ (no share text); clicking opens WhatsApp with the message; analytics events carry no week, days or link text |
 | TC-V4-31 | Week without a picture | After week 22, choosing week 2 or past week 40 shows the placeholder; the old picture is no longer zoomable and has no label |
 
+### Weight tracker (`specs/weight.spec.js`)
+
+| ID | Test | Expected |
+|---|---|---|
+| TC-WT-01 | "My weight" tab (EN/TA/HI) | 4th tracker tab in the page language; weight.js loaded; tracker and privacy pages say weights stay on the phone |
+| TC-WT-02 | Height and starting weight | Wrong values show a clear error; then BMI, its group and the healthy total gain are shown; this week is suggested |
+| TC-WT-03 | Weekly weights | Wrong week or weight is refused; same week replaces; table shows gain and In/Below/Above range; chart dots and band; month view shows the latest weight per month; delete works; kept after reload |
+| TC-WT-04 | Privacy | No request carries the height or weights; they are only in localStorage; "Clear my data" deletes them |
+| TC-WT-05 | Tamil and Hindi on a 320 px phone | Own words in the table; no sideways scroll; no JS errors |
+
 ## Manual test cases (need the live site or a real phone)
 
 These can't be automated from the build environment, which cannot reach www.peppynose.com, Amazon or Flipkart.
@@ -190,3 +200,4 @@ These can't be automated from the build environment, which cannot reach www.pepp
 | TC-MAN-20 | Tap the round blue "?" button, ask a question in English, Tamil and Hindi | Sensible answer, or "Chat on WhatsApp" if nothing fits |
 | TC-MAN-21 | After pasting the real IDs: open the site, tap Accept, tap an Amazon button | GA4 Realtime shows page_view and amazon_click within a minute; Clarity shows the visit within about 2 hours |
 | TC-MAN-22 | Pregnancy tracker on a phone: enter a due date, tilt the phone, drag the picture, tap it | The picture tilts gently and zooms on tap (iPhone asks once to allow motion); tap again to close |
+| TC-MAN-23 | Pregnancy tracker on a phone: My weight tab, enter height, starting weight and a few weeks | Chart and table look right; Week-wise / Month-wise switch works; the data is still there after closing the browser |
