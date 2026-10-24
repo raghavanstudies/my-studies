@@ -29,7 +29,7 @@
   // Pregnancy months by week, as commonly counted in India.
   const MONTHS = [[1, 4], [5, 8], [9, 13], [14, 17], [18, 22], [23, 27], [28, 31], [32, 35], [36, 42]];
 
-  let view = 'week';
+  let view = 'week', wkOpen = false;   // wkOpen: she tapped "Different week?" 
   const entries = d => Object.keys(d.e || {}).map(Number).filter(w => w >= 1 && w <= 42).sort((a, b) => a - b).map(w => ({ w, k: d.e[w] }));
 
   const chart = (d, B, list) => {
@@ -47,7 +47,9 @@
     const pts = list.map(e => `${x(e.w).toFixed(1)},${y(e.k).toFixed(1)}`);
     $('wt-svg').innerHTML = g + `<polygon class="wt-band" points="${up.concat(dn).join(' ')}"/>`
       + (pts.length > 1 ? `<polyline class="wt-line" points="${pts.join(' ')}"/>` : '')
-      + list.map(e => `<circle class="wt-dot wt-${status(B, e.w, e.k, d.pre)}" cx="${x(e.w).toFixed(1)}" cy="${y(e.k).toFixed(1)}" r="4"><title>${esc(S.w_col_week)} ${e.w}: ${kg(e.k)} kg</title></circle>`).join('');
+      + list.map((e, i) => `<circle class="wt-dot wt-${status(B, e.w, e.k, d.pre)}" style="--i:${i}" cx="${x(e.w).toFixed(1)}" cy="${y(e.k).toFixed(1)}" r="4"><title>${esc(S.w_col_week)} ${e.w}: ${kg(e.k)} kg</title></circle>`).join('');
+    const line = $('wt-svg').querySelector('.wt-line');   // the line draws itself (CSS, only when motion is on)
+    if (line && line.getTotalLength) line.style.setProperty('--len', Math.ceil(line.getTotalLength()));
   };
 
   const row = (B, d, label, e, del) => {
@@ -83,11 +85,25 @@
     if (!ok) { $('wt-h').value = d.h || ''; $('wt-pre').value = d.pre || ''; return; }
     const B = band(d), list = entries(d);
     $('wt-bmi').textContent = fmt(S.w_bmi, { b: nf.format(B.bmi), c: S['w_cat_' + B.cat], lo: B.lo, hi: B.hi });
-    const wk = $('wt-week'); if (!wk.value && window.pnWeek >= 1) wk.value = Math.min(42, window.pnWeek);
-    if (!wk.value) $('wt-wk-l').hidden = false;   // no week known: ask for it
+    const wk = $('wt-week'), now = window.pnWeek >= 1 ? Math.min(42, window.pnWeek) : 0;
+    if (!wkOpen && now) wk.value = now;                     // "Today's weight" is for this week
+    $('wt-wk-l').hidden = !(wkOpen || !wk.value);           // the week box shows only when asked for (or no week is known)
+    $('wt-wk-btn').hidden = !$('wt-wk-l').hidden;
     weekLabel(); tiles(d, B, list); chart(d, B, list); table(d, B, list);
   };
 
+  // A few little hearts float up from "Add" (only when motion is on).
+  const cheer = btn => {
+    if (!btn || !document.documentElement.classList.contains('pn-motion')) return;
+    $('wt-stats').classList.remove('wt-pop'); void $('wt-stats').offsetWidth; $('wt-stats').classList.add('wt-pop');
+    const r = btn.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) {
+      const h = document.createElement('span'); h.className = 'wt-heart'; h.setAttribute('aria-hidden', 'true'); h.textContent = i % 2 ? '💗' : '💖';
+      h.style.left = (r.left + r.width / 2 + (i - 2.5) * 10) + 'px'; h.style.top = (r.top + window.scrollY) + 'px';
+      h.style.setProperty('--dx', ((i - 2.5) * 14) + 'px'); h.style.animationDelay = (i * 60) + 'ms';
+      document.body.appendChild(h); setTimeout(() => h.remove(), 1400);
+    }
+  };
   $('wt-setup').addEventListener('submit', e => {
     e.preventDefault();
     const h = num($('wt-h')), pre = num($('wt-pre')), err = $('wt-setup-err');
@@ -98,11 +114,11 @@
   $('wt-add').addEventListener('submit', e => {
     e.preventDefault();
     const w = Math.round(num($('wt-week'))), k = num($('wt-kg')), err = $('wt-err');
-    if (!(w >= 1 && w <= 42)) { err.textContent = S.w_err_week; $('wt-wk-l').hidden = false; $('wt-week').focus(); return; }
+    if (!(w >= 1 && w <= 42)) { err.textContent = S.w_err_week; wkOpen = true; $('wt-wk-l').hidden = false; $('wt-wk-btn').hidden = true; $('wt-week').focus(); return; }
     if (!(k >= 30 && k <= 200)) { err.textContent = S.w_err_kg; $('wt-kg').focus(); return; }
-    err.textContent = ''; const d = get(); d.e = d.e || {}; d.e[w] = k; put(d); $('wt-kg').value = ''; render();
+    err.textContent = ''; const d = get(); d.e = d.e || {}; d.e[w] = k; put(d); $('wt-kg').value = ''; render(); cheer(e.submitter || $('wt-add').querySelector('button[type="submit"]'));
   });
-  $('wt-wk-btn').addEventListener('click', () => { $('wt-wk-l').hidden = false; $('wt-wk-btn').hidden = true; $('wt-week').focus(); });
+  $('wt-wk-btn').addEventListener('click', () => { wkOpen = true; $('wt-wk-l').hidden = false; $('wt-wk-btn').hidden = true; $('wt-week').focus(); });
   $('wt-week').addEventListener('input', weekLabel);
   $('wt-table').addEventListener('click', e => {
     const b = e.target.closest('.wt-del'); if (!b) return;
@@ -112,7 +128,7 @@
     view = b.dataset.view; box.querySelectorAll('.wt-views button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); render();
   }));
   $('wt-edit').addEventListener('click', () => { const d = get(); $('wt-all').open = false; $('wt-setup').hidden = false; $('wt-main').hidden = true; $('wt-h').value = d.h || ''; $('wt-pre').value = d.pre || ''; $('wt-h').focus(); });
-  const clr = $('r-clear'); if (clr) clr.addEventListener('click', () => { $('wt-week').value = ''; render(); });   // tracker.js already removed the data
+  const clr = $('r-clear'); if (clr) clr.addEventListener('click', () => { wkOpen = false; $('wt-week').value = ''; render(); });   // tracker.js already removed the data
   document.addEventListener('pn-week', render);
   render();
 })();

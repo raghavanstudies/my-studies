@@ -47,6 +47,10 @@ test('TC-WT-02 height and starting weight are checked; then "Today\'s weight" is
   await expect(page.locator('#wt-bmi')).toHaveText('Your BMI before pregnancy: 22.0 (normal weight). Usual healthy gain for the whole pregnancy: 11.5–16 kg.');
   await expect(page.locator('#wt-forweek')).toHaveText('for week 22');
   await expect(page.locator('#wt-week')).toBeHidden();          // the week box opens only with "Different week?"
+  await page.reload();                                          // also when the weights were saved before the date is shown
+  await expect(page.locator('#wt-forweek')).toHaveText('for week 22');
+  await expect(page.locator('#wt-week')).toBeHidden();
+  await expect(page.locator('#wt-wk-btn')).toBeVisible();
   await expect(page.locator('#wt-stats')).toContainText('No weights yet');
   await add(page, null, 61.9);
   await expect(page.locator('#wt-stats .wt-tile')).toHaveCount(3);

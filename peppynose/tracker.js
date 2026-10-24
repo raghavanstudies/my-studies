@@ -151,6 +151,17 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     };
   };
 
+  // The week number counts up from 0 (only when motion is on; see motion.js).
+  let countRaf = 0;
+  const countWeek = w => {
+    const el = $('r-week'), put = n => { el.textContent = fmt(S.tr_week_big, { w: n }); };
+    cancelAnimationFrame(countRaf);
+    if (!document.documentElement.classList.contains('pn-motion') || w < 2) return put(w);
+    const t0 = performance.now(), ms = Math.min(900, 300 + w * 15);
+    const step = t => { const k = Math.min(1, (t - t0) / ms); put(Math.round(w * (1 - Math.pow(1 - k, 3)))); if (k < 1) countRaf = requestAnimationFrame(step); };
+    put(0); countRaf = requestAnimationFrame(step);
+  };
+
   const show = (m, v, store) => {
     const d = parse(v);
     if (!d) { err.textContent = S.tr_err_empty; res.hidden = true; return false; }
@@ -164,7 +175,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     cur = { w, left };
     window.pnWeek = w; document.dispatchEvent(new CustomEvent('pn-week'));   // the "My weight" tab (weight.js) suggests this week
     // First screen: week, image, size, days to go
-    $('r-week').textContent = fmt(S.tr_week_big, { w });
+    countWeek(w);
     $('r-size').textContent = sizeLine(w) + (D.emoji[String(w)] ? ' ' + D.emoji[String(w)] : '');
     $('r-left').textContent = left > 0 ? fmt(S.tr_days_left, { n: left }) : S.tr_due_reached;
     showImage(w);
