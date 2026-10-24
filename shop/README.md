@@ -26,6 +26,6 @@ npm run dev          # builds, makes a fresh test database, starts http://localh
 - Payment is a pretend page (`PAYMENT_MODE=mock`). Razorpay is ready in the code; it needs Razorpay keys
   (`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`) and `PAYMENT_MODE=razorpay`.
 - Delivery ₹49, free from ₹499 — test values.
-- HSN, MRP, net quantity, origin and weight come from Seller Central (23 Oct 2026). GST rate 18% for every product (confirmed by the owner, 24 Oct 2026). The LCD tablet is not sold in the shop.
+- HSN, MRP, net quantity, origin and weight come from Seller Central (23 Oct 2026). GST rate 18% for every product (confirmed by the owner, 24 Oct 2026). The LCD tablet is not sold in the shop. BIS: not needed for teethers, kitchen set, foam mat (owner, 24 Oct 2026). Knee pad importer address: none given (owner).
 - Emails are only saved (admin → Messages), not sent yet.
 - Tamil (/ta/shop/) and Hindi (/hi/shop/) pages: text is in `data/shop-strings.json` — needs a native-speaker check. Emails and the invoice are still English.
