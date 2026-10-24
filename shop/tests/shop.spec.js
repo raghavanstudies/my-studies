@@ -29,15 +29,15 @@ test('TC-SHOP-01 live site files are not changed; only the local copy gets "Buy 
   expect(live).not.toContain('sh-direct');
   expect(fs.existsSync(path.join(__dirname, '..', '..', 'peppynose', 'shop'))).toBe(false);
   await page.goto('/products.html');
-  await expect(page.locator('a.sh-direct')).toHaveCount(13);
+  await expect(page.locator('a.sh-direct')).toHaveCount(12);
   await page.locator('a.sh-direct').first().click();
   await expect(page).toHaveURL(/\/shop\/baby-on-board-sign/);
   await expect(page.locator('h1')).toContainText('Baby on Board');
 });
 
-test('TC-SHOP-02 shop home lists all 13 products with prices, noindex and test banner', async ({ page }) => {
+test('TC-SHOP-02 shop home lists all 12 products with prices, noindex and test banner', async ({ page }) => {
   await page.goto('/shop/');
-  await expect(page.locator('.sh-card')).toHaveCount(13);
+  await expect(page.locator('.sh-card')).toHaveCount(12);
   await expect(page.locator('[data-from="teether-gift-set"]')).toHaveText('₹649');
   await expect(page.locator('.shop-test')).toContainText('Test shop');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
@@ -118,7 +118,7 @@ test('TC-SHOP-06 other state gets IGST; invoice only after payment', async ({ re
 });
 
 test('TC-SHOP-07 failed payment can be retried', async ({ page, request }) => {
-  const o = (await order(request, [{ sku: 'lcd-tablet-blue-1', qty: 1 }])).body;
+  const o = (await order(request, [{ sku: 'foam-mat-1', qty: 1 }])).body;
   await page.goto(`/shop/pay.html#o=${o.order}&t=${o.token}`);
   await page.getByRole('button', { name: 'Test: payment fails' }).click();
   await expect(page.locator('h1')).toHaveText('Payment did not go through');
@@ -214,11 +214,11 @@ test('TC-SHOP-13 no sideways scroll on product, checkout, order and admin pages'
 test('TC-SHOP-14 Tamil and Hindi shops: own text, Buy buttons on the Shop page copies, language switch keeps the page', async ({ page }) => {
   for (const [L, add, title] of [['ta', 'கார்ட்டில் சேர்', 'Peppynose கடை'], ['hi', 'कार्ट में डालें', 'Peppynose शॉप']]) {
     await page.goto(`/${L}/products.html`);
-    await expect(page.locator('a.sh-direct')).toHaveCount(13);
+    await expect(page.locator('a.sh-direct')).toHaveCount(12);
     await page.goto(`/${L}/shop/`);
     await expect(page.locator('html')).toHaveAttribute('lang', L);
     await expect(page.locator('h1')).toHaveText(title);
-    await expect(page.locator('.sh-card')).toHaveCount(13);
+    await expect(page.locator('.sh-card')).toHaveCount(12);
     await page.goto(`/${L}/shop/foam-mat.html`);
     await expect(page.locator('.sh-ph img')).toHaveJSProperty('complete', true);
     expect(await page.locator('.sh-ph img').evaluate(i => i.naturalWidth)).toBeGreaterThan(0);

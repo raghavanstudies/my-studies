@@ -408,7 +408,7 @@
      "stock": 25,
      "amazon": "https://www.amazon.in/dp/B0H757K755",
      "flipkart": "https://www.flipkart.com/peppynose-baby-crawling-knee-pads-mint/p/itm55dda0db13dad?pid=BNPHRUYFVV4VSYPM",
-     "mrp": null,
+     "mrp": 69800,
      "net_qty": "Pack of 4",
      "weight_g": 30
     }
@@ -609,48 +609,6 @@
      "mrp": 29900,
      "net_qty": "36 pieces",
      "weight_g": 350
-    }
-   ],
-   "origin": "India",
-   "manufacturer": "Peppynose"
-  },
-  {
-   "slug": "lcd-tablet-blue",
-   "category": "play",
-   "name": {
-    "en": "LCD Writing Tablet — Blue",
-    "ta": "LCD எழுதும் டேப்லெட் — Blue",
-    "hi": "LCD राइटिंग टैबलेट — Blue"
-   },
-   "desc": {
-    "en": "8.5-inch reusable LCD screen for mess-free drawing.",
-    "ta": "குப்பையில்லா ஓவியத்துக்கு மீண்டும் பயன்படுத்தக்கூடிய 8.5-இன்ச் LCD திரை.",
-    "hi": "बिना गंदगी की ड्रॉइंग के लिए दोबारा इस्तेमाल होने वाली 8.5-इंच LCD स्क्रीन।"
-   },
-   "alt": {
-    "en": "Peppynose LCD Writing Tablet — Blue",
-    "ta": "Peppynose LCD எழுதும் டேப்லெட் — Blue",
-    "hi": "Peppynose LCD राइटिंग टैबलेट — Blue"
-   },
-   "img": "images/lcd-blue.webp",
-   "gst_rate": 18,
-   "hsn": "",
-   "gst_confirmed": false,
-   "variants": [
-    {
-     "sku": "lcd-tablet-blue-1",
-     "label": {
-      "en": "1 tablet",
-      "ta": "1 டேப்லெட்",
-      "hi": "1 टैबलेट"
-     },
-     "price": 19900,
-     "stock": 25,
-     "amazon": "https://www.amazon.in/dp/B0DK17XHX3",
-     "flipkart": null,
-     "mrp": 19900,
-     "net_qty": "1 set (5 items)",
-     "weight_g": 150
     }
    ],
    "origin": "India",
