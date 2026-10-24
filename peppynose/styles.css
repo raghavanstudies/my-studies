@@ -911,3 +911,44 @@ html.trk-zoom-open { overflow: hidden; }
 .trk-hero-img img, .trk-ph, .trk-hero-img.has-img, .trk-hero-img.has-img::after { border-radius: 22%; }
 .trk-ph { background: radial-gradient(circle at 38% 34%, #ffe9df 0, #fbd6c6 60%, #f6c0aa 100%); }
 .trk .trk-card, .trk #trk-form { scroll-margin-top: 92px; }
+
+/* "My weight" tab (weight.js). Four tabs: on phones they sit 2 × 2 so Tamil and Hindi labels stay readable. */
+@media (max-width: 520px) {
+  .trk-tabs { display: grid; grid-template-columns: 1fr 1fr; border-radius: 22px; }
+}
+.trk-panel h3 { font-size: 1rem; margin: 14px 0 8px; }
+.wt-form .wt-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.wt-form label { display: grid; gap: 4px; font-weight: 600; font-size: .92rem; flex: 1 1 140px; }
+.wt-form input { font: inherit; padding: 10px 12px; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--ink); width: 100%; box-sizing: border-box; }
+.wt-form .btn { background: var(--ink); color: var(--cream); min-height: 44px; cursor: pointer; font: inherit; font-weight: 700; margin-top: 10px; }
+.wt-form .wt-row .btn { margin-top: 0; flex: 0 0 auto; }
+.wt-err { color: #b3261e; font-weight: 600; font-size: .9rem; margin: 6px 0 0; min-height: 1em; }
+.wt-bmi { background: var(--mint-soft); border-radius: 14px; padding: 10px 12px; margin: 10px 0 0; }
+.wt-chart { margin: 14px 0 6px; max-width: 560px; }
+.wt-chart svg { width: 100%; height: auto; display: block; }
+.wt-grid { stroke: var(--line); stroke-width: 1; }
+.wt-ax { font-size: 10px; fill: var(--muted); font-family: inherit; }
+.wt-band { fill: var(--mint); opacity: .75; }
+.wt-line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+.wt-dot { fill: var(--accent); stroke: var(--white); stroke-width: 1.5; }
+.wt-dot.wt-low, .wt-dot.wt-high { fill: #c2410c; }
+.wt-legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: .85rem; color: var(--muted); }
+.wt-legend span::before { content: ""; display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+.wt-l-you::before { background: var(--accent); height: 3px !important; }
+.wt-l-range::before { background: var(--mint); }
+.wt-views { display: inline-flex; gap: 4px; background: var(--sand); padding: 4px; border-radius: 999px; margin: 10px 0; }
+.wt-views button { font: inherit; font-weight: 700; font-size: .9rem; min-height: 40px; padding: 6px 14px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; }
+.wt-views button[aria-pressed="true"] { background: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.wt-scroll { overflow-x: auto; }
+.wt-tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.wt-tbl th, .wt-tbl td { padding: 8px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.wt-tbl td small { display: block; font-size: .78rem; color: var(--muted); margin-top: 3px; }
+.wt-tbl td b { white-space: nowrap; }
+.wt-tbl thead th { font-size: .8rem; color: var(--muted); }
+.wt-tbl tbody th { font-weight: 700; white-space: normal; }
+.wt-st { font-size: .78rem; font-weight: 700; border-radius: 999px; padding: 2px 8px; background: var(--mint-soft); }
+.wt-st.wt-low, .wt-st.wt-high { background: #fde7dc; color: #8a2d0b; }
+.wt-del { border: 0; background: none; color: var(--muted); font-size: 1rem; min-width: 36px; min-height: 36px; cursor: pointer; }
+.wt-link { background: none; border: 0; padding: 8px 0; font: inherit; font-size: .9rem; color: var(--muted); text-decoration: underline; cursor: pointer; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (prefers-color-scheme: dark) { .wt-st.wt-low, .wt-st.wt-high { background: #4a2414; color: #ffd8c6; } }

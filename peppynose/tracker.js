@@ -1,5 +1,6 @@
 /* Peppynose pregnancy week tracker (V4). Vanilla JS, no libraries.
-   Privacy: the date ("pn_preg") and the to-do ticks ("pn_todo") are kept ONLY in this browser's localStorage.
+   Privacy: the date ("pn_preg"), the to-do ticks ("pn_todo") and the weights ("pn_weight", see weight.js) are kept ONLY
+   in this browser's localStorage.
    The WhatsApp family card is drawn on the phone with <canvas>; nothing is uploaded.
    Page text (all languages) comes from <script type="application/json" id="trk-data"> on each page.
    ---------------------------------------------------------------------------------------------
@@ -161,6 +162,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     if (store) jset(KEY, { mode: m, date: v });
     const w = Math.floor(ga / 7), dd = ga % 7, left = diff(due, today());
     cur = { w, left };
+    window.pnWeek = w; document.dispatchEvent(new CustomEvent('pn-week'));   // the "My weight" tab (weight.js) suggests this week
     // First screen: week, image, size, days to go
     $('r-week').textContent = fmt(S.tr_week_big, { w });
     $('r-size').textContent = sizeLine(w) + (D.emoji[String(w)] ? ' ' + D.emoji[String(w)] : '');
@@ -260,7 +262,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
   });
   $('r-change').addEventListener('click', () => { form.hidden = false; dateIn.focus(); form.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
   $('r-clear').addEventListener('click', () => {
-    try { localStorage.removeItem(KEY); localStorage.removeItem(TODO_KEY); } catch (e) {}
+    try { localStorage.removeItem(KEY); localStorage.removeItem(TODO_KEY); localStorage.removeItem('pn_weight'); } catch (e) {}
     res.hidden = true; form.hidden = false; dateIn.value = ''; err.textContent = ''; cur = null; dateIn.focus();
   });
 

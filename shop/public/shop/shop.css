@@ -47,6 +47,13 @@ body.shop { overflow-x: hidden; }
 .sh-opt:has(input:checked) { border-color: var(--ink); }
 .sh-opt input { accent-color: var(--ink); width: 18px; height: 18px; margin: 0; }
 .sh-opt span { flex: 1; }
+.sh-mrp { color: var(--muted); font-size: .85rem; }
+.sh-details { border-top: 1px solid var(--line); padding-top: 10px; margin: 10px 0; }
+.sh-details summary { cursor: pointer; font-weight: 700; }
+.sh-details dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 10px 0 0; font-size: .92rem; }
+.sh-details dt { color: var(--muted); }
+.sh-details dd { margin: 0; }
+@media (max-width: 480px) { .sh-details dl { grid-template-columns: 1fr; } .sh-details dd { margin-bottom: 6px; } }
 .sh-qty { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .sh-qty label { margin-right: 6px; font-weight: 700; }
 .sh-qty button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); color: var(--ink); font-size: 1.2rem; cursor: pointer; }
