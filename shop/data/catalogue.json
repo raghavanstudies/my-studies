@@ -56,7 +56,7 @@
    "img": "images/bob-1.webp",
    "gst_rate": 18,
    "hsn": "4810",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "baby-on-board-sign-1",
@@ -113,7 +113,7 @@
    "img": "images/mob.webp",
    "gst_rate": 18,
    "hsn": "4810",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "mom-on-board-sign-1",
@@ -155,7 +155,7 @@
    "img": "images/teether-gift.webp",
    "gst_rate": 18,
    "hsn": "950300",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "teether-gift-set-1",
@@ -197,7 +197,7 @@
    "img": "images/teether-fishbird.webp",
    "gst_rate": 18,
    "hsn": "950300",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "teether-fish-bird-1",
@@ -239,7 +239,7 @@
    "img": "images/teether-carcloud.webp",
    "gst_rate": 18,
    "hsn": "950300",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "teether-car-cloud-1",
@@ -281,7 +281,7 @@
    "img": "images/knee-blue.webp",
    "gst_rate": 18,
    "hsn": "61119090",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "knee-pads-blue-smiley-1",
@@ -338,7 +338,7 @@
    "img": "images/knee-yellow.webp",
    "gst_rate": 18,
    "hsn": "61119090",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "knee-pads-yellow-smiley-1",
@@ -395,7 +395,7 @@
    "img": "images/knee-mint.webp",
    "gst_rate": 18,
    "hsn": "61119090",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "knee-pads-mint-dotted-1",
@@ -437,7 +437,7 @@
    "img": "images/knee-gray.webp",
    "gst_rate": 18,
    "hsn": "61119090",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "knee-pads-gray-dotted-1",
@@ -494,7 +494,7 @@
    "img": "images/knee-black.webp",
    "gst_rate": 18,
    "hsn": "61119090",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "knee-pads-black-dotted-1",
@@ -551,7 +551,7 @@
    "img": "images/kitchen.webp",
    "gst_rate": 18,
    "hsn": "95030010",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "wooden-kitchen-set-1",
@@ -593,7 +593,7 @@
    "img": "images/foam-mat.webp",
    "gst_rate": 18,
    "hsn": "95030090",
-   "gst_confirmed": false,
+   "gst_confirmed": true,
    "variants": [
     {
      "sku": "foam-mat-1",
