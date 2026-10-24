@@ -1,5 +1,8 @@
 -- Peppynose own shop: database schema (Cloudflare D1 / SQLite).
 -- Money is always stored in paise (₹1 = 100). Prices include GST, as shown to customers.
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS auth_attempts;
 DROP TABLE IF EXISTS outbox;
 DROP TABLE IF EXISTS order_events;
 DROP TABLE IF EXISTS order_items;
@@ -90,3 +93,31 @@ CREATE TABLE outbox (
 CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 
 CREATE TABLE login_attempts (ip TEXT NOT NULL, at TEXT NOT NULL);
+
+-- Customer accounts (separate from the shop admin password).
+-- password_hash is PBKDF2-SHA256, never the password itself.
+CREATE TABLE users (
+  id            TEXT PRIMARY KEY,
+  email         TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  name          TEXT NOT NULL,
+  password_hash TEXT NOT NULL,
+  created_at    TEXT NOT NULL
+);
+
+-- id is the SHA-256 of the cookie value, so a database copy does not reveal live cookies.
+CREATE TABLE sessions (
+  id         TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL REFERENCES users(id),
+  csrf       TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL
+);
+CREATE INDEX sessions_user ON sessions(user_id, expires_at);
+
+-- Failed customer logins and sign-up attempts. Admin lockouts stay in login_attempts.
+CREATE TABLE auth_attempts (
+  scope TEXT NOT NULL,
+  key   TEXT NOT NULL,
+  at    TEXT NOT NULL
+);
+CREATE INDEX auth_attempts_lookup ON auth_attempts(scope, key, at);

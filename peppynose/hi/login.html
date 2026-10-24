@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html lang="hi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>लॉग इन — Peppynose</title>
+<meta content="अपने Peppynose खाते में लॉग इन करें।" name="description"/>
+<link href="https://www.peppynose.com/hi/login.html" rel="canonical"/><link href="https://www.peppynose.com/login.html" hreflang="en" rel="alternate"/><link href="https://www.peppynose.com/ta/login.html" hreflang="ta" rel="alternate"/><link href="https://www.peppynose.com/hi/login.html" hreflang="hi" rel="alternate"/><link href="https://www.peppynose.com/login.html" hreflang="x-default" rel="alternate"/>
+<meta content="https://www.peppynose.com/hi/login.html" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="Peppynose" property="og:site_name"/><meta content="hi_IN" property="og:locale"/>
+<meta content="लॉग इन — Peppynose" property="og:title"/>
+<meta content="अपने Peppynose खाते में लॉग इन करें।" property="og:description"/>
+<meta content="https://www.peppynose.com/images/og-banner.jpg?v=2" property="og:image"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="लॉग इन — Peppynose" name="twitter:title"/>
+<meta content="अपने Peppynose खाते में लॉग इन करें।" name="twitter:description"/>
+<meta content="https://www.peppynose.com/images/og-banner.jpg?v=2" name="twitter:image"/>
+<link href="../favicon.png" rel="icon" type="image/png"/>
+<link href="../apple-touch-icon.png" rel="apple-touch-icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="../styles.css?v=ad58cf1dc6" rel="stylesheet"/><script src="../lang.js"></script>
+</head>
+<body>
+<div id="pn-loader" aria-hidden="true"><div class="pl-box"><div class="pl-art"><img class="pl-perch" src="/images/loader/bird-perch.webp" alt="" width="322" height="346"><img class="pl-mom" src="/images/loader/bird-mother.webp" alt="" width="322" height="346"><img class="pl-baby" src="/images/loader/bird-baby.webp" alt="" width="322" height="346"></div><img class="pl-word" src="/images/logo-wordmark.webp" alt="" width="640" height="131"></div></div>
+<script>(function(){var l=document.getElementById('pn-loader');if(!l)return;var seen=false;try{seen=sessionStorage.getItem('pn_loader_seen')==='1';sessionStorage.setItem('pn_loader_seen','1')}catch(e){}if(seen||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){l.remove();return}var t0=0,done=false;function hide(){if(done)return;done=true;l.classList.add('pn-out');setTimeout(function(){l.remove()},220)}requestAnimationFrame(function(){t0=Date.now();setTimeout(hide,680)});document.addEventListener('DOMContentLoaded',function(){setTimeout(hide,t0?Math.max(0,560-(Date.now()-t0)):560)});setTimeout(hide,2500)})();</script>
+<header>
+<div class="wrap bar">
+<a class="brand" href="index.html"><img class="brand-mark" src="../logo-mark.png" alt="" width="42" height="42"><img class="brand-word" src="../images/logo-wordmark.webp" alt="Peppynose" width="640" height="131"></a>
+<button aria-controls="nav" aria-expanded="false" class="menu-btn">मेन्यू</button>
+<nav class="nav" id="nav">
+<a href="index.html">होम</a>
+<a href="products.html">दुकान</a>
+<a href="about.html">हमारे बारे में</a>
+<a href="faq.html">सवाल-जवाब</a>
+<a href="pregnancy-tracker.html">प्रेगनेंसी ट्रैकर</a>
+<a href="contact.html">संपर्क</a>
+</nav>
+</div>
+</header>
+
+  <main>
+    <div class="page-head">
+      <div class="wrap"><span class="eyebrow">खाता</span><h1>फिर से <em>स्वागत है</em></h1><p>जिस ईमेल और पासवर्ड से साइन अप किया था, उनसे लॉग इन करें।</p></div>
+    </div>
+    <div class="wrap">
+      <div class="auth-card">
+        <p id="deleted-note" class="auth-note" hidden></p>
+        <form id="auth-form" class="auth-form" data-mode="login" novalidate>
+          <label>ईमेल<input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120"></label>
+          <label>पासवर्ड<input name="password" type="password" autocomplete="current-password" required maxlength="200"></label>
+          <p id="err" class="auth-err" role="alert"></p>
+          <button class="btn amazon" type="submit">लॉग इन</button>
+        </form>
+        <!-- TODO: forgot-password needs real email delivery. shop/src/auth.js explains why this is not a reset form. -->
+        <p class="auth-note">पासवर्ड भूल गए? ईमेल से अपने-आप रीसेट अभी उपलब्ध नहीं है। खाते वाले पते से <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a> पर लिखें, हम मदद करेंगे।</p>
+        <p class="auth-switch">नए हैं? <a href="signup.html">खाता बनाएँ</a></p>
+      </div>
+    </div>
+  </main>
+
+<footer>
+<div class="wrap">
+<div class="foot">
+<div><img alt="Peppynose लोगो" height="200" loading="lazy" src="../images/logo-footer.webp" width="266"/></div>
+<div>
+<h4>देखें</h4>
+<ul><li><a href="products.html">सभी प्रोडक्ट देखें</a></li><li><a href="about.html">हमारे बारे में</a></li><li><a href="faq.html">सवाल-जवाब</a></li><li><a href="contact.html">संपर्क</a></li><li><a href="pregnancy-tracker.html">प्रेगनेंसी ट्रैकर</a></li></ul>
+</div>
+<div>
+<h4>नीतियाँ</h4>
+<ul><li><a href="shipping.html">शिपिंग नीति</a></li><li><a href="returns.html">रिटर्न और रिफ़ंड</a></li><li><a href="privacy.html">गोपनीयता नीति</a></li><li><a href="#" data-pn-cookie-settings>कुकी सेटिंग्स</a></li><li><a href="terms.html">उपयोग की शर्तें</a></li></ul>
+</div>
+<div>
+<h4>ऑनलाइन खरीदें</h4>
+<ul><li><a href="https://www.amazon.in/stores/Peppynose/page/D8588934-1A65-4756-BB2F-4FAB88D7B018" rel="noopener" target="_blank">Amazon.in स्टोर</a></li><li><a href="https://www.flipkart.com/search?q=peppynose" rel="noopener" target="_blank">Flipkart</a></li></ul>
+<h4 style="margin-top:22px">संपर्क</h4>
+<ul><li><a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a></li><li><a href="https://www.instagram.com/peppynose_toystore/" rel="noopener" target="_blank">Instagram</a></li><li>T-pet Road, Musiri 621211, Trichy, Tamil Nadu</li></ul>
+</div>
+</div>
+<div class="copy"><span>© <span id="year">2026</span> Peppynose™. सर्वाधिकार सुरक्षित।</span><span>कीमतें बदल सकती हैं; ताज़ा कीमत Amazon.in या Flipkart पर है। लाइफ़स्टाइल फ़ोटो: Pexels।</span></div>
+</div>
+</footer><a aria-label="WhatsApp पर हमसे चैट करें (नए टैब में)" class="wa-float" href="https://wa.me/917448704660?text=Hi%20Peppynose%2C%20I%20have%20a%20question" rel="noopener" target="_blank"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.5L3.5 20.5l1.4-4.6a8.4 8.4 0 1 1 15.6-4.3z"></path><path d="M9 8.6c0 3.4 3 6.4 6.4 6.4l1.2-1.6-2-1-1 .8a5 5 0 0 1-2.8-2.8l.8-1-1-2z" fill="currentColor" stroke="none"></path></svg><span>हमसे चैट करें</span></a>
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const b = document.querySelector('.menu-btn'), n = document.getElementById('nav');
+    const setMenu = open => { n.classList.toggle('open', open); b.setAttribute('aria-expanded', open); };
+    b.addEventListener('click', () => setMenu(!n.classList.contains('open')));
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && n.classList.contains('open')) { setMenu(false); b.focus(); } });
+    document.addEventListener('click', ev => { if (n.classList.contains('open') && !n.contains(ev.target) && !b.contains(ev.target)) setMenu(false); });
+  </script>
+<script defer src="../wa.js"></script><script src="/analytics-config.js" defer></script>
+<script src="/analytics.js" defer></script>
+<script src="/chatbot.js" defer></script>
+<script src="/motion.js" defer></script>
+</body>
+</html>
