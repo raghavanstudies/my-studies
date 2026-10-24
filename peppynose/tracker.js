@@ -188,14 +188,6 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     return true;
   };
 
-  // ---- Tabs ----
-  const tabs = [...document.querySelectorAll('.trk-tabs [role="tab"]')];
-  const pick = t => tabs.forEach(x => { const on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; $(x.getAttribute('aria-controls')).hidden = !on; });
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => pick(t));
-    t.addEventListener('keydown', e => { const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (k) { const n = tabs[(i + k + tabs.length) % tabs.length]; pick(n); n.focus(); } });
-  });
-
   // ---- WhatsApp family card (canvas, on the phone) ----
   const loadImg = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
   const wrapText = (ctx, text, x, y, maxW, lh) => {

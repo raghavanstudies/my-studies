@@ -912,10 +912,25 @@ html.trk-zoom-open { overflow: hidden; }
 .trk-ph { background: radial-gradient(circle at 38% 34%, #ffe9df 0, #fbd6c6 60%, #f6c0aa 100%); }
 .trk .trk-card, .trk #trk-form { scroll-margin-top: 92px; }
 
-/* "My weight" tab (weight.js). Four tabs: on phones they sit 2 × 2 so Tamil and Hindi labels stay readable. */
-@media (max-width: 520px) {
-  .trk-tabs { display: grid; grid-template-columns: 1fr 1fr; border-radius: 22px; }
-}
+/* Tracker result without tabs: week + picture, then My weight, This week, Checkups and To-do as their own cards (weight.js). */
+.trk-sec h2, .wt-card h2 { font-size: 1.2rem; margin: 0 0 10px; display: flex; gap: 8px; align-items: center; }
+.trk-ico { font-size: 1.2em; line-height: 1; }
+.wt-card { border: 2px solid var(--mint); }
+.wt-today .wt-big-l { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+.wt-today #wt-forweek { font-weight: 500; color: var(--muted); }
+.wt-today #wt-kg { font-size: 1.3rem; font-weight: 700; flex: 1 1 140px; }
+.wt-today .wt-wk { display: grid; gap: 4px; max-width: 160px; margin-top: 8px; font-weight: 600; font-size: .92rem; }
+.wt-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 0 4px; }
+.wt-tile { background: var(--cream); border: 1px solid var(--line); border-radius: 14px; padding: 10px; display: grid; gap: 2px; min-width: 0; }
+.wt-tile b { font-size: 1.15rem; overflow-wrap: anywhere; }
+.wt-t-h, .wt-t-s { font-size: .78rem; color: var(--muted); }
+.wt-tile.wt-ok { background: var(--mint-soft); border-color: var(--mint); }
+.wt-tile.wt-low, .wt-tile.wt-high { background: #fde7dc; border-color: #f3b79c; }
+.wt-tile.wt-low b, .wt-tile.wt-high b { color: #8a2d0b; }
+.wt-all { margin-top: 6px; border-top: 1px solid var(--line); padding-top: 10px; }
+.wt-all summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
+@media (max-width: 380px) { .wt-tile b { font-size: 1rem; } .wt-tile { padding: 8px; } }
+@media (prefers-color-scheme: dark) { .wt-tile.wt-low, .wt-tile.wt-high { background: #4a2414; border-color: #7a3a1c; } .wt-tile.wt-low b, .wt-tile.wt-high b { color: #ffd8c6; } }
 .trk-panel h3 { font-size: 1rem; margin: 14px 0 8px; }
 .wt-form .wt-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
 .wt-form label { display: grid; gap: 4px; font-weight: 600; font-size: .92rem; flex: 1 1 140px; }

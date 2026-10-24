@@ -1,4 +1,4 @@
-// "My weight" tab on the pregnancy tracker (weight.js). Weights are kept only in this browser.
+// "My weight" card on the pregnancy tracker (weight.js), and the no-tabs layout. Weights are kept only in this browser.
 const { test, expect } = require('@playwright/test');
 const { blockExternal } = require('./helpers');
 
@@ -10,20 +10,25 @@ const setup = async (page, path, days = 126) => {   // due date in 126 days = we
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   await blockExternal(page);
   await page.goto('/' + path);
-  await page.click('#t-weight');
   return errors;
 };
 const start = async (page, h = '158', pre = '55') => {
   await page.fill('#wt-h', h); await page.fill('#wt-pre', pre); await page.click('#wt-setup button[type="submit"]');
 };
-const add = async (page, w, k) => { await page.fill('#wt-week', String(w)); await page.fill('#wt-kg', String(k)); await page.click('#wt-add button[type="submit"]'); };
+const add = async (page, w, k) => {   // w = null: this week (the default)
+  if (w !== null) { if (await page.locator('#wt-wk-btn').isVisible()) await page.click('#wt-wk-btn'); await page.fill('#wt-week', String(w)); }
+  await page.fill('#wt-kg', String(k)); await page.click('#wt-add button[type="submit"]');
+};
 
-test('TC-WT-01 "My weight" is the 4th tracker tab in EN/TA/HI; the page says weights stay on the phone', async ({ request }) => {
-  const words = { en: ['My weight', 'Your date and weights stay'], ta: ['என் எடை', 'தேதியும் எடைகளும்'], hi: ['मेरा वज़न', 'तारीख और वज़न'] };
+test('TC-WT-01 no tabs: week, My weight, This week, Checkups, To-do in that order (EN/TA/HI); the page says weights stay on the phone', async ({ request }) => {
+  const words = { en: ['Your weight during pregnancy', 'Your date and weights stay'], ta: ['கர்ப்ப காலத்தில் உங்கள் எடை', 'தேதியும் எடைகளும்'], hi: ['प्रेग्नेंसी में आपका वज़न', 'तारीख और वज़न'] };
   for (const [l, d] of Object.entries(LANGS)) {
     const html = await (await request.get('/' + d + 'pregnancy-tracker.html')).text();
-    expect(html.match(/role="tab"/g)).toHaveLength(4);
-    expect(html).toContain(`<button type="button" role="tab" id="t-weight" aria-controls="p-weight" aria-selected="false" tabindex="-1">${words[l][0]}</button>`);
+    expect(html).not.toContain('role="tab"');
+    expect(html).not.toContain('role="tabpanel"');
+    const at = ['trk-hero', 'id="p-weight"', 'id="p-week"', 'id="p-checks"', 'id="p-todo"'].map(x => html.indexOf(x));
+    expect(at.every((v, i) => v > 0 && (i === 0 || v > at[i - 1])), `${l} order ${at}`).toBe(true);
+    expect(html).toContain(words[l][0]);
     expect(html).toContain(words[l][1]);
     expect(html).toContain(`<script src="${d ? '../' : ''}weight.js" defer></script>`);
     const priv = await (await request.get('/' + d + 'privacy.html')).text();
@@ -31,7 +36,7 @@ test('TC-WT-01 "My weight" is the 4th tracker tab in EN/TA/HI; the page says wei
   }
 });
 
-test('TC-WT-02 height and starting weight are checked, then BMI and the healthy total are shown; this week is suggested', async ({ page }) => {
+test('TC-WT-02 height and starting weight are checked; then "Today\'s weight" is for this week and the healthy total is shown', async ({ page }) => {
   const errors = await setup(page, 'pregnancy-tracker.html');
   await expect(page.locator('#p-weight')).toBeVisible();
   await start(page, '50', '55');
@@ -40,12 +45,18 @@ test('TC-WT-02 height and starting weight are checked, then BMI and the healthy 
   await expect(page.locator('#wt-setup-err')).toHaveText('Enter a weight in kg (30–200).');
   await start(page);
   await expect(page.locator('#wt-bmi')).toHaveText('Your BMI before pregnancy: 22.0 (normal weight). Usual healthy gain for the whole pregnancy: 11.5–16 kg.');
-  await expect(page.locator('#wt-week')).toHaveValue('22');
-  await expect(page.locator('#wt-table')).toContainText('No weights yet');
+  await expect(page.locator('#wt-forweek')).toHaveText('for week 22');
+  await expect(page.locator('#wt-week')).toBeHidden();          // the week box opens only with "Different week?"
+  await expect(page.locator('#wt-stats')).toContainText('No weights yet');
+  await add(page, null, 61.9);
+  await expect(page.locator('#wt-stats .wt-tile')).toHaveCount(3);
+  await expect(page.locator('#wt-stats')).toContainText('61.9 kg');
+  await expect(page.locator('#wt-stats')).toContainText('+6.9 kg');
+  await expect(page.locator('#wt-stats .wt-tile').nth(2)).toContainText('Above range');
   expect(errors).toEqual([]);
 });
 
-test('TC-WT-03 weekly weights: table, healthy-range status, chart dots, month view, delete; kept after reload', async ({ page }) => {
+test('TC-WT-03 weekly weights: "See all" table, healthy-range status, chart dots, month view, delete; kept after reload', async ({ page }) => {
   await setup(page, 'pregnancy-tracker.html');
   await start(page);
   await add(page, 45, 60);
@@ -54,6 +65,8 @@ test('TC-WT-03 weekly weights: table, healthy-range status, chart dots, month vi
   await expect(page.locator('#wt-err')).toHaveText('Enter a weight in kg (30–200).');
   for (const [w, k] of [[8, 55.6], [16, 58.1], [20, 60.2], [22, 62.8]]) await add(page, w, k);
   await add(page, 22, 62.5);   // same week again replaces it
+  await expect(page.locator('#wt-table')).toBeHidden();         // the full list is folded under "See all weights"
+  await page.click('#wt-all summary');
   const rows = page.locator('#wt-table tbody tr');
   await expect(rows).toHaveCount(4);
   await expect(rows.nth(0)).toContainText('8'); await expect(rows.nth(0)).toContainText('55.6 kg'); await expect(rows.nth(0)).toContainText('In range');
@@ -68,7 +81,7 @@ test('TC-WT-03 weekly weights: table, healthy-range status, chart dots, month vi
   await page.click('.wt-views button[data-view="week"]');
   await page.click('button[aria-label="Delete week 8"]');
   await expect(rows).toHaveCount(3);
-  await page.reload(); await page.click('#t-weight');
+  await page.reload(); await page.click('#wt-all summary');
   await expect(page.locator('#wt-table tbody tr')).toHaveCount(3);
   await page.click('#wt-edit');
   await expect(page.locator('#wt-h')).toHaveValue('158');
@@ -93,6 +106,7 @@ test('TC-WT-05 Tamil and Hindi: own words, no sideways scroll on a 320 px phone'
     const errors = await setup(page, d + 'pregnancy-tracker.html');
     await start(page);
     await add(page, 16, 58.1);
+    await page.click('#wt-all summary');
     await expect(page.locator('#wt-table')).toContainText(st);
     await page.click('.wt-views button[data-view="month"]');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);

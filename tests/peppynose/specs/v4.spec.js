@@ -133,8 +133,8 @@ test.describe('pregnancy tracker V4', () => {
     await expect(page.locator('#r-left')).toHaveText('126 days to go');
     await expect(page.locator('#r-card')).toContainText('Share with family');
     await expect(page.locator('#trk-form')).toBeHidden();
-    // tab 1 is open with the V3 details
-    await expect(page.locator('#t-week')).toHaveAttribute('aria-selected', 'true');
+    // no tabs: the V3 details are shown right away
+    await expect(page.locator('#p-week')).toBeVisible();
     await expect(page.locator('#r-tri')).toHaveText('Second trimester');
     await expect(page.locator('#r-tip')).not.toBeEmpty();
     await expect(page.locator('.disclaimer').first()).toContainText('not medical advice');
@@ -143,23 +143,20 @@ test.describe('pregnancy tracker V4', () => {
     expect(errors).toEqual([]);
   });
 
-  test('TC-V4-08 Checkups tab marks the anomaly scan "Now"; To-do ticks survive reload; Clear removes everything', async ({ page }) => {
+  test('TC-V4-08 Checkups marks the anomaly scan "Now"; To-do ticks survive reload; Clear removes everything', async ({ page }) => {
     await open(page, 'pregnancy-tracker.html');
     await page.fill('#trk-date', await day(page, 126));
     await page.click('#trk-form button[type="submit"]');
-    await page.click('#t-checks');
     await expect(page.locator('#p-checks')).toBeVisible();
-    await expect(page.locator('#p-week')).toBeHidden();
+    await expect(page.locator('#p-week')).toBeVisible();   // all parts on one page, no tabs
     await expect(page.locator('#r-checks li')).toHaveCount(7);
     await expect(page.locator('#r-checks li.ck-now')).toHaveCount(1);
     await expect(page.locator('#r-checks li.ck-now')).toContainText('18–22');
-    await page.click('#t-todo');
     await expect(page.locator('#r-todo-h')).toHaveText('Your to-do for week 22');
     const boxes = page.locator('#r-todo input[type="checkbox"]');
     expect(await boxes.count()).toBeGreaterThanOrEqual(3);
     await boxes.nth(1).check();
     await page.reload();
-    await page.click('#t-todo');
     await expect(page.locator('#r-todo input[type="checkbox"]').nth(1)).toBeChecked();
     await page.click('#r-clear');
     expect(await page.evaluate(() => [localStorage.getItem('pn_preg'), localStorage.getItem('pn_todo')])).toEqual([null, null]);
@@ -186,17 +183,15 @@ test.describe('pregnancy tracker V4', () => {
     await expect(page.locator('#r-card-msg')).toContainText('Card saved');
   });
 
-  test('TC-V4-10 Tamil and Hindi first screen, tabs and to-do work', async ({ page }) => {
+  test('TC-V4-10 Tamil and Hindi first screen and to-do work', async ({ page }) => {
     for (const d of ['ta/', 'hi/']) {
       const { errors } = await open(page, d + 'pregnancy-tracker.html');
       await page.fill('#trk-date', await day(page, 126));
       await page.click('#trk-form button[type="submit"]');
       await expect(page.locator('#r-week')).toContainText('22');
       await expect(page.locator('#r-size')).not.toBeEmpty();
-      await page.click('#t-todo');
       await page.locator('#r-todo input[type="checkbox"]').first().check();
       await page.reload();
-      await page.click('#t-todo');
       await expect(page.locator('#r-todo input[type="checkbox"]').first()).toBeChecked();
       expect(errors).toEqual([]);
       await page.click('#r-clear');

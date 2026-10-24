@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 24 October 2026 (weight tracker), 436 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 24 October 2026 (tracker without tabs + simpler weight card), 436 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -166,9 +166,9 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 
 | ID | Test | Expected |
 |---|---|---|
-| TC-WT-01 | "My weight" tab (EN/TA/HI) | 4th tracker tab in the page language; weight.js loaded; tracker and privacy pages say weights stay on the phone |
-| TC-WT-02 | Height and starting weight | Wrong values show a clear error; then BMI, its group and the healthy total gain are shown; this week is suggested |
-| TC-WT-03 | Weekly weights | Wrong week or weight is refused; same week replaces; table shows gain and In/Below/Above range; chart dots and band; month view shows the latest weight per month; delete works; kept after reload |
+| TC-WT-01 | Tracker layout (EN/TA/HI) | No tabs: week + picture, My weight, This week, Checkups, To-do in that order; weight.js loaded; tracker and privacy pages say weights stay on the phone |
+| TC-WT-02 | Height, starting weight, today's weight | Wrong values show a clear error; "Today's weight" is for this week (week box only after "Different week?"); 3 tiles show latest, gained so far and the healthy-range status |
+| TC-WT-03 | Weekly weights | Wrong week or weight is refused; same week replaces; the list under "See all weights" shows gain and In/Below/Above range; chart dots and band; month view shows the latest weight per month; delete works; kept after reload |
 | TC-WT-04 | Privacy | No request carries the height or weights; they are only in localStorage; "Clear my data" deletes them |
 | TC-WT-05 | Tamil and Hindi on a 320 px phone | Own words in the table; no sideways scroll; no JS errors |
 
@@ -200,4 +200,4 @@ These can't be automated from the build environment, which cannot reach www.pepp
 | TC-MAN-20 | Tap the round blue "?" button, ask a question in English, Tamil and Hindi | Sensible answer, or "Chat on WhatsApp" if nothing fits |
 | TC-MAN-21 | After pasting the real IDs: open the site, tap Accept, tap an Amazon button | GA4 Realtime shows page_view and amazon_click within a minute; Clarity shows the visit within about 2 hours |
 | TC-MAN-22 | Pregnancy tracker on a phone: enter a due date, tilt the phone, drag the picture, tap it | The picture tilts gently and zooms on tap (iPhone asks once to allow motion); tap again to close |
-| TC-MAN-23 | Pregnancy tracker on a phone: My weight tab, enter height, starting weight and a few weeks | Chart and table look right; Week-wise / Month-wise switch works; the data is still there after closing the browser |
+| TC-MAN-23 | Pregnancy tracker on a phone: My weight card, enter height, starting weight and a few weeks | Tiles, chart and "See all weights" look right; Week-wise / Month-wise switch works; the data is still there after closing the browser |
