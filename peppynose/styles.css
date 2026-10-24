@@ -1032,3 +1032,28 @@ html.dash-open .wa-float, html.dash-open .pn-chat { display: none; }
 @media (max-width: 380px) { .dash-ring { width: 128px; } .dr-txt b { font-size: 2.6rem; } .dash-tile { padding: 12px; min-height: 120px; } }
 @media (max-width: 520px) { .dash-top { flex-wrap: nowrap; gap: 14px; } .dash-ring { width: 118px; } .dr-txt b { font-size: 2.5rem; } .dash-hero .trk-hero-img { width: 140px; } }
 @media (max-width: 380px) { .dash-top { gap: 10px; } .dash-ring { width: 100px; } .dr-txt b { font-size: 2.2rem; } .dash-hero .trk-hero-img { width: 118px; } }
+
+/* Dashboard animations (only with motion, html.pn-motion; transform/opacity only; clickable boxes never keep moving). */
+.dr-fg { stroke: url(#dr-grad); }
+.dr-dotg { transform-origin: 60px 60px; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+.dr-dot { fill: #fff; stroke: #E51B00; stroke-width: 3; }
+.pn-motion .dr-dot { animation: drDot 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.dash-hero { position: relative; overflow: hidden; isolation: isolate; }
+.dash-bub { position: absolute; inset: 0; pointer-events: none; z-index: -1; }
+.dash-bub span { position: absolute; left: var(--x); bottom: -30px; font-size: 18px; opacity: 0; animation: dashBub var(--t, 8s) var(--d, 0s) ease-in infinite; }
+.pn-motion .dash-tiles.dash-in .dash-tile { animation: dtIn .6s calc(.25s + var(--i, 0) * 80ms) cubic-bezier(.2, .8, .3, 1.25) both; }
+.dash-tile:active { transform: scale(.97); }
+.pn-motion .dt-ico { display: inline-block; animation: dtWiggle 5s calc(1.5s + var(--i, 0) * .6s) ease-in-out infinite; transform-origin: 50% 80%; }
+.pn-motion .dash-tile[data-open="p-checks"] .dt-ico { animation-name: dtBeat; }
+.pn-motion .dash-tile[data-open="p-week"] .dt-ico { animation-name: dtBob; }
+.btn.dash-add { position: relative; overflow: hidden; isolation: isolate; }
+.pn-motion .btn.dash-add::after { content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 30%; z-index: -1; pointer-events: none;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .45), rgba(255, 255, 255, 0)); animation: dashShine 3.6s 1.2s ease-in-out infinite; }
+.pn-motion .btn.dash-add > span { display: inline-block; animation: dtBeat 2.4s 2s ease-in-out infinite; }
+@keyframes drDot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+@keyframes dashBub { 0% { opacity: 0; transform: translateY(0) scale(.7); } 15% { opacity: .55; } 80% { opacity: .35; } 100% { opacity: 0; transform: translateY(-340px) scale(1.15) rotate(25deg); } }
+@keyframes dtIn { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+@keyframes dtWiggle { 0%, 84%, 100% { transform: rotate(0); } 88% { transform: rotate(-12deg); } 92% { transform: rotate(10deg); } 96% { transform: rotate(-5deg); } }
+@keyframes dtBeat { 0%, 80%, 100% { transform: scale(1); } 86% { transform: scale(1.25); } 92% { transform: scale(1.05); } }
+@keyframes dtBob { 0%, 80%, 100% { transform: translateY(0); } 87% { transform: translateY(-5px); } 94% { transform: translateY(1px); } }
+@keyframes dashShine { 0% { transform: translateX(0); } 45%, 100% { transform: translateX(520%); } }

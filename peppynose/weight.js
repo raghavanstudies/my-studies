@@ -95,9 +95,10 @@
     document.dispatchEvent(new CustomEvent('pn-weight'));
   };
 
+  const motionOK = () => document.documentElement.classList.contains('pn-motion') || (!!window.matchMedia && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window);   // same rule as motion.js (which loads later)
   // A few little hearts float up from "Add" (only when motion is on).
   const cheer = btn => {
-    if (!btn || !document.documentElement.classList.contains('pn-motion')) return;
+    if (!btn || !motionOK()) return;
     $('wt-stats').classList.remove('wt-pop'); void $('wt-stats').offsetWidth; $('wt-stats').classList.add('wt-pop');
     const r = btn.getBoundingClientRect();
     for (let i = 0; i < 6; i++) {

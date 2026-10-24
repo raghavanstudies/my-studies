@@ -12,23 +12,51 @@
   const locale = { en: 'en-IN', ta: 'ta-IN', hi: 'hi-IN' }[lang] || 'en-IN';
   const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
   const html = document.documentElement;
+  const motionOK = () => document.documentElement.classList.contains('pn-motion') || (!!window.matchMedia && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window);   // same rule as motion.js (which loads later)
+
+  // ---- Decoration (only with motion): gradient ring with a glowing dot, floating hearts and stars in the week card ----
+  const svg = document.querySelector('.dash-ring svg');
+  svg.insertAdjacentHTML('afterbegin', '<defs><linearGradient id="dr-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0579B"/><stop offset=".45" stop-color="#E51B00"/><stop offset=".75" stop-color="#45B033"/><stop offset="1" stop-color="#0083CF"/></linearGradient></defs>');
+  svg.insertAdjacentHTML('beforeend', '<g class="dr-dotg"><circle class="dr-dot" cx="112" cy="60" r="7"/></g>');
+  const dotG = svg.querySelector('.dr-dotg');
+  if (motionOK()) {
+    const bub = document.createElement('div'); bub.className = 'dash-bub'; bub.setAttribute('aria-hidden', 'true');
+    bub.innerHTML = ['💗', '⭐', '✨', '🌸', '💖', '⭐', '✨', '🍼'].map((c, i) => `<span style="--x:${6 + i * 12}%;--d:${(i * 1.3) % 7}s;--t:${7 + (i % 3) * 2}s">${c}</span>`).join('');
+    document.querySelector('.dash-hero').prepend(bub);
+  }
+  document.querySelectorAll('.dash-tile').forEach((t, i) => t.style.setProperty('--i', i));
+  // Numbers count up to their value (only with motion).
+  const countUp = (el, to, render) => {
+    if (!el) return;
+    if (!motionOK() || to < 2) { el.textContent = render(to); return; }
+    const t0 = performance.now(), ms = 900;
+    const step = t => { const k = Math.min(1, (t - t0) / ms); el.textContent = render(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(step); };
+    el.textContent = render(0); requestAnimationFrame(step);
+  };
+  let shown = false;
 
   // ---- Ring and tiles ----
   const ring = $('r-ring'), C = 2 * Math.PI * 52;
   const update = () => {
     const t = window.pnTrk; if (!t) return;
     const p = Math.max(0, Math.min(100, Math.round(t.ga / 280 * 100)));
-    ring.style.strokeDasharray = C.toFixed(1); ring.style.strokeDashoffset = (C * (1 - p / 100)).toFixed(1);
-    set('r-pct', fmt(S.d_pct, { p }));
+    const fill = () => { ring.style.strokeDashoffset = (C * (1 - p / 100)).toFixed(1); dotG.style.transform = `rotate(${p * 3.6}deg)`; };
+    ring.style.strokeDasharray = C.toFixed(1);
+    if (!shown && motionOK()) {   // first time: the ring fills from empty, the tiles pop in one by one
+      ring.style.strokeDashoffset = C.toFixed(1); dotG.style.transform = 'rotate(0deg)';
+      requestAnimationFrame(() => requestAnimationFrame(fill));
+      document.querySelector('.dash-tiles').classList.add('dash-in');
+    } else fill();
+    if (!shown) countUp($('r-pct'), p, n => fmt(S.d_pct, { p: n })); else set('r-pct', fmt(S.d_pct, { p }));
     const w = Math.max(0, Math.min(t.w, 40));
     set('dt-size', (D.emoji[String(w)] ? D.emoji[String(w)] + ' ' : '') + (t.w < 4 ? S.v4_size_early : t.w > 40 ? S.v4_size_late : D.sizes[String(w)]));
     set('dt-size-s', fmt(S.tr_week_big, { w: t.w }));
     const next = D.checks.find(c => t.w <= c.b);
     set('dt-check', next ? next.t.charAt(0).toUpperCase() + next.t.slice(1) : S.d_all_done); set('dt-check-s', next ? fmt(S.d_weeks, { a: next.a, b: next.b }) : '');
     set('dt-due', t.due.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' }));
-    set('dt-due-s', t.left > 0 ? fmt(S.tr_days_left, { n: t.left }) : S.tr_due_reached);
+    if (t.left > 0 && !shown) countUp($('dt-due-s'), t.left, n => fmt(S.tr_days_left, { n })); else set('dt-due-s', t.left > 0 ? fmt(S.tr_days_left, { n: t.left }) : S.tr_due_reached);
     set('dt-tip', ($('r-tip') || {}).textContent || ''); set('dt-tip-s', '');
-    todo(); weight();
+    todo(); weight(); shown = true;
   };
   const todo = () => {
     const boxes = [...document.querySelectorAll('#r-todo input[type="checkbox"]')];
@@ -69,7 +97,7 @@
   });
   addEventListener('popstate', e => { if (e.state && e.state.pnDash) show(e.state.pnDash, false); else hide(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && open && !document.querySelector('.trk-zoom')) back(); });
-  const clr = $('r-clear'); if (clr) clr.addEventListener('click', hide);
+  const clr = $('r-clear'); if (clr) clr.addEventListener('click', () => { hide(); shown = false; document.querySelector('.dash-tiles').classList.remove('dash-in'); });
 
   if (window.pnTrk) update(); else weight();
   if (history.state && history.state.pnDash && window.pnTrk) show(history.state.pnDash, false);   // reload while a panel was open
