@@ -4,6 +4,7 @@ After this script the result shows, one below the other: week + picture, My weig
 The logic is in peppynose/weight.js; weights are kept ONLY in the browser (localStorage "pn_weight").
 Rebuild chain:  python3 -I tools/peppynose/gen_site.py peppynose && python3 -I tools/peppynose/v3/apply_v3.py peppynose
                 && python3 -I tools/peppynose/v4/tools/apply_v4.py peppynose && python3 -I tools/peppynose/weight/apply_weight.py peppynose
+                && python3 -I tools/peppynose/cachebust.py peppynose
 Tamil and Hindi text: FOR BOSS REVIEW."""
 import sys, os, re, json
 REPO = os.path.abspath(sys.argv[1]); LOG = []
