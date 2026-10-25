@@ -1,11 +1,12 @@
-// Pluggable delivery for login codes. The default provider is "dev": it does not
-// contact any SMS or email service, and it may return the code to the caller for
-// local tests. Dev mode is refused when the request is for peppynose.com, so a
-// Worker left on the default cannot reveal codes on the live site.
+// Pluggable delivery for login codes. The default provider is "off": nothing is
+// sent, and the account API answers that code login is not available yet.
+// "dev" does not contact any SMS or email service. It may return the code to the
+// caller, and only when it is set explicitly and the request is from localhost
+// or 127.0.0.1. A live host never gets dev codes.
 // This module does not sign up for a provider. Live providers run only when the
 // owner sets that provider's secrets (see shop/README.md).
 
-const LIVE_HOST = /(^|\.)peppynose\.com$/i;
+const LOCAL_HOST = new Set(['localhost', '127.0.0.1']);
 
 function hostnameOf(value) {
   if (!value) return '';
@@ -16,16 +17,19 @@ function hostnameOf(value) {
   return raw.replace(/:\d+$/, '').toLowerCase();
 }
 
-export function isLiveRequest(req) {
+export function isLocalRequest(req) {
   let urlHost = '';
-  try { urlHost = new URL(req.url).hostname.toLowerCase(); } catch { urlHost = ''; }
-  return [urlHost, hostnameOf(req.headers.get('origin')), hostnameOf(req.headers.get('host'))]
-    .some(host => LIVE_HOST.test(host));
+  try { urlHost = new URL(req.url).hostname.toLowerCase(); } catch { return false; }
+  if (!LOCAL_HOST.has(urlHost)) return false;
+  const origin = req.headers.get('origin');
+  if (origin && !LOCAL_HOST.has(hostnameOf(origin))) return false;
+  return true;
 }
 
 export function providerFor(env, channel) {
   const raw = channel === 'sms' ? env && env.OTP_SMS_PROVIDER : env && env.OTP_EMAIL_PROVIDER;
-  return String(raw || 'dev').trim().toLowerCase();
+  const value = String(raw == null ? '' : raw).trim().toLowerCase();
+  return value || 'off';
 }
 
 function missing(env, names) {
@@ -35,8 +39,9 @@ function missing(env, names) {
 // Checks configuration only. Does not send and does not look up an account.
 export function deliveryReady(env, channel, req) {
   const provider = providerFor(env, channel);
+  if (provider === 'off') return { ok: false, reason: 'off' };
   if (provider === 'dev') {
-    if (isLiveRequest(req)) return { ok: false, reason: 'dev_refused' };
+    if (!isLocalRequest(req)) return { ok: false, reason: 'dev_refused' };
     return { ok: true, provider, dev: true };
   }
   const need = {
@@ -176,6 +181,7 @@ async function sendSes(env, email, code) {
 
 export async function sendOtp({ channel, to, code, env }) {
   const provider = providerFor(env, channel);
+  if (provider === 'off') return { ok: false, reason: 'off' };
   if (provider === 'dev') return { ok: true, dev: true };
   if (provider === 'msg91') return sendMsg91(env, to, code);
   if (provider === 'twilio') return sendTwilio(env, to, code);

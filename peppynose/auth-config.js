@@ -1,8 +1,7 @@
 /* Where the account API lives.
-   Leave this empty when the pages and the API are the same host
-   (the local shop at http://localhost:8787).
-   Before accounts work on www.peppynose.com, set the worker origin, for example:
-   window.PN_AUTH_API = "https://api.peppynose.com";
-   Setup steps, secrets and DNS are in shop/README.md under "Accounts".
-   Do not put secrets in this file. It is published with the static site. */
-window.PN_AUTH_API = "";
+   Live pages call the shop Worker. On localhost and 127.0.0.1 the pages and
+   the API are the same host, so the override below clears this for tests
+   and `wrangler dev`. Do not put secrets in this file. It is published with
+   the static site. Setup steps are in shop/README.md under "Accounts". */
+window.PN_AUTH_API = "https://api.peppynose.com";
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") window.PN_AUTH_API = "";

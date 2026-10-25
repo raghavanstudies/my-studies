@@ -24,6 +24,7 @@
       forbidden_origin: 'This site cannot do that.',
       not_configured: 'Accounts are not set up yet.',
       otp_not_configured: 'Code login is not available yet.',
+      otp_soon: 'Code login is coming soon.',
       otp_needs_contact: 'A code can be sent to a mobile number or an email, not a username.',
       otp_sent: 'If an account exists, we sent a code.',
       otp_invalid: 'That code is wrong or has expired.',
@@ -63,6 +64,7 @@
       forbidden_origin: 'यह साइट यह नहीं कर सकती।',
       not_configured: 'खाते अभी सेट नहीं हैं।',
       otp_not_configured: 'कोड से लॉग इन अभी उपलब्ध नहीं है।',
+      otp_soon: 'कोड से लॉग इन जल्द आ रहा है।',
       otp_needs_contact: 'कोड मोबाइल नंबर या ईमेल पर भेजा जा सकता है, उपयोगकर्ता नाम पर नहीं।',
       otp_sent: 'अगर खाता है, तो हमने एक कोड भेज दिया है।',
       otp_invalid: 'यह कोड ग़लत है या इसकी समय-सीमा खत्म हो गई है।',
@@ -102,6 +104,7 @@
       forbidden_origin: 'இந்தத் தளத்தால் இதைச் செய்ய முடியாது.',
       not_configured: 'கணக்குகள் இன்னும் அமைக்கப்படவில்லை.',
       otp_not_configured: 'குறியீட்டுடன் உள்நுழைவு இன்னும் இல்லை.',
+      otp_soon: 'குறியீட்டு உள்நுழைவு விரைவில் வரும்.',
       otp_needs_contact: 'குறியீட்டைக் கைபேசி எண் அல்லது மின்னஞ்சலுக்கு அனுப்பலாம்; பயனர் பெயருக்கு அல்ல.',
       otp_sent: 'கணக்கு இருந்தால், ஒரு குறியீட்டை அனுப்பியுள்ளோம்.',
       otp_invalid: 'அந்தக் குறியீடு தவறு அல்லது காலாவதியாகிவிட்டது.',
@@ -401,15 +404,43 @@
     const verify = document.getElementById('otp-verify');
     const resend = document.getElementById('otp-resend');
     const err = document.getElementById('err');
+    const hintText = hint ? hint.textContent : '';
     let clock = 0;
+    let settled = false;
+    let otpOn = false;
 
     function refresh() {
-      const kind = contactKind(input.value);
-      requestBtn.disabled = !kind;
-      if (hint) hint.hidden = !!kind;
+      if (!settled) return;
+      const kind = otpOn ? contactKind(input.value) : '';
+      requestBtn.disabled = !otpOn || !kind;
+      requestBtn.hidden = !otpOn;
+      requestBtn.style.display = otpOn ? '' : 'none';
+      requestBtn.setAttribute('aria-hidden', otpOn ? 'false' : 'true');
+      if (hint) {
+        if (!otpOn) {
+          hint.hidden = false;
+          hint.textContent = t.otp_soon;
+        } else {
+          hint.textContent = hintText;
+          hint.hidden = !!kind;
+        }
+      }
+      if (!otpOn && panel) panel.hidden = true;
     }
     input.addEventListener('input', refresh);
-    refresh();
+
+    async function loadOtpConfig() {
+      try {
+        const res = await fetch(api('/api/auth/config'), { credentials: 'include' });
+        const data = res.ok ? await read(res) : null;
+        otpOn = !!(data && data.otp);
+      } catch {
+        otpOn = false;
+      }
+      settled = true;
+      refresh();
+    }
+    loadOtpConfig();
 
     function armResend() {
       if (!resend) return;
@@ -430,6 +461,7 @@
     }
 
     async function requestCode() {
+      if (!otpOn) return;
       if (err) err.textContent = '';
       requestBtn.disabled = true;
       try {

@@ -1,15 +1,21 @@
 // Customer accounts for the Peppynose site. The static pages cannot store passwords;
 // this module runs inside the shop Worker and keeps accounts in D1.
 // Passwords are peppered with SESSION_SECRET, then hashed with PBKDF2-SHA256.
+// The iteration count is stored in each hash. Cloudflare Workers' WebCrypto
+// refuses counts above 100000, so that is the only production setting.
 // The browser only receives an HttpOnly session cookie. Logout also needs the
 // per-session CSRF token returned by GET /api/auth/me (custom header, so a
 // foreign page cannot log someone out).
-// A login code is a random 6-digit OTP. Only its HMAC is stored. Dev delivery
-// (the default) never runs for a peppynose.com host; see otp-delivery.js.
+// A login code is a random 6-digit OTP. Only its HMAC is stored. Delivery is
+// off unless a provider is set. Dev delivery runs only when it is set and the
+// request is from localhost or 127.0.0.1. See otp-delivery.js.
 
 import { deliveryReady, sendOtp } from './otp-delivery.js';
 
-export const MIN_PBKDF2_ITERS = 600_000;
+// Workers WebCrypto: "iteration counts above 100000 are not supported".
+export const MAX_PBKDF2_ITERS = 100_000;
+export const MIN_PBKDF2_ITERS = MAX_PBKDF2_ITERS;
+const PBKDF2_TOO_HIGH = 'Password hashing is not configured safely. Cloudflare Workers cannot run PBKDF2 above 100000 iterations.';
 const TEST_ITERS = 1_000;
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
@@ -67,8 +73,8 @@ function timingSafeEqual(a, b) {
 
 export function configuredIters(env) {
   if (env && env.AUTH_TEST_FAST === '1') return TEST_ITERS;
-  const raw = env && env.AUTH_PBKDF2_ITERS ? Number(env.AUTH_PBKDF2_ITERS) : MIN_PBKDF2_ITERS;
-  if (!Number.isInteger(raw) || raw < MIN_PBKDF2_ITERS || raw > 2_000_000) return null;
+  const raw = env && env.AUTH_PBKDF2_ITERS ? Number(env.AUTH_PBKDF2_ITERS) : MAX_PBKDF2_ITERS;
+  if (!Number.isInteger(raw) || raw < MIN_PBKDF2_ITERS || raw > MAX_PBKDF2_ITERS) return null;
   return raw;
 }
 
@@ -76,7 +82,13 @@ function requireSecret(env) {
   const secret = env && env.SESSION_SECRET;
   if (typeof secret !== 'string' || secret.length < 32) throw new HttpError(503, 'Accounts are not set up yet.', { code: 'not_configured' });
   const iters = configuredIters(env);
-  if (!iters) throw new HttpError(503, 'Password hashing is not configured safely.', { code: 'not_configured' });
+  if (!iters) {
+    const asked = env && env.AUTH_PBKDF2_ITERS ? Number(env.AUTH_PBKDF2_ITERS) : 0;
+    const msg = Number.isInteger(asked) && asked > MAX_PBKDF2_ITERS
+      ? PBKDF2_TOO_HIGH
+      : 'Password hashing is not configured safely.';
+    throw new HttpError(503, msg, { code: 'not_configured' });
+  }
   return { secret, iters };
 }
 
@@ -92,11 +104,24 @@ async function pepper(secret, password) {
 }
 
 async function pbkdf2(material, salt, iters) {
-  const key = await crypto.subtle.importKey('raw', material, 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iters }, key, 256);
-  return new Uint8Array(bits);
+  if (!Number.isInteger(iters) || iters < 1 || iters > MAX_PBKDF2_ITERS) {
+    throw new HttpError(503, PBKDF2_TOO_HIGH, { code: 'not_configured' });
+  }
+  try {
+    const key = await crypto.subtle.importKey('raw', material, 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iters }, key, 256);
+    return new Uint8Array(bits);
+  } catch (e) {
+    const msg = String(e && e.message || e);
+    if ((e && e.name === 'NotSupportedError') || /iteration counts above/i.test(msg)) {
+      throw new HttpError(503, PBKDF2_TOO_HIGH, { code: 'not_configured' });
+    }
+    throw e;
+  }
 }
 
+// Stored form: pbkdf2-sha256$<iterations>$<salt hex>$<hash hex>
+// The count stays with the hash so a later, higher Workers limit can re-hash.
 export async function hashPassword(password, secret, iters) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const hash = await pbkdf2(await pepper(secret, password), salt, iters);
@@ -109,7 +134,9 @@ export async function verifyPassword(password, stored, secret) {
   const iters = Number(parts[1]);
   const salt = fromHex(parts[2]);
   const expect = fromHex(parts[3]);
-  if (!Number.isInteger(iters) || iters < TEST_ITERS || iters > 2_000_000 || !salt || salt.length < 16 || !expect || expect.length !== 32) return false;
+  // A stored count above the Workers cap cannot be checked here. Leave the
+  // hash as it is (the count is still in the string) and do not throw a 500.
+  if (!Number.isInteger(iters) || iters < TEST_ITERS || iters > MAX_PBKDF2_ITERS || !salt || salt.length < 16 || !expect || expect.length !== 32) return false;
   const got = await pbkdf2(await pepper(secret, password), salt, iters);
   return timingSafeEqual(got, expect);
 }
@@ -237,6 +264,12 @@ function cookieDomain(env) {
   return domain;
 }
 
+function hostMatchesCookieDomain(host, domain) {
+  const bare = domain.replace(/^\./, '').toLowerCase();
+  const h = String(host || '').toLowerCase();
+  return h === bare || h.endsWith('.' + bare);
+}
+
 function sessionCookie(req, env, value, maxAge) {
   const url = new URL(req.url);
   const host = url.hostname;
@@ -244,7 +277,10 @@ function sessionCookie(req, env, value, maxAge) {
   let c = `pn_session=${value}; Path=/; Max-Age=${maxAge}; SameSite=Lax; HttpOnly`;
   if (secure) c += '; Secure';
   const domain = cookieDomain(env);
-  if (domain) c += `; Domain=${domain}`;
+  // A Domain for peppynose.com is ignored by a localhost browser, so local
+  // tests and `wrangler dev` keep a host-only cookie. Live hosts under that
+  // domain still get Domain=.peppynose.com.
+  if (domain && hostMatchesCookieDomain(host, domain)) c += `; Domain=${domain}`;
   return c;
 }
 
@@ -453,7 +489,7 @@ async function verifyOtp(req, env) {
   if (!id.ok || (id.kind !== 'email' && id.kind !== 'mobile')) throw new HttpError(401, OTP_BAD, { code: 'otp_invalid' });
   const channel = id.kind === 'mobile' ? 'sms' : 'email';
   const ready = deliveryReady(env, channel, req);
-  if (!ready.ok && ready.reason === 'dev_refused') throw new HttpError(503, 'Code login is not available yet.', { code: 'otp_not_configured' });
+  if (!ready.ok && (ready.reason === 'dev_refused' || ready.reason === 'off')) throw new HttpError(503, 'Code login is not available yet.', { code: 'otp_not_configured' });
   const idKey = id.kind + ':' + id.value;
   const row = await env.DB.prepare('SELECT id, code_hash, expires_at, attempts, used FROM auth_otps WHERE identifier = ? ORDER BY created_at DESC LIMIT 1').bind(idKey).first();
   const got = await otpHash(secret, idKey, /^\d{6}$/.test(code) ? code : '000000');
@@ -525,10 +561,17 @@ async function deleteAccount(req, env) {
 // One-time login codes are separate: they prove control of the mobile or inbox only
 // when a real SMS or email provider is configured. Dev mode does not do that.
 
+function authPublicConfig(req, env) {
+  const sms = deliveryReady(env, 'sms', req).ok;
+  const email = deliveryReady(env, 'email', req).ok;
+  return json({ otp: !!(sms || email) });
+}
+
 export async function authApi(req, env) {
   try {
     const path = new URL(req.url).pathname;
     const method = req.method;
+    if (path === '/api/auth/config' && method === 'GET') return authPublicConfig(req, env);
     if (path === '/api/auth/signup' && method === 'POST') return await signup(req, env);
     if (path === '/api/auth/login' && method === 'POST') return await login(req, env);
     if (path === '/api/auth/otp/request' && method === 'POST') return await requestOtp(req, env);

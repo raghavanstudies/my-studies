@@ -107,7 +107,9 @@ test('duplicate username and mobile are explained on the sign-up form', async ({
 });
 
 test('OTP button follows the identifier, then a mobile code and an email code log in', async ({ page }, testInfo) => {
+  const ready = page.waitForResponse(r => r.url().includes('/api/auth/config') && r.request().method() === 'GET');
   await page.goto('/login.html');
+  await ready;
   const otp = page.getByRole('button', { name: 'Log in with OTP' });
   const id = page.getByLabel('Username / mobile number / email');
   await expect(otp).toBeDisabled();
@@ -229,6 +231,20 @@ test('Skip login is smaller than Log in, returns to a safe page, and still allow
   await page.goto('/shop/cart.html');
   await expect(page.locator('.sh-line')).toHaveCount(1);
   await expect(page.locator('header .pn-account')).toHaveText('Log in');
+});
+
+test('OTP button steps aside when code login is off', async ({ page }) => {
+  await page.route('**/api/auth/config', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ otp: false })
+  }));
+  await page.goto('/login.html');
+  await expect(page.locator('#otp-request')).toBeHidden();
+  await expect(page.locator('#otp-hint')).toHaveText('Code login is coming soon.');
+  await page.getByLabel('Username / mobile number / email').fill('9876543210');
+  await expect(page.locator('#otp-request')).toBeHidden();
+  await expect(page.locator('#otp-panel')).toBeHidden();
 });
 
 test('Hindi and Tamil login pages and the header link do not overflow', async ({ page }) => {

@@ -16,7 +16,7 @@ module.exports = defineConfig({
     { name: 'mobile', use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
   ],
   webServer: {
-    command: `npm run build && npm run db:reset && npx wrangler dev --local --port ${PORT}`,
+    command: `npm run build && npm run db:reset && npx wrangler dev --local --port ${PORT} --var OTP_SMS_PROVIDER:dev --var OTP_EMAIL_PROVIDER:dev`,
     url: `http://localhost:${PORT}/api/catalogue`,
     reuseExistingServer: false,
     timeout: 120000,

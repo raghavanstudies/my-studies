@@ -1,13 +1,13 @@
 // Unit tests for the customer account API. They use an in-memory SQLite database
 // with the same schema the Worker runs on D1. AUTH_TEST_FAST shortens PBKDF2 so
-// the suite stays quick; production refuses iteration counts below 600,000.
+// the suite stays quick. Production accepts only 100000 iterations, the Workers cap.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DatabaseSync } from 'node:sqlite';
-import { authApi, configuredIters, hashPassword, verifyPassword, MIN_PBKDF2_ITERS } from '../src/auth.js';
+import { authApi, configuredIters, hashPassword, verifyPassword, MIN_PBKDF2_ITERS, MAX_PBKDF2_ITERS } from '../src/auth.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const SCHEMA = readFileSync(join(here, '..', 'db', 'schema.sql'), 'utf8');
@@ -58,6 +58,8 @@ function makeEnv(extra = {}) {
     DB: d1(db),
     SESSION_SECRET: SECRET,
     AUTH_TEST_FAST: '1',
+    OTP_SMS_PROVIDER: 'dev',
+    OTP_EMAIL_PROVIDER: 'dev',
     ...extra
   };
 }
@@ -96,12 +98,29 @@ function account(over = {}) {
   };
 }
 
-test('production PBKDF2 floor is 600,000 and a low override is refused', () => {
-  assert.equal(MIN_PBKDF2_ITERS, 600_000);
-  assert.equal(configuredIters({}), 600_000);
-  assert.equal(configuredIters({ AUTH_PBKDF2_ITERS: '600000' }), 600_000);
+test('production PBKDF2 count is 100000 and a higher override is refused', async () => {
+  assert.equal(MAX_PBKDF2_ITERS, 100_000);
+  assert.equal(MIN_PBKDF2_ITERS, 100_000);
+  assert.equal(configuredIters({}), 100_000);
+  assert.ok(configuredIters({}) <= 100_000);
+  assert.equal(configuredIters({ AUTH_PBKDF2_ITERS: '100000' }), 100_000);
+  assert.equal(configuredIters({ AUTH_PBKDF2_ITERS: '100001' }), null);
+  assert.equal(configuredIters({ AUTH_PBKDF2_ITERS: '600000' }), null);
   assert.equal(configuredIters({ AUTH_PBKDF2_ITERS: '1000' }), null);
   assert.equal(configuredIters({ AUTH_TEST_FAST: '1' }), 1_000);
+  assert.equal(configuredIters({ AUTH_TEST_FAST: '1', AUTH_PBKDF2_ITERS: '600000' }), 1_000);
+
+  const env = makeEnv({ AUTH_TEST_FAST: '0', AUTH_PBKDF2_ITERS: '600000' });
+  const res = await call(env, '/api/auth/signup', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.9',
+    body: account({ username: 'too.many', email: 'toomany@example.com' })
+  });
+  assert.equal(res.status, 503);
+  const body = await res.json();
+  assert.equal(body.code, 'not_configured');
+  assert.match(body.error, /100000/);
+  assert.match(body.error, /cannot run PBKDF2 above/);
+  assert.equal(await env.DB.prepare('SELECT id FROM users').first(), null);
 });
 
 test('hashPassword never stores the password and verifyPassword checks it', async () => {
@@ -113,6 +132,13 @@ test('hashPassword never stores the password and verifyPassword checks it', asyn
   assert.equal(await verifyPassword('wrong-password-here', stored, SECRET), false);
   assert.equal(await verifyPassword(password, stored, 'another-secret-that-is-long-enough'), false);
   assert.equal(await verifyPassword(password, 'plain-text-' + password, SECRET), false);
+  const storedCount = await hashPassword(password, SECRET, 100_000);
+  assert.match(storedCount, /^pbkdf2-sha256\$100000\$[0-9a-f]{32}\$[0-9a-f]{64}$/);
+  assert.equal(storedCount.includes(password), false);
+  assert.equal(await verifyPassword(password, storedCount, SECRET), true);
+  const tooHigh = 'pbkdf2-sha256$600000$' + '11'.repeat(16) + '$' + '22'.repeat(32);
+  assert.equal(await verifyPassword(password, tooHigh, SECRET), false);
+  assert.match(tooHigh, /\$600000\$/);
 });
 
 test('migration 002 only adds columns and the OTP table', () => {
@@ -344,13 +370,20 @@ test('login attempts are rate limited per IP', async () => {
 });
 
 test('cookie Domain is set only from a safe COOKIE_DOMAIN value', async () => {
-  const env = makeEnv({ COOKIE_DOMAIN: '.peppynose.com', AUTH_ORIGINS: 'https://www.peppynose.com' });
-  const res = await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'https://www.peppynose.com', ip: '203.0.113.50',
-    body: account({ name: 'Diya', username: 'diya', email: 'diya@example.com' })
-  });
+  const env = makeEnv({ COOKIE_DOMAIN: '.peppynose.com', AUTH_ORIGINS: 'https://www.peppynose.com,https://peppynose.com' });
+  const res = await authApi(new Request('https://www.peppynose.com/api/auth/signup', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin: 'https://www.peppynose.com', 'cf-connecting-ip': '203.0.113.50' },
+    body: JSON.stringify(account({ name: 'Diya', username: 'diya', email: 'diya@example.com' }))
+  }), env);
   assert.equal(res.status, 200);
   assert.match(cookieOf(res), /Domain=\.peppynose\.com/);
+  const local = await call(env, '/api/auth/signup', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.52',
+    body: account({ name: 'Diya', username: 'diya.local', email: 'diya.local@example.com' })
+  });
+  assert.equal(local.status, 200);
+  assert.doesNotMatch(cookieOf(local), /Domain=/);
   const bad = makeEnv({ COOKIE_DOMAIN: 'peppynose.com' });
   const refused = await call(bad, '/api/auth/signup', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.51',
@@ -567,4 +600,52 @@ test('OTP requests are rate limited and dev mode never reveals a code on the liv
   } finally {
     globalThis.fetch = orig;
   }
+});
+
+test('OTP is off unless dev is set and the request is local', async () => {
+  const person = account({ username: 'off.user', mobile: '9567890123', email: 'off@example.com' });
+  const off = makeEnv({ OTP_SMS_PROVIDER: 'off', OTP_EMAIL_PROVIDER: 'off' });
+  await call(off, '/api/auth/signup', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.93', body: person
+  });
+  const refused = await call(off, '/api/auth/otp/request', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.93',
+    body: { identifier: '9567890123' }
+  });
+  assert.equal(refused.status, 503);
+  const refusedBody = await refused.json();
+  assert.equal(refusedBody.code, 'otp_not_configured');
+  assert.equal(refusedBody.error, 'Code login is not available yet.');
+  assert.equal(refusedBody.dev_code, undefined);
+
+  const unset = makeEnv();
+  delete unset.OTP_SMS_PROVIDER;
+  delete unset.OTP_EMAIL_PROVIDER;
+  const configOff = await call(unset, '/api/auth/config');
+  assert.equal(configOff.status, 200);
+  assert.deepEqual(await configOff.json(), { otp: false });
+  const unsetSend = await call(unset, '/api/auth/otp/request', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.94',
+    body: { identifier: '9567890123' }
+  });
+  assert.equal(unsetSend.status, 503);
+  assert.equal((await unsetSend.json()).error, 'Code login is not available yet.');
+
+  const dev = makeEnv({ OTP_SMS_PROVIDER: 'dev', OTP_EMAIL_PROVIDER: 'dev' });
+  const localConfig = await call(dev, '/api/auth/config');
+  assert.deepEqual(await localConfig.json(), { otp: true });
+  const loopback = await authApi(new Request('http://127.0.0.1/api/auth/config'), dev);
+  assert.deepEqual(await loopback.json(), { otp: true });
+  const liveConfig = await authApi(new Request('https://api.peppynose.com/api/auth/config', {
+    headers: { origin: 'https://www.peppynose.com' }
+  }), dev);
+  assert.equal(liveConfig.status, 200);
+  assert.deepEqual(await liveConfig.json(), { otp: false });
+  const liveSend = await authApi(new Request('https://www.peppynose.com/api/auth/otp/request', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin: 'https://www.peppynose.com' },
+    body: JSON.stringify({ identifier: '9567890123' })
+  }), dev);
+  assert.equal(liveSend.status, 503);
+  assert.equal((await liveSend.json()).dev_code, undefined);
 });
