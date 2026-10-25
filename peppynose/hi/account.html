@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="../styles.css?v=ad58cf1dc6" rel="stylesheet"/><script src="../lang.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="../styles.css?v=2b7cfcc79c" rel="stylesheet"/><script src="../lang.js"></script>
   <meta name="robots" content="noindex">
 </head>
 <body>
@@ -47,7 +47,7 @@
 
   <main>
     <div class="page-head">
-      <div class="wrap"><span class="eyebrow">खाता</span><h1>आपका <em>खाता</em></h1><p>यह आपके लिए सेव किया नाम और ईमेल है।</p></div>
+      <div class="wrap"><span class="eyebrow">खाता</span><h1>आपका <em>खाता</em></h1><p>यह आपके लिए सेव किया नाम, उपयोगकर्ता नाम, मोबाइल नंबर और ईमेल है।</p></div>
     </div>
     <div class="wrap">
       <div class="auth-card">
@@ -58,10 +58,15 @@
         </div>
         <div id="account-in" hidden>
           <p id="who"></p>
+          <ul class="auth-facts">
+            <li><span>उपयोगकर्ता नाम</span> <b id="who-username"></b></li>
+            <li><span>मोबाइल नंबर</span> <b id="who-mobile"></b></li>
+            <li><span>ईमेल</span> <b id="who-email"></b></li>
+          </ul>
           <button id="logout" class="btn ghost" type="button">लॉग आउट</button>
           <details class="auth-delete">
             <summary>खाता मिटाएँ</summary>
-            <p class="auth-note">इससे आपका नाम, ईमेल और पासवर्ड हैश मिट जाता है। इसे वापस नहीं लाया जा सकता।</p>
+            <p class="auth-note">इससे आपका नाम, उपयोगकर्ता नाम, मोबाइल नंबर, ईमेल और पासवर्ड हैश मिट जाता है। इसे वापस नहीं लाया जा सकता।</p>
             <form id="delete-form">
               <label>पासवर्ड<input name="password" type="password" autocomplete="current-password" required maxlength="200"></label>
               <button class="btn ghost" type="submit">मेरा खाता मिटाएँ</button>

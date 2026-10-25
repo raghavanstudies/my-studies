@@ -1077,8 +1077,28 @@ button.pn-logout:hover { color: var(--ink); }
 .auth-switch a { font-weight: 700; }
 .auth-delete { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 14px; }
 .auth-delete summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+.auth-field-err { color: #9d2c2c; font-weight: 700; font-size: .82rem; }
+.auth-field-err:empty { display: none; }
+.auth-form input[aria-invalid="true"] { border-color: #9d2c2c; }
+.auth-facts { list-style: none; padding: 0; margin: 8px 0 16px; }
+.auth-facts li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .95rem; }
+.auth-facts span { color: var(--muted); font-weight: 700; }
+.auth-otp { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.auth-card .auth-otp .btn.ghost { width: 100%; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: .92rem; padding: 12px 18px; }
+.auth-card .auth-otp .btn.ghost:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+.auth-otp-panel { display: flex; flex-direction: column; gap: 12px; }
+.auth-otp-panel[hidden] { display: none; }
+.auth-otp-panel label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: .92rem; }
+.auth-otp-panel input { font: inherit; font-weight: 500; padding: 12px 14px; min-height: 48px; border: 1px solid var(--line); border-radius: 14px; background: var(--cream); color: var(--ink); width: 100%; letter-spacing: .18em; }
+.auth-otp-panel input:focus { outline: 2px solid var(--peach); border-color: transparent; }
+button.auth-resend, button.auth-skip-btn { min-height: 44px; min-width: 44px; padding: 8px 14px; background: transparent; border: 0; border-radius: 999px; color: var(--ink); font: inherit; font-size: .85rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+button.auth-resend { align-self: center; }
+button.auth-resend:disabled { opacity: .55; cursor: not-allowed; }
+.auth-skip { display: flex; justify-content: center; margin: 2px 0 0; }
+button.auth-skip-btn:focus-visible, button.auth-resend:focus-visible, #otp-request:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
+#otp-hint[hidden] { display: none; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .auth-err { color: #ffb4ab; }
+  :root:not([data-theme="light"]) .auth-err, :root:not([data-theme="light"]) .auth-field-err { color: #ffb4ab; }
 }
 @media (max-width: 760px) {
   .bar:has(> .pn-auth) { flex-wrap: wrap; row-gap: 6px; }

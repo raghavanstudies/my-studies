@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=ad58cf1dc6">
+  <link rel="stylesheet" href="styles.css?v=2b7cfcc79c">
   <script src="lang.js"></script>
 </head>
 <body>
@@ -51,17 +51,21 @@
 
   <main>
     <div class="page-head">
-      <div class="wrap"><span class="eyebrow">Account</span><h1>Create an <em>account</em></h1><p>A name, an email and a password of at least 10 characters. We store the password only as a hash.</p></div>
+      <div class="wrap"><span class="eyebrow">Account</span><h1>Create an <em>account</em></h1><p>Name, username, a 10-digit mobile number, email, and a password of at least 10 characters. Email is required. We store the password only as a hash.</p></div>
     </div>
     <div class="wrap">
       <div class="auth-card">
         <form id="auth-form" class="auth-form" data-mode="signup" novalidate>
-          <label>Name<input name="name" type="text" autocomplete="name" required minlength="2" maxlength="80"></label>
-          <label>Email<input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120"></label>
-          <label>Password<input name="password" type="password" autocomplete="new-password" required minlength="10" maxlength="200"></label>
+          <label>Name<input name="name" type="text" autocomplete="name" required minlength="2" maxlength="80"><span class="auth-field-err" data-for="name"></span></label>
+          <label>Username<input name="username" type="text" autocomplete="username" required minlength="3" maxlength="30" autocapitalize="none" spellcheck="false"><span class="auth-field-err" data-for="username"></span></label>
+          <label>Mobile number<input name="mobile" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20"><span class="auth-field-err" data-for="mobile"></span></label>
+          <label>Email<input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120"><span class="auth-field-err" data-for="email"></span></label>
+          <label>Password<input name="password" type="password" autocomplete="new-password" required minlength="10" maxlength="200"><span class="auth-field-err" data-for="password"></span></label>
+          <label>Confirm password<input name="confirm" type="password" autocomplete="new-password" required minlength="10" maxlength="200"><span class="auth-field-err" data-for="confirm"></span></label>
           <p id="err" class="auth-err" role="alert"></p>
           <button class="btn amazon" type="submit">Create account</button>
         </form>
+        <p class="auth-skip"><button type="button" class="auth-skip-btn" id="skip-login">Skip login</button></p>
         <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
       </div>
     </div>

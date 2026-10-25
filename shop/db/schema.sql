@@ -1,5 +1,6 @@
 -- Peppynose own shop: database schema (Cloudflare D1 / SQLite).
 -- Money is always stored in paise (₹1 = 100). Prices include GST, as shown to customers.
+DROP TABLE IF EXISTS auth_otps;
 DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS auth_attempts;
@@ -96,9 +97,13 @@ CREATE TABLE login_attempts (ip TEXT NOT NULL, at TEXT NOT NULL);
 
 -- Customer accounts (separate from the shop admin password).
 -- password_hash is PBKDF2-SHA256, never the password itself.
+-- email stays required. username and mobile are unique. This file is for a fresh
+-- local database only; a live database gets these columns from auth-migration-002.sql.
 CREATE TABLE users (
   id            TEXT PRIMARY KEY,
   email         TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  username      TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  mobile        TEXT NOT NULL UNIQUE,
   name          TEXT NOT NULL,
   password_hash TEXT NOT NULL,
   created_at    TEXT NOT NULL
@@ -121,3 +126,15 @@ CREATE TABLE auth_attempts (
   at    TEXT NOT NULL
 );
 CREATE INDEX auth_attempts_lookup ON auth_attempts(scope, key, at);
+
+-- One-time login codes. code_hash is an HMAC of the code, never the code itself.
+CREATE TABLE auth_otps (
+  id          TEXT PRIMARY KEY,
+  identifier  TEXT NOT NULL,
+  code_hash   TEXT NOT NULL,
+  expires_at  TEXT NOT NULL,
+  attempts    INTEGER NOT NULL DEFAULT 0,
+  used        INTEGER NOT NULL DEFAULT 0,
+  created_at  TEXT NOT NULL
+);
+CREATE INDEX auth_otps_lookup ON auth_otps(identifier, created_at);

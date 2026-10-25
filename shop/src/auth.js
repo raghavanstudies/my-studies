@@ -4,15 +4,28 @@
 // The browser only receives an HttpOnly session cookie. Logout also needs the
 // per-session CSRF token returned by GET /api/auth/me (custom header, so a
 // foreign page cannot log someone out).
+// A login code is a random 6-digit OTP. Only its HMAC is stored. Dev delivery
+// (the default) never runs for a peppynose.com host; see otp-delivery.js.
+
+import { deliveryReady, sendOtp } from './otp-delivery.js';
 
 export const MIN_PBKDF2_ITERS = 600_000;
 const TEST_ITERS = 1_000;
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_MAX_IP = 8;
-const LOGIN_MAX_EMAIL = 20;
+const LOGIN_MAX_ID = 20;
 const SIGNUP_WINDOW_MS = 60 * 60 * 1000;
 const SIGNUP_MAX_IP = 10;
+const OTP_TTL_MS = 5 * 60 * 1000;
+const OTP_MAX_ATTEMPTS = 5;
+const OTP_WINDOW_MS = 15 * 60 * 1000;
+const OTP_MAX_IP = 8;
+const OTP_MAX_ID = 5;
+const BAD_LOGIN = 'Invalid credentials.';
+const OTP_SENT = 'If an account exists, we sent a code.';
+const OTP_BAD = 'That code is wrong or has expired.';
+const OTP_LOCKED = 'Too many tries for this code. Request a new one.';
 const COMMON = new Set([
   'password123', 'password1234', '1234567890', '123456789012', 'qwerty12345',
   'peppynose123', 'changeme123', 'iloveyou123', 'welcome1234'
@@ -45,6 +58,7 @@ const fromHex = hex => {
 const randHex = n => toHex(crypto.getRandomValues(new Uint8Array(n)));
 
 function timingSafeEqual(a, b) {
+  if (!a || !b) return false;
   const n = Math.max(a.length, b.length);
   let d = a.length === b.length ? 0 : 1;
   for (let i = 0; i < n; i++) d |= (a[i] || 0) ^ (b[i] || 0);
@@ -108,29 +122,68 @@ async function dummyHash(secret, iters) {
 }
 
 const EMAIL = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+const USERNAME = /^[A-Za-z0-9._]{3,30}$/;
 const clean = (v, max) => (typeof v === 'string' ? v.replace(/[\u0000-\u001f\u007f]/g, '').replace(/\s+/g, ' ').trim() : '').slice(0, max);
+
+// Strip spaces and dashes, then a leading +91, a 12-digit 91 prefix, or an 11-digit 0 prefix.
+// A 10-digit number that itself starts with 91 is a mobile, not a country code.
+export function normalizeMobile(raw) {
+  let s = String(raw || '').replace(/[\s-]/g, '');
+  if (s.startsWith('+91')) s = s.slice(3);
+  else if (s.startsWith('+')) return '';
+  if (s.startsWith('91') && s.length === 12) s = s.slice(2);
+  else if (s.startsWith('0') && s.length === 11) s = s.slice(1);
+  return /^[6-9]\d{9}$/.test(s) ? s : '';
+}
+
+// '@' means email. A string of digits (spaces, dashes, and a leading + allowed) means mobile.
+// Anything else is a username. Username and email compare case-insensitively.
+export function classifyIdentifier(raw) {
+  const text = typeof raw === 'string' ? raw.replace(/[\u0000-\u001f\u007f]/g, '').trim() : '';
+  if (!text || text.length > 120) return { ok: false };
+  if (text.includes('@')) {
+    const email = text.replace(/\s+/g, '').toLowerCase();
+    if (!EMAIL.test(email) || email.includes('..') || email.startsWith('.') || email.includes('.@')) return { ok: false };
+    return { ok: true, kind: 'email', value: email };
+  }
+  const compact = text.replace(/[\s-]/g, '');
+  if (/^\+?\d+$/.test(compact)) {
+    const mobile = normalizeMobile(text);
+    if (!mobile) return { ok: false };
+    return { ok: true, kind: 'mobile', value: mobile };
+  }
+  if (!USERNAME.test(text)) return { ok: false };
+  return { ok: true, kind: 'username', value: text };
+}
 
 function validateSignup(b) {
   const name = clean(b.name, 80);
+  const username = typeof b.username === 'string' ? b.username.replace(/[\u0000-\u001f\u007f]/g, '').trim() : '';
+  const mobileRaw = typeof b.mobile === 'string' ? b.mobile.replace(/[\u0000-\u001f\u007f]/g, '').trim() : '';
   const email = clean(b.email, 120).toLowerCase();
   const password = typeof b.password === 'string' ? b.password : '';
+  const confirm = typeof b.confirm === 'string' ? b.confirm : '';
   const fields = {};
-  if (name.length < 2) fields.name = 'name';
+  if (name.length < 2 || name.length > 80) fields.name = 'name';
+  if (!USERNAME.test(username) || /^\d+$/.test(username)) fields.username = 'username';
+  const mobile = mobileRaw.length > 20 ? '' : normalizeMobile(mobileRaw);
+  if (!mobile) fields.mobile = 'mobile';
   if (!EMAIL.test(email) || email.includes('..') || email.startsWith('.') || email.includes('.@')) fields.email = 'email';
   if (password.length < 10 || password.length > 200) fields.password = 'short';
-  else if (COMMON.has(password.toLowerCase()) || /^(.)\1+$/.test(password) || password.toLowerCase() === email || password.toLowerCase() === name.toLowerCase()) fields.password = 'common';
+  else if (COMMON.has(password.toLowerCase()) || /^(.)\1+$/.test(password) || password.toLowerCase() === email || password.toLowerCase() === name.toLowerCase() || password.toLowerCase() === username.toLowerCase() || password === mobile) fields.password = 'common';
+  if (confirm !== password) fields.confirm = 'mismatch';
   if (Object.keys(fields).length) throw new HttpError(400, 'Please check the highlighted fields.', { code: 'invalid', fields });
-  return { name, email, password };
+  return { name, username, mobile, email, password };
 }
 
-function validateLogin(b) {
-  const email = clean(b.email, 120).toLowerCase();
-  const password = typeof b.password === 'string' ? b.password : '';
-  const fields = {};
-  if (!EMAIL.test(email)) fields.email = 'email';
-  if (password.length < 1 || password.length > 200) fields.password = 'short';
-  if (Object.keys(fields).length) throw new HttpError(400, 'Please check the highlighted fields.', { code: 'invalid', fields });
-  return { email, password };
+function takenError(code) {
+  const field = code === 'username_taken' ? 'username' : code === 'mobile_taken' ? 'mobile' : 'email';
+  const message = code === 'username_taken'
+    ? 'That username is already taken.'
+    : code === 'mobile_taken'
+      ? 'An account with this mobile number already exists.'
+      : 'An account with this email already exists. Try logging in.';
+  return new HttpError(409, message, { code, fields: { [field]: code } });
 }
 
 async function readJson(req) {
@@ -224,7 +277,17 @@ async function recordAttempt(env, scope, key) {
   ]);
 }
 
-const pub = row => ({ name: row.name, email: row.email });
+const pub = row => ({ name: row.name, email: row.email, username: row.username, mobile: row.mobile });
+
+const USER_SQL = {
+  email: 'SELECT id, email, username, mobile, name, password_hash FROM users WHERE email = ? COLLATE NOCASE',
+  mobile: 'SELECT id, email, username, mobile, name, password_hash FROM users WHERE mobile = ?',
+  username: 'SELECT id, email, username, mobile, name, password_hash FROM users WHERE username = ? COLLATE NOCASE'
+};
+
+function findUser(env, id) {
+  return env.DB.prepare(USER_SQL[id.kind]).bind(id.value).first();
+}
 
 async function startSession(req, env, user) {
   const token = randHex(32);
@@ -242,7 +305,7 @@ async function sessionRow(req, env) {
   const token = readCookie(req, 'pn_session');
   if (!/^[0-9a-f]{64}$/.test(token)) return null;
   const id = await sha256hex(token);
-  const row = await env.DB.prepare(`SELECT s.id, s.csrf, s.expires_at, s.user_id, u.email, u.name, u.password_hash
+  const row = await env.DB.prepare(`SELECT s.id, s.csrf, s.expires_at, s.user_id, u.email, u.username, u.mobile, u.name, u.password_hash
     FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.id = ?`).bind(id).first();
   if (!row) return null;
   if (row.expires_at < new Date().toISOString()) {
@@ -259,6 +322,23 @@ function assertCsrf(req, row) {
   if (!timingSafeEqual(a, b)) throw new HttpError(403, 'This page is out of date. Please refresh and try again.', { code: 'csrf' });
 }
 
+async function assertAvailable(env, body) {
+  const found = await env.DB.prepare('SELECT username, mobile, email FROM users WHERE username = ? COLLATE NOCASE OR mobile = ? OR email = ? COLLATE NOCASE').bind(body.username, body.mobile, body.email).all();
+  for (const row of (found && found.results) || []) {
+    if (row.username && row.username.toLowerCase() === body.username.toLowerCase()) throw takenError('username_taken');
+    if (row.mobile === body.mobile) throw takenError('mobile_taken');
+    if (row.email && row.email.toLowerCase() === body.email) throw takenError('email_taken');
+  }
+}
+
+function mapUnique(e) {
+  const msg = String(e && e.message || '');
+  if (!msg.includes('UNIQUE') && !msg.includes('constraint failed')) return null;
+  if (/username/i.test(msg)) return takenError('username_taken');
+  if (/mobile/i.test(msg)) return takenError('mobile_taken');
+  return takenError('email_taken');
+}
+
 async function signup(req, env) {
   assertBrowserOrigin(req, env);
   const { secret, iters } = assertConfig(env);
@@ -268,34 +348,136 @@ async function signup(req, env) {
     throw new HttpError(429, 'Too many accounts created from this network. Please wait an hour.', { code: 'rate_limited' });
   }
   await recordAttempt(env, 'signup', 'ip:' + ip);
+  await assertAvailable(env, body);
   const hash = await hashPassword(body.password, secret, iters);
   const id = 'u_' + randHex(16);
   try {
-    await env.DB.prepare('INSERT INTO users (id, email, name, password_hash, created_at) VALUES (?, ?, ?, ?, ?)').bind(id, body.email, body.name, hash, new Date().toISOString()).run();
+    await env.DB.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(id, body.email, body.username, body.mobile, body.name, hash, new Date().toISOString()).run();
   } catch (e) {
-    const msg = String(e && e.message || '');
-    if (msg.includes('UNIQUE') || msg.includes('constraint failed')) throw new HttpError(409, 'An account with this email already exists. Try logging in.', { code: 'email_taken' });
+    const mapped = mapUnique(e);
+    if (mapped) throw mapped;
     throw e;
   }
-  return startSession(req, env, { id, email: body.email, name: body.name });
+  return startSession(req, env, { id, email: body.email, username: body.username, mobile: body.mobile, name: body.name });
 }
 
 async function login(req, env) {
   assertBrowserOrigin(req, env);
   const { secret, iters } = assertConfig(env);
-  const body = validateLogin(await readJson(req));
+  const body = await readJson(req);
+  const password = typeof body.password === 'string' ? body.password : '';
   const ip = clientIp(req);
-  if (await tooMany(env, 'login', 'ip:' + ip, LOGIN_WINDOW_MS, LOGIN_MAX_IP) || await tooMany(env, 'login', 'email:' + body.email, LOGIN_WINDOW_MS, LOGIN_MAX_EMAIL)) {
+  if (await tooMany(env, 'login', 'ip:' + ip, LOGIN_WINDOW_MS, LOGIN_MAX_IP)) {
     throw new HttpError(429, 'Too many tries. Please wait 15 minutes.', { code: 'rate_limited' });
   }
-  const user = await env.DB.prepare('SELECT id, email, name, password_hash FROM users WHERE email = ?').bind(body.email).first();
+  const id = classifyIdentifier(body.identifier);
+  const fields = {};
+  if (!id.ok) fields.identifier = 'identifier';
+  if (password.length < 1 || password.length > 200) fields.password = 'short';
+  if (Object.keys(fields).length) {
+    await recordAttempt(env, 'login', 'ip:' + ip);
+    throw new HttpError(400, 'Please check the highlighted fields.', { code: 'invalid', fields });
+  }
+  const idKey = id.kind + ':' + id.value;
+  if (await tooMany(env, 'login', 'id:' + idKey, LOGIN_WINDOW_MS, LOGIN_MAX_ID)) {
+    throw new HttpError(429, 'Too many tries. Please wait 15 minutes.', { code: 'rate_limited' });
+  }
+  const user = await findUser(env, id);
   const stored = user ? user.password_hash : await dummyHash(secret, iters);
-  const ok = await verifyPassword(body.password, stored, secret);
+  const ok = await verifyPassword(password, stored, secret);
   if (!user || !ok) {
     await recordAttempt(env, 'login', 'ip:' + ip);
-    await recordAttempt(env, 'login', 'email:' + body.email);
-    throw new HttpError(401, 'Wrong email or password.', { code: 'bad_login' });
+    await recordAttempt(env, 'login', 'id:' + idKey);
+    throw new HttpError(401, BAD_LOGIN, { code: 'bad_login' });
   }
+  return startSession(req, env, user);
+}
+
+function randomOtp() {
+  const buf = new Uint32Array(1);
+  const limit = 0x100000000 - (0x100000000 % 1000000);
+  let n = 0;
+  do {
+    crypto.getRandomValues(buf);
+    n = buf[0];
+  } while (n >= limit);
+  return String(n % 1000000).padStart(6, '0');
+}
+
+async function otpHash(secret, identifier, code) {
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(identifier + '\n' + code));
+  return toHex(new Uint8Array(sig));
+}
+
+async function requestOtp(req, env) {
+  assertBrowserOrigin(req, env);
+  const { secret } = assertConfig(env);
+  const body = await readJson(req);
+  const id = classifyIdentifier(body.identifier);
+  if (!id.ok || (id.kind !== 'email' && id.kind !== 'mobile')) {
+    throw new HttpError(400, 'A code can be sent to a mobile number or an email, not a username.', { code: 'otp_needs_contact' });
+  }
+  const channel = id.kind === 'mobile' ? 'sms' : 'email';
+  const ready = deliveryReady(env, channel, req);
+  if (!ready.ok) throw new HttpError(503, 'Code login is not available yet.', { code: 'otp_not_configured' });
+  const ip = clientIp(req);
+  const idKey = id.kind + ':' + id.value;
+  if (await tooMany(env, 'otp_send', 'ip:' + ip, OTP_WINDOW_MS, OTP_MAX_IP) || await tooMany(env, 'otp_send', 'id:' + idKey, OTP_WINDOW_MS, OTP_MAX_ID)) {
+    throw new HttpError(429, 'Too many codes requested. Please wait 15 minutes.', { code: 'rate_limited' });
+  }
+  await recordAttempt(env, 'otp_send', 'ip:' + ip);
+  await recordAttempt(env, 'otp_send', 'id:' + idKey);
+  const user = await findUser(env, id);
+  const payload = { ok: true, message: OTP_SENT };
+  if (!user) return json(payload);
+  const code = randomOtp();
+  const now = new Date();
+  await env.DB.prepare('UPDATE auth_otps SET used = 1 WHERE identifier = ? AND used = 0').bind(idKey).run();
+  await env.DB.prepare('INSERT INTO auth_otps (id, identifier, code_hash, expires_at, attempts, used, created_at) VALUES (?, ?, ?, ?, 0, 0, ?)').bind('otp_' + randHex(16), idKey, await otpHash(secret, idKey, code), new Date(now.getTime() + OTP_TTL_MS).toISOString(), now.toISOString()).run();
+  const sent = await sendOtp({ channel, to: id.value, code, env });
+  if (!sent.ok) {
+    await env.DB.prepare('UPDATE auth_otps SET used = 1 WHERE identifier = ? AND used = 0').bind(idKey).run();
+    return json(payload);
+  }
+  if (ready.dev) payload.dev_code = code;
+  return json(payload);
+}
+
+async function verifyOtp(req, env) {
+  assertBrowserOrigin(req, env);
+  const { secret } = assertConfig(env);
+  const body = await readJson(req);
+  const id = classifyIdentifier(body.identifier);
+  const code = typeof body.code === 'string' ? body.code.trim() : '';
+  if (!id.ok || (id.kind !== 'email' && id.kind !== 'mobile')) throw new HttpError(401, OTP_BAD, { code: 'otp_invalid' });
+  const channel = id.kind === 'mobile' ? 'sms' : 'email';
+  const ready = deliveryReady(env, channel, req);
+  if (!ready.ok && ready.reason === 'dev_refused') throw new HttpError(503, 'Code login is not available yet.', { code: 'otp_not_configured' });
+  const idKey = id.kind + ':' + id.value;
+  const row = await env.DB.prepare('SELECT id, code_hash, expires_at, attempts, used FROM auth_otps WHERE identifier = ? ORDER BY created_at DESC LIMIT 1').bind(idKey).first();
+  const got = await otpHash(secret, idKey, /^\d{6}$/.test(code) ? code : '000000');
+  if (!row || row.used) {
+    const dummy = await otpHash(secret, idKey, '000000');
+    timingSafeEqual(fromHex(dummy), fromHex(got));
+    const since = new Date(Date.now() - OTP_TTL_MS).toISOString();
+    const fails = await env.DB.prepare('SELECT COUNT(*) AS n FROM auth_attempts WHERE scope = ? AND key = ? AND at > ?').bind('otp_verify', 'id:' + idKey, since).first();
+    if (Number(fails && fails.n) >= OTP_MAX_ATTEMPTS) throw new HttpError(401, OTP_LOCKED, { code: 'otp_locked' });
+    await recordAttempt(env, 'otp_verify', 'id:' + idKey);
+    throw new HttpError(401, OTP_BAD, { code: 'otp_invalid' });
+  }
+  if (Number(row.attempts) >= OTP_MAX_ATTEMPTS) throw new HttpError(401, OTP_LOCKED, { code: 'otp_locked' });
+  const expired = row.expires_at < new Date().toISOString();
+  const match = /^\d{6}$/.test(code) && timingSafeEqual(fromHex(row.code_hash), fromHex(got));
+  if (expired || !match) {
+    const attempts = Number(row.attempts) + 1;
+    await env.DB.prepare('UPDATE auth_otps SET attempts = ? WHERE id = ?').bind(attempts, row.id).run();
+    if (attempts >= OTP_MAX_ATTEMPTS) throw new HttpError(401, OTP_LOCKED, { code: 'otp_locked' });
+    throw new HttpError(401, OTP_BAD, { code: 'otp_invalid' });
+  }
+  await env.DB.prepare('UPDATE auth_otps SET used = 1 WHERE id = ?').bind(row.id).run();
+  const user = await findUser(env, id);
+  if (!user) throw new HttpError(401, OTP_BAD, { code: 'otp_invalid' });
   return startSession(req, env, user);
 }
 
@@ -326,7 +508,7 @@ async function deleteAccount(req, env) {
   const body = await readJson(req);
   const password = typeof body.password === 'string' ? body.password : '';
   if (password.length < 1 || password.length > 200 || !(await verifyPassword(password, row.password_hash, secret))) {
-    throw new HttpError(401, 'Wrong email or password.', { code: 'bad_login' });
+    throw new HttpError(401, BAD_LOGIN, { code: 'bad_login' });
   }
   await env.DB.batch([
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(row.user_id),
@@ -340,6 +522,8 @@ async function deleteAccount(req, env) {
 // token that is shown on screen, or accepted without proving control of the inbox,
 // would let someone else take the account. Until then the login page asks the visitor
 // to email care.peppynose@gmail.com from the address on the account.
+// One-time login codes are separate: they prove control of the mobile or inbox only
+// when a real SMS or email provider is configured. Dev mode does not do that.
 
 export async function authApi(req, env) {
   try {
@@ -347,6 +531,8 @@ export async function authApi(req, env) {
     const method = req.method;
     if (path === '/api/auth/signup' && method === 'POST') return await signup(req, env);
     if (path === '/api/auth/login' && method === 'POST') return await login(req, env);
+    if (path === '/api/auth/otp/request' && method === 'POST') return await requestOtp(req, env);
+    if (path === '/api/auth/otp/verify' && method === 'POST') return await verifyOtp(req, env);
     if (path === '/api/auth/logout' && method === 'POST') return await logout(req, env);
     if (path === '/api/auth/delete' && method === 'POST') return await deleteAccount(req, env);
     if (path === '/api/auth/me' && method === 'GET') return await me(req, env);

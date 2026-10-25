@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=ad58cf1dc6">
+  <link rel="stylesheet" href="styles.css?v=2b7cfcc79c">
   <script src="lang.js"></script>
   <meta name="robots" content="noindex">
 </head>
@@ -52,7 +52,7 @@
 
   <main>
     <div class="page-head">
-      <div class="wrap"><span class="eyebrow">Account</span><h1>Your <em>account</em></h1><p>This is the name and email saved for you.</p></div>
+      <div class="wrap"><span class="eyebrow">Account</span><h1>Your <em>account</em></h1><p>This is the name, username, mobile number and email saved for you.</p></div>
     </div>
     <div class="wrap">
       <div class="auth-card">
@@ -63,10 +63,15 @@
         </div>
         <div id="account-in" hidden>
           <p id="who"></p>
+          <ul class="auth-facts">
+            <li><span>Username</span> <b id="who-username"></b></li>
+            <li><span>Mobile number</span> <b id="who-mobile"></b></li>
+            <li><span>Email</span> <b id="who-email"></b></li>
+          </ul>
           <button id="logout" class="btn ghost" type="button">Log out</button>
           <details class="auth-delete">
             <summary>Delete account</summary>
-            <p class="auth-note">This removes your name, email and password hash. It cannot be undone.</p>
+            <p class="auth-note">This removes your name, username, mobile number, email and password hash. It cannot be undone.</p>
             <form id="delete-form">
               <label>Password<input name="password" type="password" autocomplete="current-password" required maxlength="200"></label>
               <button class="btn ghost" type="submit">Delete my account</button>
