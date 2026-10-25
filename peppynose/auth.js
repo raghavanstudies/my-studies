@@ -235,6 +235,7 @@
         body: '{}'
       });
     } catch { /* still leave the page; the cookie may already be gone */ }
+    clearLogin();
     location.assign(path('login.html'));
   }
 
@@ -307,6 +308,7 @@
               if (submit) submit.disabled = false;
               return;
             }
+            clearLogin();
             location.assign(path('login.html') + '?deleted=1');
           } catch {
             if (err) err.textContent = t.network;
@@ -320,11 +322,57 @@
     }
   }
 
-  function rememberGuest() {
-    try { sessionStorage.setItem('pn_guest', '1'); } catch { /* private mode */ }
-    try { localStorage.setItem('pn_guest', '1'); } catch { /* private mode */ }
+  function browserCookie(name, value, maxAge) {
     const secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    document.cookie = 'pn_guest=1; Path=/; Max-Age=' + (60 * 60 * 24 * 14) + '; SameSite=Lax' + (secure ? '; Secure' : '');
+    document.cookie = name + '=' + value + '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax' + (secure ? '; Secure' : '');
+  }
+
+  function rememberFlag(name) {
+    try { sessionStorage.setItem(name, '1'); } catch { /* private mode */ }
+    try { localStorage.setItem(name, '1'); } catch { /* private mode */ }
+    browserCookie(name, '1', 60 * 60 * 24 * 14);
+  }
+
+  function clearFlag(name) {
+    try { sessionStorage.removeItem(name); } catch { /* private mode */ }
+    try { localStorage.removeItem(name); } catch { /* private mode */ }
+    browserCookie(name, '', 0);
+  }
+
+  function rememberGuest() { rememberFlag('pn_guest'); }
+  function rememberLogin() { rememberFlag('pn_logged_in'); }
+  function clearLogin() { clearFlag('pn_logged_in'); }
+
+  function carryNext() {
+    const next = safeNext(new URLSearchParams(location.search).get('next'));
+    if (!next || /\/(?:login|signup)(\.html)?$/i.test(next.split('?')[0])) return;
+    document.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href') || '';
+      if (!/(^|\/)signup\.html(?:\?|$)/.test(href)) return;
+      const base = href.split('?')[0];
+      a.setAttribute('href', base + '?next=' + encodeURIComponent(next));
+    });
+  }
+
+  // A stale pn_logged_in hint is corrected from /api/auth/me. A real session
+  // that hits the login page with a safe next goes back to that page.
+  function leaveForGate(meKnown, me) {
+    const loggedIn = !!(meKnown && me && me.user);
+    if (loggedIn && /\/login(\.html)?$/i.test(location.pathname)) {
+      const next = safeNext(new URLSearchParams(location.search).get('next'));
+      if (next && !/\/(?:login|signup)(\.html)?$/i.test(next.split('?')[0])) {
+        location.replace(next);
+        return true;
+      }
+    }
+    if (!window.pnLoginGate || !meKnown || loggedIn) return false;
+    const state = window.pnLoginGate.readState();
+    state.loggedInHint = false;
+    const choice = window.pnLoginGate.decide(state);
+    if (!choice.redirect) return false;
+    globalThis.__pnLoginLeaving = true;
+    location.replace(choice.redirect);
+    return true;
   }
 
   function guestTarget() {
@@ -381,6 +429,7 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
+        rememberLogin();
         const next = safeNext(new URLSearchParams(location.search).get('next')) || path('account.html');
         location.assign(next);
       } catch {
@@ -504,6 +553,7 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
+        rememberLogin();
         const next = safeNext(new URLSearchParams(location.search).get('next')) || path('account.html');
         location.assign(next);
       } catch {
@@ -523,10 +573,15 @@
       if (note) { note.hidden = false; note.textContent = t.deleted; }
     }
     let me = null;
+    let meKnown = false;
     try {
       const res = await fetch(api('/api/auth/me'), { credentials: 'include' });
-      if (res.ok) me = await read(res);
+      if (res.ok) { me = await read(res); meKnown = true; }
     } catch { me = null; }
+    if (meKnown && me && me.user) rememberLogin();
+    else if (meKnown) clearLogin();
+    carryNext();
+    if (leaveForGate(meKnown, me)) return;
     paintHeader(me);
     paintAccount(me);
   }

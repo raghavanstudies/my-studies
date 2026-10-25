@@ -275,3 +275,99 @@ test('Hindi and Tamil login pages and the header link do not overflow', async ({
     expect(await noSideScroll(page), path).toBeLessThanOrEqual(1);
   }
 });
+
+test('a first visit to the landing page opens login, and other pages do not', async ({ page }) => {
+  await page.goto('/index.html');
+  await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
+  expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/index.html');
+  await expect(page.getByRole('button', { name: 'Log in', exact: true })).toBeVisible();
+  await expect(page.locator('#skip-login')).toBeVisible();
+  await expect(page.locator('.auth-switch a')).toHaveAttribute('href', /signup\.html\?next=/);
+
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
+
+  await page.goto('/products.html');
+  await expect(page).toHaveURL(/\/products(\.html)?$/);
+  await expect(page.locator('h1')).toBeVisible();
+});
+
+test('Skip login returns to the landing page and stays there on reload', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
+  await page.locator('#skip-login').click();
+  await expect(page).toHaveURL(homeUrl);
+  await expect(page.locator('h1')).toContainText('little');
+  await page.reload();
+  await expect(page).toHaveURL(homeUrl);
+  await expect(page.locator('h1')).toContainText('little');
+  const guest = await page.evaluate(() => ({
+    local: localStorage.getItem('pn_guest'),
+    session: sessionStorage.getItem('pn_guest')
+  }));
+  expect(guest.local).toBe('1');
+  expect(guest.session).toBe('1');
+});
+
+test('a logged-in visitor sees the landing page, and logout shows login again', async ({ page }, testInfo) => {
+  const project = testInfo.project.name;
+  const who = { username: `otp.${project}` };
+  const loggedIn = await page.request.post('/api/auth/login', { data: { identifier: who.username, password } });
+  expect(loggedIn.ok()).toBeTruthy();
+  await page.goto('/index.html');
+  await expect(page).toHaveURL(homeUrl);
+  await expect(page.locator('h1')).toContainText('little');
+  await page.reload();
+  await expect(page).toHaveURL(homeUrl);
+
+  await page.evaluate(() => {
+    localStorage.removeItem('pn_logged_in');
+    sessionStorage.removeItem('pn_logged_in');
+    document.cookie = 'pn_logged_in=; Path=/; Max-Age=0; SameSite=Lax; Secure';
+  });
+  await page.goto('/index.html');
+  await expect(page).toHaveURL(homeUrl);
+
+  await logOut(page);
+  await page.goto('/index.html');
+  await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
+  await page.getByLabel('Username / mobile number / email').fill(who.username);
+  await page.getByLabel('Password', { exact: true }).fill(password);
+  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await expect(page).toHaveURL(homeUrl);
+});
+
+test('Hindi and Tamil landing pages open their own login page', async ({ page }) => {
+  await page.goto('/hi/');
+  await expect(page).toHaveURL(/\/hi\/login(\.html)?\?next=/);
+  expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/hi/index.html');
+  await page.getByRole('button', { name: 'लॉगिन छोड़ें' }).click();
+  await expect(page).toHaveURL(/\/hi\/(index(\.html)?)?$/);
+  await page.reload();
+  await expect(page.locator('h1')).toContainText('पड़ाव');
+
+  await page.evaluate(() => {
+    localStorage.removeItem('pn_guest');
+    sessionStorage.removeItem('pn_guest');
+    document.cookie = 'pn_guest=; Path=/; Max-Age=0; SameSite=Lax; Secure';
+  });
+  await page.goto('/ta/index.html');
+  await expect(page).toHaveURL(/\/ta\/login(\.html)?\?next=/);
+  expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/ta/index.html');
+  await page.getByRole('button', { name: 'உள்நுழையாமல் தொடரவும்' }).click();
+  await expect(page).toHaveURL(/\/ta\/(index(\.html)?)?$/);
+  await expect(page.locator('h1')).toContainText('கட்டத்திலும்');
+});
+
+test('a search crawler stays on the English landing page', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({
+    baseURL,
+    userAgent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+  });
+  const page = await context.newPage();
+  await page.goto('/index.html');
+  await expect(page).toHaveURL(homeUrl);
+  await expect(page).not.toHaveURL(/\/login/);
+  await expect(page.locator('h1')).toContainText('little');
+  await context.close();
+});
