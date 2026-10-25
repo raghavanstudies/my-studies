@@ -17,14 +17,17 @@ function person(project) {
 const homeUrl = /\/$|\/index(\.html)?$/;
 
 async function signUp(page, who, name = 'Test Amma') {
-  await page.goto('/signup.html?next=https://evil.example');
-  await page.getByLabel('Name', { exact: true }).fill(name);
+  await page.goto('/signup.html?next=' + encodeURIComponent('/account.html'));
   await page.getByLabel('Username', { exact: true }).fill(who.username);
-  await page.getByLabel('Mobile number', { exact: true }).fill(who.mobile);
-  await page.getByLabel('Email', { exact: true }).fill(who.email);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByLabel('Confirm password', { exact: true }).fill(password);
+  await expect(page.locator('#stay-logged-in')).toBeChecked();
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
+  await expect(page).toHaveURL(/\/details(\.html)?/);
+  await page.getByLabel('Name', { exact: true }).fill(name);
+  await page.getByLabel('Email', { exact: true }).fill(who.email);
+  await page.getByLabel(/Mobile number/).fill(who.mobile);
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function logOut(page) {
@@ -55,22 +58,25 @@ test('sign up, header shows the name, log in each way, reject a bad password, de
   await id.fill(who.username.toUpperCase());
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Log in', exact: true }).click();
-  await expect(page).toHaveURL(/\/account(\.html)?$/);
+  await expect(page).toHaveURL(homeUrl);
+  await page.goto('/account.html');
   await logOut(page);
 
   await id.fill(who.spaced);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Log in', exact: true }).click();
-  await expect(page).toHaveURL(/\/account(\.html)?$/);
+  await expect(page).toHaveURL(homeUrl);
+  await page.goto('/account.html');
   await expect(page.locator('#who-mobile')).toHaveText(who.mobile);
   await logOut(page);
 
   await id.fill(who.email);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Log in', exact: true }).click();
-  await expect(page).toHaveURL(/\/account(\.html)?$/);
+  await expect(page).toHaveURL(homeUrl);
   await expect(page.locator('header .pn-logout')).toHaveText('Log out');
 
+  await page.goto('/account.html');
   await page.locator('#account-in summary').click();
   await page.locator('#delete-form').getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Delete my account' }).click();
@@ -89,88 +95,22 @@ test('duplicate username and mobile are explained on the sign-up form', async ({
   await signUp(page, who, 'Dup Amma');
   await expect(page).toHaveURL(/\/account(\.html)?$/);
   await page.goto('/signup.html');
-  await page.getByLabel('Name', { exact: true }).fill('Other Amma');
   await page.getByLabel('Username', { exact: true }).fill(who.username.toUpperCase());
-  await page.getByLabel('Mobile number', { exact: true }).fill(project === 'mobile' ? '9000000012' : '9000000011');
-  await page.getByLabel('Email', { exact: true }).fill(`other.${project}@example.com`);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByLabel('Confirm password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page.locator('#err')).toHaveText('That username is already taken.');
   await expect(page.locator('[data-for="username"]')).toHaveText('That username is already taken.');
 
-  await page.getByLabel('Username').fill(`other.${project}`);
-  await page.getByLabel('Mobile number').fill('+91 ' + who.mobile);
+  await page.locator('#auth-form input[name="username"]').fill(`other.${project}`);
   await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page).toHaveURL(/\/details(\.html)?/);
+  await page.getByLabel('Name', { exact: true }).fill('Other Amma');
+  await page.getByLabel('Email', { exact: true }).fill(`other.${project}@example.com`);
+  await page.getByLabel(/Mobile number/).fill('+91 ' + who.mobile);
+  await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.locator('#err')).toHaveText('An account with this mobile number already exists.');
   await expect(page.locator('[data-for="mobile"]')).toHaveText('An account with this mobile number already exists.');
-});
-
-test('OTP button follows the identifier, then a mobile code and an email code log in', async ({ page }, testInfo) => {
-  const ready = page.waitForResponse(r => r.url().includes('/api/auth/config') && r.request().method() === 'GET');
-  await page.goto('/login.html');
-  await ready;
-  const otp = page.getByRole('button', { name: 'Log in with OTP' });
-  const id = page.getByLabel('Username / mobile number / email');
-  await expect(otp).toBeDisabled();
-  await id.fill('ada_amma');
-  await expect(otp).toBeDisabled();
-  await expect(page.locator('#otp-hint')).toBeVisible();
-  await expect(page.locator('#otp-hint')).toContainText('mobile number or email');
-  await id.fill('98765 43210');
-  await expect(otp).toBeEnabled();
-  await expect(page.locator('#otp-hint')).toBeHidden();
-  await id.fill('ada@example.com');
-  await expect(otp).toBeEnabled();
-
-  const project = testInfo.project.name;
-  const who = {
-    email: `otp.${project}@example.com`,
-    username: `otp.${project}`,
-    mobile: project === 'mobile' ? '9345678901' : '9234567890'
-  };
-  await signUp(page, who, 'Otp Amma');
-  await expect(page).toHaveURL(/\/account(\.html)?$/);
-  await logOut(page);
-  await page.clock.install();
-
-  await id.fill(`+91 ${who.mobile.slice(0, 5)} ${who.mobile.slice(5)}`);
-  await expect(otp).toBeEnabled();
-  const requested = page.waitForResponse(r => r.url().includes('/api/auth/otp/request') && r.request().method() === 'POST');
-  await otp.click();
-  const first = await (await requested).json();
-  await expect(page.locator('#otp-panel')).toBeVisible();
-  await expect(page.locator('#otp-sent')).toContainText('If an account exists, we sent a code.');
-  const resend = page.locator('#otp-resend');
-  await expect(resend).toBeDisabled();
-  await page.locator('#otp-code').fill('000000');
-  await page.getByRole('button', { name: 'Verify code' }).click();
-  await expect(page.locator('#err')).toHaveText('That code is wrong or has expired.');
-
-  await page.clock.runFor(31_000);
-  await expect(resend).toBeEnabled();
-  const resent = page.waitForResponse(r => r.url().includes('/api/auth/otp/request') && r.request().method() === 'POST');
-  await resend.click();
-  const second = await (await resent).json();
-  expect(second.dev_code).toMatch(/^\d{6}$/);
-  expect(second.dev_code).not.toBe(first.dev_code);
-  await page.locator('#otp-code').fill(first.dev_code);
-  await page.getByRole('button', { name: 'Verify code' }).click();
-  await expect(page.locator('#err')).toHaveText('That code is wrong or has expired.');
-  await page.locator('#otp-code').fill(second.dev_code);
-  await page.getByRole('button', { name: 'Verify code' }).click();
-  await expect(page).toHaveURL(/\/account(\.html)?$/);
-  await expect(page.locator('#who-mobile')).toHaveText(who.mobile);
-
-  await logOut(page);
-  await id.fill(who.email.toUpperCase());
-  const emailed = page.waitForResponse(r => r.url().includes('/api/auth/otp/request') && r.request().method() === 'POST');
-  await otp.click();
-  const emailCode = await (await emailed).json();
-  await page.locator('#otp-code').fill(emailCode.dev_code);
-  await page.getByRole('button', { name: 'Verify code' }).click();
-  await expect(page).toHaveURL(/\/account(\.html)?$/);
-  await expect(page.locator('#who-email')).toHaveText(who.email);
 });
 
 test('Skip login is smaller than Log in, returns to a safe page, and still allows the cart', async ({ page }) => {
@@ -233,20 +173,6 @@ test('Skip login is smaller than Log in, returns to a safe page, and still allow
   await expect(page.locator('header .pn-account')).toHaveText('Log in');
 });
 
-test('OTP button steps aside when code login is off', async ({ page }) => {
-  await page.route('**/api/auth/config', route => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({ otp: false })
-  }));
-  await page.goto('/login.html');
-  await expect(page.locator('#otp-request')).toBeHidden();
-  await expect(page.locator('#otp-hint')).toHaveText('Code login is coming soon.');
-  await page.getByLabel('Username / mobile number / email').fill('9876543210');
-  await expect(page.locator('#otp-request')).toBeHidden();
-  await expect(page.locator('#otp-panel')).toBeHidden();
-});
-
 test('Hindi and Tamil login pages and the header link do not overflow', async ({ page }) => {
   await page.goto('/hi/login.html');
   await expect(page.locator('h1')).toContainText('स्वागत');
@@ -254,7 +180,9 @@ test('Hindi and Tamil login pages and the header link do not overflow', async ({
   await expect(page.locator('header .pn-account')).toHaveText('लॉग इन');
   await expect(page.getByRole('button', { name: 'लॉग इन', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'लॉगिन छोड़ें' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'OTP से लॉग इन करें' })).toBeDisabled();
+  await expect(page.locator('#stay-logged-in')).toBeChecked();
+  await expect(page.locator('#google-signin')).toHaveText('Google से साइन इन करें');
+  await expect(page.locator('#otp-request')).toHaveCount(0);
   expect(await noSideScroll(page)).toBeLessThanOrEqual(1);
 
   await page.goto('/ta/signup.html');
@@ -266,7 +194,9 @@ test('Hindi and Tamil login pages and the header link do not overflow', async ({
   await page.goto('/ta/login.html');
   await expect(page.getByLabel('பயனர் பெயர் / கைபேசி எண் / மின்னஞ்சல்')).toBeVisible();
   await expect(page.getByRole('button', { name: 'உள்நுழை', exact: true })).toBeVisible();
-  await expect(page.locator('#otp-hint')).toContainText('கைபேசி');
+  await expect(page.locator('h1')).toContainText('வரவேற்கிறோம்');
+  await expect(page.locator('#otp-hint')).toHaveCount(0);
+  await expect(page.locator('#stay-logged-in')).toBeChecked();
   expect(await noSideScroll(page)).toBeLessThanOrEqual(1);
 
   for (const path of ['/index.html', '/login.html', '/account.html', '/ta/index.html', '/hi/index.html']) {
@@ -280,6 +210,13 @@ test('a first visit to the landing page opens login, and other pages do not', as
   await page.goto('/index.html');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
   expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/index.html');
+  await expect(page.locator('h1')).toContainText('Welcome to');
+  await expect(page.locator('h1')).toContainText('Peppynose');
+  await expect(page.locator('#stay-logged-in')).toBeChecked();
+  await expect(page.locator('#google-slot')).toBeVisible();
+  await expect(page.locator('#google-signin')).toBeVisible();
+  await expect(page.locator('#otp-request')).toHaveCount(0);
+  await expect(page.locator('main')).not.toContainText(/one-time code|OTP/i);
   await expect(page.getByRole('button', { name: 'Log in', exact: true })).toBeVisible();
   await expect(page.locator('#skip-login')).toBeVisible();
   await expect(page.locator('.auth-switch a')).toHaveAttribute('href', /signup\.html\?next=/);
@@ -309,9 +246,47 @@ test('Skip login returns to the landing page and stays there on reload', async (
   expect(guest.session).toBe('1');
 });
 
+test('a first visit can sign up, must fill details, then stays on the home page', async ({ page }, testInfo) => {
+  const project = testInfo.project.name;
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
+  await expect(page.locator('h1')).toContainText('Welcome to');
+  await expect(page.locator('#stay-logged-in')).toBeChecked();
+  await expect(page.locator('#google-signin')).toBeVisible();
+  await expect(page.locator('#otp-request')).toHaveCount(0);
+  const link = page.locator('.auth-switch a');
+  await expect(link).toHaveAttribute('href', /signup\.html\?next=/);
+  await link.click();
+  await expect(page).toHaveURL(/\/signup(\.html)?\?next=/);
+  await page.getByLabel('Username', { exact: true }).fill(`gate.${project}`);
+  await page.getByLabel('Password', { exact: true }).fill(password);
+  await page.getByLabel('Confirm password', { exact: true }).fill(password);
+  await expect(page.locator('#stay-logged-in')).toBeChecked();
+  await page.getByRole('button', { name: 'Create account', exact: true }).click();
+  await expect(page).toHaveURL(/\/details(\.html)?\?next=/);
+  await expect(page.locator('h1')).toContainText('details');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('[data-for="name"]')).not.toBeEmpty();
+  await expect(page.locator('[data-for="email"]')).not.toBeEmpty();
+  await page.locator('#details-form input[name="name"]').fill('Gate Amma');
+  await page.locator('#details-form input[name="email"]').fill('not-an-email');
+  await page.locator('#details-form input[name="mobile"]').fill('12345');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('[data-for="email"]')).toHaveText('Please enter a valid email.');
+  await expect(page.locator('[data-for="mobile"]')).toHaveText('Enter a 10-digit Indian mobile number.');
+  await page.locator('#details-form input[name="mobile"]').fill('');
+  await page.locator('#details-form input[name="email"]').fill(`gate.${project}@example.com`);
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page).toHaveURL(homeUrl);
+  await expect(page.locator('h1')).toContainText('little');
+  await page.reload();
+  await expect(page).toHaveURL(homeUrl);
+  await expect(page.locator('h1')).toContainText('little');
+});
+
 test('a logged-in visitor sees the landing page, and logout shows login again', async ({ page }, testInfo) => {
   const project = testInfo.project.name;
-  const who = { username: `otp.${project}` };
+  const who = { username: `gate.${project}` };
   const loggedIn = await page.request.post('/api/auth/login', { data: { identifier: who.username, password } });
   expect(loggedIn.ok()).toBeTruthy();
   await page.goto('/index.html');

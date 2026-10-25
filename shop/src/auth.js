@@ -11,13 +11,17 @@
 // request is from localhost or 127.0.0.1. See otp-delivery.js.
 
 import { deliveryReady, sendOtp } from './otp-delivery.js';
+import { GoogleTokenError, verifyGoogleIdToken } from './google-id.js';
 
 // Workers WebCrypto: "iteration counts above 100000 are not supported".
 export const MAX_PBKDF2_ITERS = 100_000;
 export const MIN_PBKDF2_ITERS = MAX_PBKDF2_ITERS;
 const PBKDF2_TOO_HIGH = 'Password hashing is not configured safely. Cloudflare Workers cannot run PBKDF2 above 100000 iterations.';
 const TEST_ITERS = 1_000;
-const SESSION_SECONDS = 14 * 24 * 60 * 60;
+// Checked "Stay logged in" sets Max-Age to this. An unchecked box omits Max-Age,
+// so the browser drops the cookie when it closes. The server row uses the same
+// lifetime either way, so a window left open does not stay logged in forever.
+export const REMEMBER_SECONDS = 30 * 24 * 60 * 60;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_MAX_IP = 8;
 const LOGIN_MAX_ID = 20;
@@ -183,24 +187,45 @@ export function classifyIdentifier(raw) {
   return { ok: true, kind: 'username', value: text };
 }
 
+function validEmail(raw) {
+  const email = (typeof raw === 'string' ? raw : '').replace(/[\u0000-\u001f\u007f\s]/g, '').toLowerCase().slice(0, 120);
+  if (!EMAIL.test(email) || email.includes('..') || email.startsWith('.') || email.includes('.@')) return '';
+  return email;
+}
+
+function validName(raw) {
+  const name = clean(raw, 80);
+  if (name.length < 2 || name.length > 80) return '';
+  return name;
+}
+
 function validateSignup(b) {
-  const name = clean(b.name, 80);
   const username = typeof b.username === 'string' ? b.username.replace(/[\u0000-\u001f\u007f]/g, '').trim() : '';
-  const mobileRaw = typeof b.mobile === 'string' ? b.mobile.replace(/[\u0000-\u001f\u007f]/g, '').trim() : '';
-  const email = clean(b.email, 120).toLowerCase();
   const password = typeof b.password === 'string' ? b.password : '';
   const confirm = typeof b.confirm === 'string' ? b.confirm : '';
   const fields = {};
-  if (name.length < 2 || name.length > 80) fields.name = 'name';
   if (!USERNAME.test(username) || /^\d+$/.test(username)) fields.username = 'username';
-  const mobile = mobileRaw.length > 20 ? '' : normalizeMobile(mobileRaw);
-  if (!mobile) fields.mobile = 'mobile';
-  if (!EMAIL.test(email) || email.includes('..') || email.startsWith('.') || email.includes('.@')) fields.email = 'email';
   if (password.length < 10 || password.length > 200) fields.password = 'short';
-  else if (COMMON.has(password.toLowerCase()) || /^(.)\1+$/.test(password) || password.toLowerCase() === email || password.toLowerCase() === name.toLowerCase() || password.toLowerCase() === username.toLowerCase() || password === mobile) fields.password = 'common';
+  else if (COMMON.has(password.toLowerCase()) || /^(.)\1+$/.test(password) || password.toLowerCase() === username.toLowerCase()) fields.password = 'common';
   if (confirm !== password) fields.confirm = 'mismatch';
   if (Object.keys(fields).length) throw new HttpError(400, 'Please check the highlighted fields.', { code: 'invalid', fields });
-  return { name, username, mobile, email, password };
+  return { username, password };
+}
+
+function validateProfile(b) {
+  const name = validName(b.name);
+  const email = validEmail(b.email);
+  const mobileRaw = typeof b.mobile === 'string' ? b.mobile.replace(/[\u0000-\u001f\u007f]/g, '').trim() : '';
+  const fields = {};
+  if (!name) fields.name = 'name';
+  if (!email) fields.email = 'email';
+  let mobile = null;
+  if (mobileRaw) {
+    mobile = mobileRaw.length > 20 ? '' : normalizeMobile(mobileRaw);
+    if (!mobile) fields.mobile = 'mobile';
+  }
+  if (Object.keys(fields).length) throw new HttpError(400, 'Please check the highlighted fields.', { code: 'invalid', fields });
+  return { name, email, mobile };
 }
 
 function takenError(code) {
@@ -217,7 +242,7 @@ async function readJson(req) {
   const type = req.headers.get('content-type') || '';
   if (!type.startsWith('application/json')) throw new HttpError(415, 'Send JSON.', { code: 'bad_json' });
   const text = await req.text();
-  if (text.length > 4000) throw new HttpError(413, 'Too much data.', { code: 'too_large' });
+  if (text.length > 16000) throw new HttpError(413, 'Too much data.', { code: 'too_large' });
   try {
     const v = JSON.parse(text);
     if (v && typeof v === 'object' && !Array.isArray(v)) return v;
@@ -274,7 +299,9 @@ function sessionCookie(req, env, value, maxAge) {
   const url = new URL(req.url);
   const host = url.hostname;
   const secure = url.protocol === 'https:' || host === 'localhost' || host === '127.0.0.1';
-  let c = `pn_session=${value}; Path=/; Max-Age=${maxAge}; SameSite=Lax; HttpOnly`;
+  // maxAge null is a session cookie (no Max-Age). 0 clears it on logout.
+  let c = `pn_session=${value}; Path=/; SameSite=Lax; HttpOnly`;
+  if (maxAge != null) c += `; Max-Age=${maxAge}`;
   if (secure) c += '; Secure';
   const domain = cookieDomain(env);
   // A Domain for peppynose.com is ignored by a localhost browser, so local
@@ -313,35 +340,47 @@ async function recordAttempt(env, scope, key) {
   ]);
 }
 
-const pub = row => ({ name: row.name, email: row.email, username: row.username, mobile: row.mobile });
+const pub = row => ({
+  name: row.name || '',
+  email: row.email || '',
+  username: row.username || '',
+  mobile: row.mobile || '',
+  profile_complete: Number(row.profile_complete) === 1
+});
 
+const USER_COLS = 'id, email, username, mobile, name, password_hash, google_sub, profile_complete';
 const USER_SQL = {
-  email: 'SELECT id, email, username, mobile, name, password_hash FROM users WHERE email = ? COLLATE NOCASE',
-  mobile: 'SELECT id, email, username, mobile, name, password_hash FROM users WHERE mobile = ?',
-  username: 'SELECT id, email, username, mobile, name, password_hash FROM users WHERE username = ? COLLATE NOCASE'
+  email: `SELECT ${USER_COLS} FROM users WHERE email = ? COLLATE NOCASE`,
+  mobile: `SELECT ${USER_COLS} FROM users WHERE mobile = ?`,
+  username: `SELECT ${USER_COLS} FROM users WHERE username = ? COLLATE NOCASE`
 };
+
+function wantsStay(body) {
+  return !!(body && body.stay === true);
+}
 
 function findUser(env, id) {
   return env.DB.prepare(USER_SQL[id.kind]).bind(id.value).first();
 }
 
-async function startSession(req, env, user) {
+async function startSession(req, env, user, stay) {
   const token = randHex(32);
   const csrf = randHex(16);
   const at = new Date().toISOString();
-  const exp = new Date(Date.now() + SESSION_SECONDS * 1000).toISOString();
+  const exp = new Date(Date.now() + REMEMBER_SECONDS * 1000).toISOString();
   await env.DB.batch([
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ? OR expires_at < ?').bind(user.id, at),
     env.DB.prepare('INSERT INTO sessions (id, user_id, csrf, created_at, expires_at) VALUES (?, ?, ?, ?, ?)').bind(await sha256hex(token), user.id, csrf, at, exp)
   ]);
-  return json({ ok: true, user: pub(user), csrf }, 200, { 'set-cookie': sessionCookie(req, env, token, SESSION_SECONDS) });
+  const maxAge = stay ? REMEMBER_SECONDS : null;
+  return json({ ok: true, user: pub(user), csrf }, 200, { 'set-cookie': sessionCookie(req, env, token, maxAge) });
 }
 
 async function sessionRow(req, env) {
   const token = readCookie(req, 'pn_session');
   if (!/^[0-9a-f]{64}$/.test(token)) return null;
   const id = await sha256hex(token);
-  const row = await env.DB.prepare(`SELECT s.id, s.csrf, s.expires_at, s.user_id, u.email, u.username, u.mobile, u.name, u.password_hash
+  const row = await env.DB.prepare(`SELECT s.id, s.csrf, s.expires_at, s.user_id, u.email, u.username, u.mobile, u.name, u.password_hash, u.google_sub, u.profile_complete
     FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.id = ?`).bind(id).first();
   if (!row) return null;
   if (row.expires_at < new Date().toISOString()) {
@@ -358,18 +397,10 @@ function assertCsrf(req, row) {
   if (!timingSafeEqual(a, b)) throw new HttpError(403, 'This page is out of date. Please refresh and try again.', { code: 'csrf' });
 }
 
-async function assertAvailable(env, body) {
-  const found = await env.DB.prepare('SELECT username, mobile, email FROM users WHERE username = ? COLLATE NOCASE OR mobile = ? OR email = ? COLLATE NOCASE').bind(body.username, body.mobile, body.email).all();
-  for (const row of (found && found.results) || []) {
-    if (row.username && row.username.toLowerCase() === body.username.toLowerCase()) throw takenError('username_taken');
-    if (row.mobile === body.mobile) throw takenError('mobile_taken');
-    if (row.email && row.email.toLowerCase() === body.email) throw takenError('email_taken');
-  }
-}
-
 function mapUnique(e) {
   const msg = String(e && e.message || '');
   if (!msg.includes('UNIQUE') && !msg.includes('constraint failed')) return null;
+  if (/google_sub/i.test(msg)) return new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
   if (/username/i.test(msg)) return takenError('username_taken');
   if (/mobile/i.test(msg)) return takenError('mobile_taken');
   return takenError('email_taken');
@@ -378,23 +409,26 @@ function mapUnique(e) {
 async function signup(req, env) {
   assertBrowserOrigin(req, env);
   const { secret, iters } = assertConfig(env);
-  const body = validateSignup(await readJson(req));
+  const raw = await readJson(req);
+  const body = validateSignup(raw);
   const ip = clientIp(req);
   if (await tooMany(env, 'signup', 'ip:' + ip, SIGNUP_WINDOW_MS, SIGNUP_MAX_IP)) {
     throw new HttpError(429, 'Too many accounts created from this network. Please wait an hour.', { code: 'rate_limited' });
   }
   await recordAttempt(env, 'signup', 'ip:' + ip);
-  await assertAvailable(env, body);
+  const taken = await env.DB.prepare('SELECT id FROM users WHERE username = ? COLLATE NOCASE').bind(body.username).first();
+  if (taken) throw takenError('username_taken');
   const hash = await hashPassword(body.password, secret, iters);
   const id = 'u_' + randHex(16);
+  const user = { id, email: '', username: body.username, mobile: '', name: '', password_hash: hash, google_sub: null, profile_complete: 0 };
   try {
-    await env.DB.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(id, body.email, body.username, body.mobile, body.name, hash, new Date().toISOString()).run();
+    await env.DB.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, google_sub, profile_complete, created_at) VALUES (?, NULL, ?, NULL, NULL, ?, NULL, 0, ?)').bind(id, body.username, hash, new Date().toISOString()).run();
   } catch (e) {
     const mapped = mapUnique(e);
     if (mapped) throw mapped;
     throw e;
   }
-  return startSession(req, env, { id, email: body.email, username: body.username, mobile: body.mobile, name: body.name });
+  return startSession(req, env, user, wantsStay(raw));
 }
 
 async function login(req, env) {
@@ -426,7 +460,106 @@ async function login(req, env) {
     await recordAttempt(env, 'login', 'id:' + idKey);
     throw new HttpError(401, BAD_LOGIN, { code: 'bad_login' });
   }
-  return startSession(req, env, user);
+  return startSession(req, env, user, wantsStay(body));
+}
+
+function googleClientId(env) {
+  const id = String(env && env.GOOGLE_CLIENT_ID || '').trim();
+  return /^[0-9A-Za-z._-]{10,200}$/.test(id) ? id : '';
+}
+
+async function googleLogin(req, env) {
+  assertBrowserOrigin(req, env);
+  assertConfig(env);
+  const clientId = googleClientId(env);
+  if (!clientId) throw new HttpError(503, 'Google sign-in is not available yet.', { code: 'google_not_configured' });
+  const body = await readJson(req);
+  const credential = typeof body.credential === 'string' ? body.credential.trim() : '';
+  const ip = clientIp(req);
+  if (await tooMany(env, 'google', 'ip:' + ip, LOGIN_WINDOW_MS, LOGIN_MAX_IP)) {
+    throw new HttpError(429, 'Too many tries. Please wait 15 minutes.', { code: 'rate_limited' });
+  }
+  let claims;
+  try {
+    claims = await verifyGoogleIdToken(credential, { clientId, fetchImpl: env.GOOGLE_JWKS_FETCH });
+  } catch (e) {
+    await recordAttempt(env, 'google', 'ip:' + ip);
+    if (e instanceof GoogleTokenError && (e.code === 'jwks' || e.code === 'not_configured')) {
+      throw new HttpError(503, 'Google sign-in is not available yet.', { code: 'google_not_configured' });
+    }
+    throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
+  }
+  let user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE google_sub = ?`).bind(claims.sub).first();
+  if (!user) {
+    const byEmail = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE email = ? COLLATE NOCASE`).bind(claims.email).first();
+    if (byEmail && byEmail.google_sub && byEmail.google_sub !== claims.sub) {
+      await recordAttempt(env, 'google', 'ip:' + ip);
+      throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
+    }
+    if (byEmail) {
+      await env.DB.prepare('UPDATE users SET google_sub = ? WHERE id = ? AND google_sub IS NULL').bind(claims.sub, byEmail.id).run();
+      user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(byEmail.id).first();
+      if (!user || user.google_sub !== claims.sub) {
+        await recordAttempt(env, 'google', 'ip:' + ip);
+        throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
+      }
+    }
+  }
+  if (!user) {
+    const id = 'u_' + randHex(16);
+    const name = validName(claims.name) ? claims.name : (claims.name || null);
+    try {
+      await env.DB.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, google_sub, profile_complete, created_at) VALUES (?, ?, NULL, NULL, ?, NULL, ?, 0, ?)').bind(id, claims.email, name, claims.sub, new Date().toISOString()).run();
+    } catch (e) {
+      const mapped = mapUnique(e);
+      if (mapped && mapped.extra && mapped.extra.code === 'google_invalid') throw mapped;
+      if (mapped && mapped.extra && mapped.extra.code === 'email_taken') {
+        const again = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE email = ? COLLATE NOCASE`).bind(claims.email).first();
+        if (again && !again.google_sub) {
+          await env.DB.prepare('UPDATE users SET google_sub = ? WHERE id = ? AND google_sub IS NULL').bind(claims.sub, again.id).run();
+          user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(again.id).first();
+        }
+      }
+      if (!user) {
+        if (mapped) throw mapped;
+        throw e;
+      }
+    }
+    if (!user) user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(id).first();
+  }
+  return startSession(req, env, user, wantsStay(body));
+}
+
+async function updateProfile(req, env) {
+  assertBrowserOrigin(req, env);
+  assertConfig(env);
+  const row = await sessionRow(req, env);
+  if (!row) throw new HttpError(401, 'Please log in.', { code: 'bad_login' });
+  assertCsrf(req, row);
+  const profile = validateProfile(await readJson(req));
+  const emailOwner = await env.DB.prepare('SELECT id FROM users WHERE email = ? COLLATE NOCASE AND id != ?').bind(profile.email, row.user_id).first();
+  if (emailOwner) throw takenError('email_taken');
+  if (profile.mobile) {
+    const mobileOwner = await env.DB.prepare('SELECT id FROM users WHERE mobile = ? AND id != ?').bind(profile.mobile, row.user_id).first();
+    if (mobileOwner) throw takenError('mobile_taken');
+  }
+  try {
+    await env.DB.prepare('UPDATE users SET name = ?, email = ?, mobile = ?, profile_complete = 1 WHERE id = ?').bind(profile.name, profile.email, profile.mobile, row.user_id).run();
+  } catch (e) {
+    const mapped = mapUnique(e);
+    if (mapped) throw mapped;
+    throw e;
+  }
+  return json({
+    ok: true,
+    user: pub({
+      name: profile.name,
+      email: profile.email,
+      username: row.username,
+      mobile: profile.mobile || '',
+      profile_complete: 1
+    })
+  });
 }
 
 function randomOtp() {
@@ -514,7 +647,7 @@ async function verifyOtp(req, env) {
   await env.DB.prepare('UPDATE auth_otps SET used = 1 WHERE id = ?').bind(row.id).run();
   const user = await findUser(env, id);
   if (!user) throw new HttpError(401, OTP_BAD, { code: 'otp_invalid' });
-  return startSession(req, env, user);
+  return startSession(req, env, user, wantsStay(body));
 }
 
 async function me(req, env) {
@@ -564,7 +697,7 @@ async function deleteAccount(req, env) {
 function authPublicConfig(req, env) {
   const sms = deliveryReady(env, 'sms', req).ok;
   const email = deliveryReady(env, 'email', req).ok;
-  return json({ otp: !!(sms || email) });
+  return json({ otp: !!(sms || email), google_client_id: googleClientId(env) });
 }
 
 export async function authApi(req, env) {
@@ -574,6 +707,8 @@ export async function authApi(req, env) {
     if (path === '/api/auth/config' && method === 'GET') return authPublicConfig(req, env);
     if (path === '/api/auth/signup' && method === 'POST') return await signup(req, env);
     if (path === '/api/auth/login' && method === 'POST') return await login(req, env);
+    if (path === '/api/auth/google' && method === 'POST') return await googleLogin(req, env);
+    if (path === '/api/auth/profile' && method === 'PUT') return await updateProfile(req, env);
     if (path === '/api/auth/otp/request' && method === 'POST') return await requestOtp(req, env);
     if (path === '/api/auth/otp/verify' && method === 'POST') return await verifyOtp(req, env);
     if (path === '/api/auth/logout' && method === 'POST') return await logout(req, env);

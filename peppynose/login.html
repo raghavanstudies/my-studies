@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=2b7cfcc79c">
+  <link rel="stylesheet" href="styles.css?v=google1">
   <script src="lang.js"></script>
 </head>
 <body>
@@ -51,27 +51,23 @@
 
   <main>
     <div class="page-head">
-      <div class="wrap"><span class="eyebrow">Account</span><h1>Welcome <em>back</em></h1><p>Use your username, mobile number or email, then your password. A one-time code works for a mobile number or email.</p></div>
+      <div class="wrap"><span class="eyebrow">Account</span><h1>Welcome to <em>Peppynose</em></h1><p>Log in, sign up, or skip to continue as a guest.</p></div>
     </div>
     <div class="wrap">
       <div class="auth-card">
         <p id="deleted-note" class="auth-note" hidden></p>
+        <div id="google-slot" hidden>
+          <div id="google-btn"></div>
+          <button class="btn ghost" type="button" id="google-signin">Sign in with Google</button>
+          <p class="auth-or" id="auth-or">or</p>
+        </div>
         <form id="auth-form" class="auth-form" data-mode="login" novalidate>
           <label>Username / mobile number / email<input name="identifier" type="text" autocomplete="username" required maxlength="120" autocapitalize="none" spellcheck="false"><span class="auth-field-err" data-for="identifier"></span></label>
           <label>Password<input name="password" type="password" autocomplete="current-password" required maxlength="200"><span class="auth-field-err" data-for="password"></span></label>
+          <label class="auth-stay"><input id="stay-logged-in" name="stay" type="checkbox" checked> Stay logged in on this device</label>
           <p id="err" class="auth-err" role="alert"></p>
           <button class="btn amazon" type="submit">Log in</button>
         </form>
-        <div class="auth-otp">
-          <button class="btn ghost" type="button" id="otp-request" disabled>Log in with OTP</button>
-          <p id="otp-hint" class="auth-note">OTP works with a mobile number or email.</p>
-          <div id="otp-panel" class="auth-otp-panel" hidden>
-            <p id="otp-sent" class="auth-note"></p>
-            <label>6-digit code<input id="otp-code" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}"></label>
-            <button class="btn amazon" type="button" id="otp-verify">Verify code</button>
-            <button class="auth-resend" type="button" id="otp-resend" disabled>Resend code (30s)</button>
-          </div>
-        </div>
         <p class="auth-skip"><button type="button" class="auth-skip-btn" id="skip-login">Skip login</button></p>
         <!-- TODO: forgot-password needs real email delivery. shop/src/auth.js explains why this is not a reset form. -->
         <p class="auth-note">Forgot your password? Automatic reset by email is not available yet. Write to <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a> from the address on your account and we will help you.</p>

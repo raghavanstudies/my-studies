@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="../styles.css?v=2b7cfcc79c" rel="stylesheet"/><script src="../lang.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="../styles.css?v=google1" rel="stylesheet"/><script src="../lang.js"></script>
 </head>
 <body>
 <div id="pn-loader" aria-hidden="true"><div class="pl-box"><div class="pl-art"><img class="pl-perch" src="/images/loader/bird-perch.webp" alt="" width="322" height="346"><img class="pl-mom" src="/images/loader/bird-mother.webp" alt="" width="322" height="346"><img class="pl-baby" src="/images/loader/bird-baby.webp" alt="" width="322" height="346"></div><img class="pl-word" src="/images/logo-wordmark.webp" alt="" width="640" height="131"></div></div>
@@ -46,27 +46,23 @@
 
   <main>
     <div class="page-head">
-      <div class="wrap"><span class="eyebrow">खाता</span><h1>फिर से <em>स्वागत है</em></h1><p>उपयोगकर्ता नाम, मोबाइल नंबर या ईमेल, फिर पासवर्ड डालें। एक बार का कोड मोबाइल नंबर या ईमेल पर काम करता है।</p></div>
+      <div class="wrap"><span class="eyebrow">खाता</span><h1>Peppynose में आपका <em>स्वागत</em> है</h1><p>लॉग इन करें, साइन अप करें, या मेहमान के रूप में जारी रखने के लिए छोड़ें।</p></div>
     </div>
     <div class="wrap">
       <div class="auth-card">
         <p id="deleted-note" class="auth-note" hidden></p>
+        <div id="google-slot" hidden>
+          <div id="google-btn"></div>
+          <button class="btn ghost" type="button" id="google-signin">Google से साइन इन करें</button>
+          <p class="auth-or" id="auth-or">या</p>
+        </div>
         <form id="auth-form" class="auth-form" data-mode="login" novalidate>
           <label>उपयोगकर्ता नाम / मोबाइल नंबर / ईमेल<input name="identifier" type="text" autocomplete="username" required maxlength="120" autocapitalize="none" spellcheck="false"><span class="auth-field-err" data-for="identifier"></span></label>
           <label>पासवर्ड<input name="password" type="password" autocomplete="current-password" required maxlength="200"><span class="auth-field-err" data-for="password"></span></label>
+          <label class="auth-stay"><input id="stay-logged-in" name="stay" type="checkbox" checked> इस डिवाइस पर लॉग इन रखें</label>
           <p id="err" class="auth-err" role="alert"></p>
           <button class="btn amazon" type="submit">लॉग इन</button>
         </form>
-        <div class="auth-otp">
-          <button class="btn ghost" type="button" id="otp-request" disabled>OTP से लॉग इन करें</button>
-          <p id="otp-hint" class="auth-note">OTP मोबाइल नंबर या ईमेल से काम करता है।</p>
-          <div id="otp-panel" class="auth-otp-panel" hidden>
-            <p id="otp-sent" class="auth-note"></p>
-            <label>6 अंकों का कोड<input id="otp-code" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}"></label>
-            <button class="btn amazon" type="button" id="otp-verify">कोड जाँचें</button>
-            <button class="auth-resend" type="button" id="otp-resend" disabled>कोड फिर भेजें (30 सेकंड)</button>
-          </div>
-        </div>
         <p class="auth-skip"><button type="button" class="auth-skip-btn" id="skip-login">लॉगिन छोड़ें</button></p>
         <!-- TODO: forgot-password needs real email delivery. shop/src/auth.js explains why this is not a reset form. -->
         <p class="auth-note">पासवर्ड भूल गए? ईमेल से अपने-आप रीसेट अभी उपलब्ध नहीं है। खाते वाले पते से <a href="mailto:care.peppynose@gmail.com">care.peppynose@gmail.com</a> पर लिखें, हम मदद करेंगे।</p>

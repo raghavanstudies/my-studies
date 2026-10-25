@@ -7,12 +7,15 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DatabaseSync } from 'node:sqlite';
-import { authApi, configuredIters, hashPassword, verifyPassword, MIN_PBKDF2_ITERS, MAX_PBKDF2_ITERS } from '../src/auth.js';
+import { authApi, configuredIters, hashPassword, verifyPassword, MIN_PBKDF2_ITERS, MAX_PBKDF2_ITERS, REMEMBER_SECONDS } from '../src/auth.js';
+import { resetGoogleKeyCache } from '../src/google-id.js';
+import { makeRsaKey, signIdToken, jwksFetch, baseClaims } from './google-token.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const SCHEMA = readFileSync(join(here, '..', 'db', 'schema.sql'), 'utf8');
 const MIGRATION_1 = readFileSync(join(here, '..', 'db', 'auth-migration.sql'), 'utf8');
 const MIGRATION_2 = readFileSync(join(here, '..', 'db', 'auth-migration-002.sql'), 'utf8');
+const MIGRATION_3 = readFileSync(join(here, '..', 'db', 'auth-migration-003.sql'), 'utf8');
 const SECRET = 'unit-test-session-secret-not-used-in-production';
 
 function d1(db) {
@@ -98,6 +101,24 @@ function account(over = {}) {
   };
 }
 
+async function createAccount(env, body, ip = '203.0.113.10') {
+  const res = await call(env, '/api/auth/signup', {
+    method: 'POST', origin: 'http://localhost', ip,
+    body: { username: body.username, password: body.password, confirm: body.confirm, stay: body.stay === true }
+  });
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  const cookie = `pn_session=${tokenOf(res)}`;
+  const profile = await call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie,
+    headers: { 'x-csrf-token': data.csrf },
+    body: { name: body.name, email: body.email, mobile: body.mobile || '' }
+  });
+  const saved = await profile.json();
+  assert.equal(profile.status, 200, JSON.stringify(saved));
+  return { cookie, csrf: data.csrf, signup: data, profile: saved };
+}
+
 test('production PBKDF2 count is 100000 and a higher override is refused', async () => {
   assert.equal(MAX_PBKDF2_ITERS, 100_000);
   assert.equal(MIN_PBKDF2_ITERS, 100_000);
@@ -158,16 +179,37 @@ test('migration 002 only adds columns and the OTP table', () => {
   assert.ok(indexes.includes('users_mobile'));
 });
 
-test('sign up stores a hash, sets an HttpOnly cookie, and rejects duplicate email, username and mobile', async () => {
+test('migration 003 keeps existing accounts and allows a Google-only row', () => {
+  assert.match(MIGRATION_3, /google_sub/);
+  assert.match(MIGRATION_3, /profile_complete/);
+  assert.match(MIGRATION_3, /DROP TABLE users/);
+  assert.equal(/drop\s+table\s+(orders|products|sessions|auth_otps)\b/i.test(MIGRATION_3), false);
+  const db = new DatabaseSync(':memory:');
+  db.exec(MIGRATION_1);
+  db.exec(MIGRATION_2);
+  db.prepare('INSERT INTO users (id, email, name, password_hash, created_at, username, mobile) VALUES (?, ?, ?, ?, ?, ?, ?)').run('u1', 'ada@example.com', 'Ada', 'hash', '2020-01-01T00:00:00.000Z', 'ada', '9876543210');
+  db.prepare('INSERT INTO sessions (id, user_id, csrf, created_at, expires_at) VALUES (?, ?, ?, ?, ?)').run('s1', 'u1', 'csrfcsrfcsrfcsrfcsrfcsrfcsrfcsrf', '2020-01-01T00:00:00.000Z', '2099-01-01T00:00:00.000Z');
+  db.exec(MIGRATION_3);
+  const row = db.prepare('SELECT email, username, name, profile_complete, google_sub FROM users WHERE id = ?').get('u1');
+  assert.equal(row.email, 'ada@example.com');
+  assert.equal(row.username, 'ada');
+  assert.equal(row.profile_complete, 1);
+  assert.equal(row.google_sub, null);
+  assert.equal(db.prepare('SELECT user_id FROM sessions WHERE id = ?').get('s1').user_id, 'u1');
+  db.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, google_sub, profile_complete, created_at) VALUES (?, NULL, NULL, NULL, ?, NULL, ?, 0, ?)').run('u2', 'Ada', '1234567890', '2020-01-02T00:00:00.000Z');
+  assert.equal(db.prepare('SELECT google_sub, profile_complete FROM users WHERE id = ?').get('u2').profile_complete, 0);
+});
+
+test('sign up stores a hash, sets an HttpOnly cookie, and rejects a duplicate username', async () => {
   const env = makeEnv();
   const first = account({ username: 'Ada.Amma', email: 'Ada@Example.com', mobile: '+91 98765 43210' });
   const res = await call(env, '/api/auth/signup', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.10',
-    body: first
+    body: { username: first.username, password: first.password, confirm: first.confirm, stay: true }
   });
   assert.equal(res.status, 200);
   const data = await res.json();
-  assert.deepEqual(data.user, { name: 'Ada Amma', email: 'ada@example.com', username: 'Ada.Amma', mobile: '9876543210' });
+  assert.deepEqual(data.user, { name: '', email: '', username: 'Ada.Amma', mobile: '', profile_complete: false });
   assert.match(data.csrf, /^[0-9a-f]{32}$/);
   assert.equal(JSON.stringify(data).includes('horse-battery-99'), false);
   const cookie = cookieOf(res);
@@ -175,22 +217,30 @@ test('sign up stores a hash, sets an HttpOnly cookie, and rejects duplicate emai
   assert.match(cookie, /SameSite=Lax/i);
   assert.match(cookie, /Secure/i);
   assert.match(cookie, /Path=\//);
+  assert.match(cookie, new RegExp('Max-Age=' + REMEMBER_SECONDS));
   const token = tokenOf(res);
-  const row = await env.DB.prepare('SELECT email, username, mobile, password_hash FROM users').first();
-  assert.equal(row.email, 'ada@example.com');
+  const row = await env.DB.prepare('SELECT email, username, mobile, password_hash, profile_complete FROM users').first();
+  assert.equal(row.email, null);
   assert.equal(row.username, 'Ada.Amma');
-  assert.equal(row.mobile, '9876543210');
+  assert.equal(row.mobile, null);
+  assert.equal(row.profile_complete, 0);
   assert.equal(row.password_hash.includes('horse-battery-99'), false);
   assert.equal(row.password_hash.startsWith('pbkdf2-sha256$'), true);
-  const session = await env.DB.prepare('SELECT id FROM sessions').first();
+  const session = await env.DB.prepare('SELECT id, expires_at FROM sessions').first();
   assert.notEqual(session.id, token);
+  const life = new Date(session.expires_at).getTime() - Date.now();
+  assert.ok(life > 29 * 24 * 60 * 60 * 1000);
+  assert.ok(life < 31 * 24 * 60 * 60 * 1000);
 
-  const dupEmail = await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.10',
-    body: account({ email: 'ada@example.com' })
+  const profile = await call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie: `pn_session=${token}`,
+    headers: { 'x-csrf-token': data.csrf },
+    body: { name: first.name, email: first.email, mobile: first.mobile }
   });
-  assert.equal(dupEmail.status, 409);
-  assert.equal((await dupEmail.json()).code, 'email_taken');
+  assert.equal(profile.status, 200);
+  assert.deepEqual((await profile.json()).user, {
+    name: 'Ada Amma', email: 'ada@example.com', username: 'Ada.Amma', mobile: '9876543210', profile_complete: true
+  });
 
   const dupUser = await call(env, '/api/auth/signup', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.10',
@@ -199,9 +249,18 @@ test('sign up stores a hash, sets an HttpOnly cookie, and rejects duplicate emai
   assert.equal(dupUser.status, 409);
   assert.equal((await dupUser.json()).code, 'username_taken');
 
-  const dupMobile = await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.10',
-    body: account({ mobile: '09876543210' })
+  const other = await createAccount(env, account({ email: 'other@example.com', mobile: '9123456780' }), '203.0.113.11');
+  const dupEmail = await call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie: other.cookie,
+    headers: { 'x-csrf-token': other.csrf },
+    body: { name: 'Other Amma', email: 'ada@example.com', mobile: '' }
+  });
+  assert.equal(dupEmail.status, 409);
+  assert.equal((await dupEmail.json()).code, 'email_taken');
+  const dupMobile = await call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie: other.cookie,
+    headers: { 'x-csrf-token': other.csrf },
+    body: { name: 'Other Amma', email: 'other@example.com', mobile: '09876543210' }
   });
   assert.equal(dupMobile.status, 409);
   assert.equal((await dupMobile.json()).code, 'mobile_taken');
@@ -209,10 +268,7 @@ test('sign up stores a hash, sets an HttpOnly cookie, and rejects duplicate emai
 
 test('login accepts username, mobile formats and email, and hides which one was wrong', async () => {
   const env = makeEnv();
-  await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.15',
-    body: account({ name: 'Meera', username: 'Meera.R', mobile: '9876543210', email: 'meera@example.com' })
-  });
+  await createAccount(env, account({ name: 'Meera', username: 'Meera.R', mobile: '9876543210', email: 'meera@example.com' }), '203.0.113.15');
   for (const identifier of ['meera.r', 'MEERA.R', '9876543210', '+91 98765 43210', '91-9876543210', '09876543210', 'MEERA@example.com']) {
     const res = await call(env, '/api/auth/login', {
       method: 'POST', origin: 'http://localhost', ip: '203.0.113.16',
@@ -239,12 +295,9 @@ test('login accepts username, mobile formats and email, and hides which one was 
 
 test('login, me, logout and delete follow the cookie and the CSRF token', async () => {
   const env = makeEnv();
-  const signup = await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.20',
-    body: account({ name: 'Meera', username: 'meera', email: 'meera2@example.com' })
-  });
-  const { csrf } = await signup.json();
-  const cookie = `pn_session=${tokenOf(signup)}`;
+  const made = await createAccount(env, account({ name: 'Meera', username: 'meera', email: 'meera2@example.com', mobile: '9000000001' }), '203.0.113.20');
+  const { csrf } = made;
+  const cookie = made.cookie;
 
   const anon = await call(env, '/api/auth/me');
   assert.deepEqual(await anon.json(), { user: null });
@@ -295,10 +348,7 @@ test('login, me, logout and delete follow the cookie and the CSRF token', async 
 test('wrong password, validation, foreign origin and a form post are refused', async () => {
   const env = makeEnv();
   const ravi = account({ name: 'Ravi', username: 'ravi', email: 'ravi@example.com' });
-  await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.30',
-    body: ravi
-  });
+  await createAccount(env, ravi, '203.0.113.30');
   const wrong = await call(env, '/api/auth/login', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.30',
     body: { identifier: 'ravi@example.com', password: 'not-the-password' }
@@ -309,16 +359,16 @@ test('wrong password, validation, foreign origin and a form post are refused', a
 
   const weak = await call(env, '/api/auth/signup', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.32',
-    body: { name: 'A', email: 'not-an-email', password: 'short', confirm: 'other' }
+    body: { username: 'ab', password: 'short', confirm: 'other' }
   });
   assert.equal(weak.status, 400);
   const fields = (await weak.json()).fields;
-  assert.equal(fields.name, 'name');
-  assert.equal(fields.email, 'email');
   assert.equal(fields.username, 'username');
-  assert.equal(fields.mobile, 'mobile');
   assert.equal(fields.password, 'short');
   assert.equal(fields.confirm, 'mismatch');
+  assert.equal(fields.name, undefined);
+  assert.equal(fields.email, undefined);
+  assert.equal(fields.mobile, undefined);
 
   const digits = await call(env, '/api/auth/signup', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.32',
@@ -345,10 +395,7 @@ test('wrong password, validation, foreign origin and a form post are refused', a
 test('login attempts are rate limited per IP', async () => {
   const env = makeEnv();
   const lata = account({ name: 'Lata', username: 'lata', email: 'lata@example.com' });
-  await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.40',
-    body: lata
-  });
+  await createAccount(env, lata, '203.0.113.40');
   for (let i = 0; i < 8; i++) {
     const res = await call(env, '/api/auth/login', {
       method: 'POST', origin: 'http://localhost', ip: '203.0.113.40',
@@ -406,10 +453,7 @@ test('accounts stay unavailable when the session secret is missing', async () =>
 test('OTP login works by mobile and email, and a missing account stays generic', async () => {
   const env = makeEnv();
   const person = account({ name: 'Oviya', username: 'oviya', mobile: '9123456780', email: 'oviya@example.com' });
-  await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.60',
-    body: person
-  });
+  await createAccount(env, person, '203.0.113.60');
   const usernameCode = await call(env, '/api/auth/otp/request', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.60',
     body: { identifier: 'oviya' }
@@ -476,9 +520,7 @@ test('OTP login works by mobile and email, and a missing account stays generic',
 test('OTP resend replaces the previous code', async () => {
   const env = makeEnv();
   const person = account({ username: 'resend.user', mobile: '9234567890', email: 'resend@example.com' });
-  await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.70', body: person
-  });
+  await createAccount(env, person, '203.0.113.70');
   const first = await call(env, '/api/auth/otp/request', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.70',
     body: { identifier: '9234567890' }
@@ -505,9 +547,7 @@ test('OTP resend replaces the previous code', async () => {
 test('an expired OTP and a code with five wrong tries cannot be used', async () => {
   const env = makeEnv();
   const person = account({ username: 'expiry.user', mobile: '9345678901', email: 'expiry@example.com' });
-  await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.80', body: person
-  });
+  await createAccount(env, person, '203.0.113.80');
   const issued = await call(env, '/api/auth/otp/request', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.80',
     body: { identifier: 'expiry@example.com' }
@@ -551,9 +591,7 @@ test('an expired OTP and a code with five wrong tries cannot be used', async () 
 test('OTP requests are rate limited and dev mode never reveals a code on the live domain', async () => {
   const env = makeEnv();
   const person = account({ username: 'limit.user', mobile: '9456789012', email: 'limit@example.com' });
-  await call(env, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.90', body: person
-  });
+  await createAccount(env, person, '203.0.113.90');
   for (let i = 0; i < 5; i++) {
     const res = await call(env, '/api/auth/otp/request', {
       method: 'POST', origin: 'http://localhost', ip: '203.0.113.91',
@@ -605,9 +643,7 @@ test('OTP requests are rate limited and dev mode never reveals a code on the liv
 test('OTP is off unless dev is set and the request is local', async () => {
   const person = account({ username: 'off.user', mobile: '9567890123', email: 'off@example.com' });
   const off = makeEnv({ OTP_SMS_PROVIDER: 'off', OTP_EMAIL_PROVIDER: 'off' });
-  await call(off, '/api/auth/signup', {
-    method: 'POST', origin: 'http://localhost', ip: '203.0.113.93', body: person
-  });
+  await createAccount(off, person, '203.0.113.93');
   const refused = await call(off, '/api/auth/otp/request', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.93',
     body: { identifier: '9567890123' }
@@ -623,7 +659,7 @@ test('OTP is off unless dev is set and the request is local', async () => {
   delete unset.OTP_EMAIL_PROVIDER;
   const configOff = await call(unset, '/api/auth/config');
   assert.equal(configOff.status, 200);
-  assert.deepEqual(await configOff.json(), { otp: false });
+  assert.deepEqual(await configOff.json(), { otp: false, google_client_id: '' });
   const unsetSend = await call(unset, '/api/auth/otp/request', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.94',
     body: { identifier: '9567890123' }
@@ -633,14 +669,14 @@ test('OTP is off unless dev is set and the request is local', async () => {
 
   const dev = makeEnv({ OTP_SMS_PROVIDER: 'dev', OTP_EMAIL_PROVIDER: 'dev' });
   const localConfig = await call(dev, '/api/auth/config');
-  assert.deepEqual(await localConfig.json(), { otp: true });
+  assert.deepEqual(await localConfig.json(), { otp: true, google_client_id: '' });
   const loopback = await authApi(new Request('http://127.0.0.1/api/auth/config'), dev);
-  assert.deepEqual(await loopback.json(), { otp: true });
+  assert.deepEqual(await loopback.json(), { otp: true, google_client_id: '' });
   const liveConfig = await authApi(new Request('https://api.peppynose.com/api/auth/config', {
     headers: { origin: 'https://www.peppynose.com' }
   }), dev);
   assert.equal(liveConfig.status, 200);
-  assert.deepEqual(await liveConfig.json(), { otp: false });
+  assert.deepEqual(await liveConfig.json(), { otp: false, google_client_id: '' });
   const liveSend = await authApi(new Request('https://www.peppynose.com/api/auth/otp/request', {
     method: 'POST',
     headers: { 'content-type': 'application/json', origin: 'https://www.peppynose.com' },
@@ -648,4 +684,133 @@ test('OTP is off unless dev is set and the request is local', async () => {
   }), dev);
   assert.equal(liveSend.status, 503);
   assert.equal((await liveSend.json()).dev_code, undefined);
+});
+
+test('stay logged in sets Max-Age, and an unchecked box is a session cookie', async () => {
+  const env = makeEnv();
+  const who = account({ username: 'stay.user', email: 'stay@example.com' });
+  const persistent = await call(env, '/api/auth/signup', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.100',
+    body: { username: who.username, password: who.password, confirm: who.confirm, stay: true }
+  });
+  assert.match(cookieOf(persistent), new RegExp('Max-Age=' + REMEMBER_SECONDS));
+  const sessionOnly = await call(env, '/api/auth/login', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.101',
+    body: { identifier: who.username, password: who.password, stay: false }
+  });
+  assert.equal(sessionOnly.status, 200);
+  assert.doesNotMatch(cookieOf(sessionOnly), /Max-Age=/);
+  const omitted = await call(env, '/api/auth/login', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.102',
+    body: { identifier: who.username, password: who.password }
+  });
+  assert.doesNotMatch(cookieOf(omitted), /Max-Age=/);
+});
+
+test('profile requires name and email, and mobile is optional', async () => {
+  const env = makeEnv();
+  const made = await createAccount(env, account({ username: 'profile.user', email: 'profile@example.com', mobile: '9678901234' }), '203.0.113.110');
+  const noCsrf = await call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie: made.cookie,
+    body: { name: 'New Name', email: 'profile@example.com', mobile: '' }
+  });
+  assert.equal(noCsrf.status, 403);
+  const empty = await call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie: made.cookie,
+    headers: { 'x-csrf-token': made.csrf },
+    body: { name: 'A', email: 'bad', mobile: '12345' }
+  });
+  assert.equal(empty.status, 400);
+  const fields = (await empty.json()).fields;
+  assert.equal(fields.name, 'name');
+  assert.equal(fields.email, 'email');
+  assert.equal(fields.mobile, 'mobile');
+  const optional = await call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie: made.cookie,
+    headers: { 'x-csrf-token': made.csrf },
+    body: { name: 'Profile Amma', email: 'profile@example.com', mobile: '' }
+  });
+  assert.equal(optional.status, 200);
+  const saved = await optional.json();
+  assert.equal(saved.user.mobile, '');
+  assert.equal(saved.user.profile_complete, true);
+  const row = await env.DB.prepare('SELECT mobile, profile_complete FROM users WHERE username = ?').bind('profile.user').first();
+  assert.equal(row.mobile, null);
+  assert.equal(row.profile_complete, 1);
+});
+
+test('Google sign-in verifies the token, links a verified email, and honours stay logged in', async () => {
+  const { privateKey, jwk } = await makeRsaKey();
+  const clientId = 'test-client-id.apps.googleusercontent.com';
+  const env = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
+  resetGoogleKeyCache();
+  const hidden = await call(makeEnv(), '/api/auth/config');
+  assert.equal((await hidden.json()).google_client_id, '');
+  const shown = await call(env, '/api/auth/config');
+  assert.equal((await shown.json()).google_client_id, clientId);
+
+  const off = await call(makeEnv(), '/api/auth/google', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.120',
+    body: { credential: 'nope', stay: true }
+  });
+  assert.equal(off.status, 503);
+  assert.equal((await off.json()).code, 'google_not_configured');
+
+  const bad = await call(env, '/api/auth/google', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.121',
+    body: { credential: await signIdToken(privateKey, baseClaims({ aud: 'other.apps.googleusercontent.com' })), stay: true }
+  });
+  assert.equal(bad.status, 401);
+  assert.equal((await bad.json()).code, 'google_invalid');
+  assert.equal(await env.DB.prepare('SELECT id FROM users').first(), null);
+
+  const created = await call(env, '/api/auth/google', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.122',
+    body: { credential: await signIdToken(privateKey, baseClaims()), stay: false }
+  });
+  assert.equal(created.status, 200);
+  const createdBody = await created.json();
+  assert.equal(createdBody.user.email, 'ada.google@gmail.com');
+  assert.equal(createdBody.user.name, 'Ada Lovelace');
+  assert.equal(createdBody.user.profile_complete, false);
+  assert.doesNotMatch(cookieOf(created), /Max-Age=/);
+  const row = await env.DB.prepare('SELECT google_sub, password_hash, profile_complete FROM users').first();
+  assert.equal(row.google_sub, '100000000000000000001');
+  assert.equal(row.password_hash, null);
+  assert.equal(row.profile_complete, 0);
+  const passwordTry = await call(env, '/api/auth/login', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.123',
+    body: { identifier: 'ada.google@gmail.com', password: 'horse-battery-99' }
+  });
+  assert.equal(passwordTry.status, 401);
+
+  const again = await call(env, '/api/auth/google', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.124',
+    body: { credential: await signIdToken(privateKey, baseClaims({ name: 'Ada L' })), stay: true }
+  });
+  assert.equal(again.status, 200);
+  assert.match(cookieOf(again), new RegExp('Max-Age=' + REMEMBER_SECONDS));
+  assert.equal(await env.DB.prepare('SELECT COUNT(*) AS n FROM users').first().then(r => r.n), 1);
+
+  const existing = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
+  await createAccount(existing, account({ username: 'linked.user', email: 'linked@example.com', name: 'Linked Amma', mobile: '9789012345' }), '203.0.113.125');
+  resetGoogleKeyCache();
+  const linked = await call(existing, '/api/auth/google', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.126',
+    body: { credential: await signIdToken(privateKey, baseClaims({ sub: '100000000000000000099', email: 'linked@example.com', name: 'From Google' })), stay: true }
+  });
+  assert.equal(linked.status, 200);
+  const linkedBody = await linked.json();
+  assert.equal(linkedBody.user.username, 'linked.user');
+  assert.equal(linkedBody.user.profile_complete, true);
+  assert.equal(linkedBody.user.name, 'Linked Amma');
+  const linkedRow = await existing.DB.prepare('SELECT google_sub FROM users WHERE email = ?').bind('linked@example.com').first();
+  assert.equal(linkedRow.google_sub, '100000000000000000099');
+
+  const clash = await call(existing, '/api/auth/google', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.127',
+    body: { credential: await signIdToken(privateKey, baseClaims({ sub: '100000000000000000077', email: 'linked@example.com' })), stay: true }
+  });
+  assert.equal(clash.status, 401);
+  assert.equal((await clash.json()).code, 'google_invalid');
 });

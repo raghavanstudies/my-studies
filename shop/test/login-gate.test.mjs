@@ -63,7 +63,7 @@ test('guest, logged-in hint, and crawlers stay on the landing page', () => {
 });
 
 test('other pages are never sent to login', () => {
-  for (const path of ['/products.html', '/hi/products.html', '/ta/about.html', '/shop/', '/shop/index.html', '/hi/shop/', '/login', '/login.html', '/hi/login', '/hi/login.html', '/ta/login.html', '/signup', '/signup.html', '/ta/signup.html', '/account.html', '/contact.html']) {
+  for (const path of ['/products.html', '/hi/products.html', '/ta/about.html', '/shop/', '/shop/index.html', '/hi/shop/', '/login', '/login.html', '/hi/login', '/hi/login.html', '/ta/login.html', '/signup', '/signup.html', '/ta/signup.html', '/account.html', '/details.html', '/hi/details.html', '/contact.html']) {
     assert.equal(gate.isLanding(path), false, path);
     assert.equal(gate.decide({ ...anon, path }).redirect, null, path);
   }
