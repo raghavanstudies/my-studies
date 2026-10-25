@@ -13,6 +13,17 @@
   // 1) A saved choice wins: send the visitor to the same page in their language (runs in <head>, before paint).
   if (saved && saved !== cur && ['en', 'ta', 'hi'].includes(saved) && alt(saved)) { go(saved); return; }
   document.addEventListener('DOMContentLoaded', () => {
+    // Account link (Log in / your name) and the login forms. auth-config.js is published
+    // with the site and only names the API host; it holds no secrets.
+    const load = src => new Promise(resolve => {
+      if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => resolve();
+      s.onerror = () => resolve();
+      document.body.appendChild(s);
+    });
+    load('/auth-config.js').then(() => load('/auth.js'));
     // 2) Remember the choice whenever the switch is used (header or mobile menu).
     document.querySelectorAll('.lang-switch a[hreflang]').forEach(a =>
       a.addEventListener('click', () => set(KEY, a.getAttribute('hreflang'))));

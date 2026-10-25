@@ -6,7 +6,8 @@
     "build": "node scripts/build.mjs",
     "db:reset": "wrangler d1 execute peppynose_shop --local --file=db/schema.sql && wrangler d1 execute peppynose_shop --local --file=dist-db/seed.sql",
     "dev": "npm run build && npm run db:reset && wrangler dev --local --port 8787",
-    "test": "playwright test"
+    "test:unit": "node --test test/auth.test.mjs",
+    "test": "npm run test:unit && playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

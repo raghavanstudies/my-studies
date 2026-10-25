@@ -66,6 +66,8 @@ ${main}
 </main>
 ${footer}
 <script>window.PN_SHOP_T = ${js};</script>
+<script src="/auth-config.js"></script>
+<script src="/auth.js" defer></script>
 <script src="${R}shop/shop.js" defer></script>
 </body>
 </html>
