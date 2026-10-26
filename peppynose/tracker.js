@@ -17,7 +17,8 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
   const form = $('trk-form'), dateIn = $('trk-date'), err = $('trk-err'), res = $('trk-result');
   const lang = (document.documentElement.lang || 'en').slice(0, 2);
   const locale = { en: 'en-IN', ta: 'ta-IN', hi: 'hi-IN' }[lang] || 'en-IN';
-  const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m));
+  // English: "1 week" / "1 day", never "1 weeks" / "1 days"
+  const fmt = (s, o) => { const t = s.replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m)); return lang === 'en' ? t.replace(/\b1 (week|day)s\b/g, '1 $1') : t; };
   const ymd = d => [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
   const parse = v => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); if (!m) return null; const d = new Date(+m[1], +m[2] - 1, +m[3]); return d.getMonth() === +m[2] - 1 ? d : null; };
   const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
@@ -44,7 +45,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
   const showImage = w => {
     pic.off();                                                   // also for weeks without a picture: no stale zoom or label
     const img = $('r-img'), ph = $('r-ph'), cr = $('r-credit');
-    $('r-ph-n').textContent = String(Math.max(0, Math.min(w, 40)));
+    $('r-ph-n').textContent = String(Math.max(0, w));   // the same week number as everywhere else (also 41, 42)
     img.hidden = true; ph.hidden = false; cr.hidden = true;
     if (!PN_TRACKER_IMAGES.ready || w < 4 || w > 40) return;
     // Lazy-loaded, so it must stay in the layout while loading: it sits invisible over the circle until it arrives.
@@ -143,7 +144,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     const items = t.items.slice();
     D.checks.filter(c => wk >= c.a && wk <= c.b).slice(0, 1).forEach(c => items.push(fmt(S.v4_todo_ask, { x: c.t })));
     const all = jget(TODO_KEY) || {}, ticks = all['w' + wk] || [];
-    $('r-todo-h').textContent = fmt(S.v4_todo_h, { w: wk });
+    $('r-todo-h').textContent = fmt(S.v4_todo_h, { w: Math.max(0, w) });   // week 41/42 use the week-40 list, but say the real week
     $('r-todo').innerHTML = items.map((txt, i) => `<li><label><input type="checkbox" data-i="${i}"${ticks[i] ? ' checked' : ''}> <span>${esc(txt)}</span></label></li>`).join('');
     $('r-todo').onchange = e => {
       const i = +e.target.dataset.i, a = jget(TODO_KEY) || {}; a['w' + wk] = a['w' + wk] || [];
@@ -182,7 +183,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     // "This week" tab (V3 details)
     $('r-tri').textContent = w < 14 ? S.tr_tri1 : w < 28 ? S.tr_tri2 : S.tr_tri3;
     $('r-age').textContent = fmt(S.tr_age, { w, d: dd });
-    $('r-prog').textContent = fmt(S.tr_progress, { w: Math.min(w, 40) });
+    $('r-prog').textContent = w > 40 ? fmt(S.tr_week_big, { w }) + ' · ' + S.tr_due_reached : fmt(S.tr_progress, { w });   // never "Week 40 of 40" in week 41
     $('r-due').textContent = fmt(S.tr_due, { date: due.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }) });
     const bar = $('r-barwrap');
     bar.setAttribute('aria-valuenow', String(Math.min(w, 40)));
@@ -228,7 +229,7 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
     else {
       const rg = x.createRadialGradient(cx - 50, cy - 60, 20, cx, cy, r * 1.3); rg.addColorStop(0, '#ffe9df'); rg.addColorStop(1, '#f9c7b4');
       x.fillStyle = rg; frame(); x.fill();
-      x.fillStyle = '#9a4a33'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `700 130px ${serif}`; x.fillText(String(wk), cx, cy + 6);
+      x.fillStyle = '#9a4a33'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `700 130px ${serif}`; x.fillText(String(Math.max(0, w)), cx, cy + 6);
     }
     x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = '#1d2b4f';
     x.font = `700 80px ${serif}`; x.fillText(fmt(S.v4_card_week, { w }), 540, 660);
