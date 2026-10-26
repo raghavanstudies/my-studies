@@ -16,6 +16,16 @@ function person(project) {
 
 const homeUrl = /\/$|\/index(\.html)?$/;
 
+// login-gate.js replaces the landing page before it finishes loading. Playwright
+// then reports ERR_ABORTED. The redirect is the result the test is waiting for.
+async function openPage(page, url) {
+  try {
+    await page.goto(url, { waitUntil: 'commit' });
+  } catch (err) {
+    if (!/ERR_ABORTED|NS_BINDING_ABORTED/.test(String(err && err.message || err))) throw err;
+  }
+}
+
 async function expectOneGoogleSignIn(page) {
   await expect(page.locator('#google-slot')).toHaveAttribute('data-google', /^(gis|fallback)$/);
   const count = await page.evaluate(() => {
@@ -220,14 +230,14 @@ test('Hindi and Tamil login pages and the header link do not overflow', async ({
   expect(await noSideScroll(page)).toBeLessThanOrEqual(1);
 
   for (const path of ['/index.html', '/login.html', '/account.html', '/ta/index.html', '/hi/index.html']) {
-    await page.goto(path);
+    await openPage(page, path);
     await expect(page.locator('header .pn-account')).toBeVisible();
     expect(await noSideScroll(page), path).toBeLessThanOrEqual(1);
   }
 });
 
 test('a first visit to the landing page opens login, and other pages do not', async ({ page }) => {
-  await page.goto('/index.html');
+  await openPage(page, '/index.html');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
   expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/index.html');
   await expect(page.locator('h1')).toHaveText('Welcome');
@@ -240,7 +250,7 @@ test('a first visit to the landing page opens login, and other pages do not', as
   await expect(page.locator('#skip-login')).toBeVisible();
   await expect(page.locator('.auth-switch a')).toHaveAttribute('href', /signup\.html\?next=/);
 
-  await page.goto('/');
+  await openPage(page, '/');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
 
   await page.goto('/products.html');
@@ -249,7 +259,7 @@ test('a first visit to the landing page opens login, and other pages do not', as
 });
 
 test('Skip login returns to the landing page and stays there on reload', async ({ page }) => {
-  await page.goto('/');
+  await openPage(page, '/');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
   await page.locator('#skip-login').click();
   await expect(page).toHaveURL(homeUrl);
@@ -267,7 +277,7 @@ test('Skip login returns to the landing page and stays there on reload', async (
 
 test('a first visit can sign up, must fill details, then stays on the home page', async ({ page }, testInfo) => {
   const project = testInfo.project.name;
-  await page.goto('/');
+  await openPage(page, '/');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
   await expect(page.locator('h1')).toHaveText('Welcome');
   await expect(page.locator('#stay-logged-in')).toBeChecked();
@@ -308,7 +318,7 @@ test('a logged-in visitor sees the landing page, and logout shows login again', 
   const who = { username: `gate.${project}` };
   const loggedIn = await page.request.post('/api/auth/login', { data: { identifier: who.username, password } });
   expect(loggedIn.ok()).toBeTruthy();
-  await page.goto('/index.html');
+  await openPage(page, '/index.html');
   await expect(page).toHaveURL(homeUrl);
   await expect(page.locator('h1')).toContainText('little');
   await page.reload();
@@ -319,11 +329,11 @@ test('a logged-in visitor sees the landing page, and logout shows login again', 
     sessionStorage.removeItem('pn_logged_in');
     document.cookie = 'pn_logged_in=; Path=/; Max-Age=0; SameSite=Lax; Secure';
   });
-  await page.goto('/index.html');
+  await openPage(page, '/index.html');
   await expect(page).toHaveURL(homeUrl);
 
   await logOut(page);
-  await page.goto('/index.html');
+  await openPage(page, '/index.html');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
   await page.getByLabel('Username / mobile number / email').fill(who.username);
   await page.getByLabel('Password', { exact: true }).fill(password);
@@ -332,7 +342,7 @@ test('a logged-in visitor sees the landing page, and logout shows login again', 
 });
 
 test('Hindi and Tamil landing pages open their own login page', async ({ page }) => {
-  await page.goto('/hi/');
+  await openPage(page, '/hi/');
   await expect(page).toHaveURL(/\/hi\/login(\.html)?\?next=/);
   expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/hi/index.html');
   await page.getByRole('button', { name: 'लॉगिन छोड़ें' }).click();
@@ -345,7 +355,7 @@ test('Hindi and Tamil landing pages open their own login page', async ({ page })
     sessionStorage.removeItem('pn_guest');
     document.cookie = 'pn_guest=; Path=/; Max-Age=0; SameSite=Lax; Secure';
   });
-  await page.goto('/ta/index.html');
+  await openPage(page, '/ta/index.html');
   await expect(page).toHaveURL(/\/ta\/login(\.html)?\?next=/);
   expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/ta/index.html');
   await page.getByRole('button', { name: 'உள்நுழையாமல் தொடரவும்' }).click();
@@ -359,7 +369,7 @@ test('a search crawler stays on the English landing page', async ({ browser, bas
     userAgent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
   });
   const page = await context.newPage();
-  await page.goto('/index.html');
+  await openPage(page, '/index.html');
   await expect(page).toHaveURL(homeUrl);
   await expect(page).not.toHaveURL(/\/login/);
   await expect(page.locator('h1')).toContainText('little');
