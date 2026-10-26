@@ -103,7 +103,7 @@
     const r = btn.getBoundingClientRect();
     for (let i = 0; i < 6; i++) {
       const h = document.createElement('span'); h.className = 'wt-heart'; h.setAttribute('aria-hidden', 'true'); h.textContent = i % 2 ? '💗' : '💖';
-      h.style.left = (r.left + r.width / 2 + (i - 2.5) * 10) + 'px'; h.style.top = (r.top + window.scrollY) + 'px';
+      h.style.left = (r.left + r.width / 2 + (i - 2.5) * 10) + 'px'; h.style.top = r.top + 'px';   // fixed to the screen: never makes the page wider
       h.style.setProperty('--dx', ((i - 2.5) * 14) + 'px'); h.style.animationDelay = (i * 60) + 'ms';
       document.body.appendChild(h); setTimeout(() => h.remove(), 1400);
     }

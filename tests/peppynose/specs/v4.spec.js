@@ -621,7 +621,7 @@ test.describe('22 Oct re-test fixes', () => {
     const box = page.locator('.trk-hero-img');
     await expect(box).toHaveClass(/has-img/);
     await expect(box).toHaveAttribute('aria-label', /week 22/);
-    for (const [mode, n, ph] of [['lmp', -14, '2'], ['lmp', -290, '40']]) {           // week 2 (too early) and past week 40
+    for (const [mode, n, ph] of [['lmp', -14, '2'], ['lmp', -290, '41']]) {           // week 2 (too early) and week 41 (shows its real number, 24 Oct)
       await page.click('#r-change');
       await page.check(`input[name="mode"][value="${mode}"]`);
       await page.fill('#trk-date', await day(page, n));

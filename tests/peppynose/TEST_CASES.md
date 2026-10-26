@@ -2,7 +2,7 @@
 
 Site: www.peppynose.com (files in `peppynose/`, Tamil pages in `peppynose/ta/`, Hindi pages in `peppynose/hi/`; V3 adds `buy/` pages and `pregnancy-tracker.html` in each language). Automated tests are in `specs/` and run every page in a real Chromium browser at two sizes: **desktop (1280 px)** and **mobile (390 px)**.
 
-**Last run: 24 October 2026 (tracker dashboard), 442 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
+**Last run: 26 October 2026 (QA fixes + edge cases), 456 passed, 0 failed** (tests that apply to only one screen size are skipped on the other by design). Run twice in a row, both green.
 
 ## How to run
 
@@ -179,6 +179,18 @@ Runs on all 30 pages (10 English + 10 Tamil + 10 Hindi) where it says so.
 | TC-DASH-01 | Dashboard after the date | Week ring (22, 55% of the way), big "Add today's weight" button, 6 tiles (weight + status, baby size, next checkup, to-do count, due date, tip); detail panels closed; page title hidden |
 | TC-DASH-02 | Panels | A tile opens a full-screen panel (dialog, #hash in the address); Back, the phone's back button and Escape close it; the to-do and weight tiles update |
 | TC-DASH-03 | Tamil and Hindi on a 320 px phone | Own tile words; no sideways scroll, also with a panel open; no JS errors |
+
+### Edge cases from the QA report (`specs/edge.spec.js`)
+
+| ID | Test | Expected |
+|---|---|---|
+| TC-EDGE-01 | English grammar | "1 week and 1 day", "1 day to go" (also in the WhatsApp text); never "1 weeks" / "1 days" |
+| TC-EDGE-02 | Weeks 41 and 42 | The same week number everywhere: heading, ring, picture circle, tiles, progress ("Week 41 · Due date reached"), to-do |
+| TC-EDGE-03 | Leap day | Today 29 Feb 2028, due 31 Mar 2028: 31 days to go, 35 weeks 4 days |
+| TC-EDGE-04 | Month end | Today 31 Jan 2027, last period 31 Dec 2026: week 4 + 3 days, due 7 Oct 2027 |
+| TC-EDGE-05 | Weight inputs | 0, negative, letters, empty, huge values refused with a clear message; week 0/43/empty refused; 61.25 kg saved as 61.3 |
+| TC-EDGE-06 | Refresh / broken / cleared data | Typed but not added = not saved; broken saved data shows the setup again; cleared data shows the date form; no JS errors |
+| TC-EDGE-07 | Hearts after "Add" | The page never gets wider on a 360 px phone |
 
 ## Manual test cases (need the live site or a real phone)
 
