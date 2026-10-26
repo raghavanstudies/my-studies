@@ -16,6 +16,24 @@ function person(project) {
 
 const homeUrl = /\/$|\/index(\.html)?$/;
 
+async function expectOneGoogleSignIn(page) {
+  await expect(page.locator('#google-slot')).toHaveAttribute('data-google', /^(gis|fallback)$/);
+  const count = await page.evaluate(() => {
+    const shown = el => {
+      if (!el || el.hidden) return false;
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden') return false;
+      const box = el.getBoundingClientRect();
+      return box.width > 1 && box.height > 1;
+    };
+    const fallback = document.getElementById('google-signin');
+    const host = document.getElementById('google-btn');
+    const official = host && host.querySelector('iframe, [role="button"]');
+    return (shown(fallback) ? 1 : 0) + (shown(official) ? 1 : 0);
+  });
+  expect(count).toBe(1);
+}
+
 async function signUp(page, who, name = 'Test Amma') {
   await page.goto('/signup.html?next=' + encodeURIComponent('/account.html'));
   await page.getByLabel('Username', { exact: true }).fill(who.username);
@@ -182,6 +200,7 @@ test('Hindi and Tamil login pages and the header link do not overflow', async ({
   await expect(page.getByRole('button', { name: 'लॉगिन छोड़ें' })).toBeVisible();
   await expect(page.locator('#stay-logged-in')).toBeChecked();
   await expect(page.locator('#google-signin')).toHaveText('Google से साइन इन करें');
+  await expectOneGoogleSignIn(page);
   await expect(page.locator('#otp-request')).toHaveCount(0);
   expect(await noSideScroll(page)).toBeLessThanOrEqual(1);
 
@@ -195,6 +214,7 @@ test('Hindi and Tamil login pages and the header link do not overflow', async ({
   await expect(page.getByLabel('பயனர் பெயர் / கைபேசி எண் / மின்னஞ்சல்')).toBeVisible();
   await expect(page.getByRole('button', { name: 'உள்நுழை', exact: true })).toBeVisible();
   await expect(page.locator('h1')).toHaveText('வரவேற்கிறோம்');
+  await expectOneGoogleSignIn(page);
   await expect(page.locator('#otp-hint')).toHaveCount(0);
   await expect(page.locator('#stay-logged-in')).toBeChecked();
   expect(await noSideScroll(page)).toBeLessThanOrEqual(1);
@@ -213,7 +233,7 @@ test('a first visit to the landing page opens login, and other pages do not', as
   await expect(page.locator('h1')).toHaveText('Welcome');
   await expect(page.locator('#stay-logged-in')).toBeChecked();
   await expect(page.locator('#google-slot')).toBeVisible();
-  await expect(page.locator('#google-signin')).toBeVisible();
+  await expectOneGoogleSignIn(page);
   await expect(page.locator('#otp-request')).toHaveCount(0);
   await expect(page.locator('main')).not.toContainText(/one-time code|OTP/i);
   await expect(page.getByRole('button', { name: 'Log in', exact: true })).toBeVisible();
@@ -251,7 +271,7 @@ test('a first visit can sign up, must fill details, then stays on the home page'
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
   await expect(page.locator('h1')).toHaveText('Welcome');
   await expect(page.locator('#stay-logged-in')).toBeChecked();
-  await expect(page.locator('#google-signin')).toBeVisible();
+  await expectOneGoogleSignIn(page);
   await expect(page.locator('#otp-request')).toHaveCount(0);
   const link = page.locator('.auth-switch a');
   await expect(link).toHaveAttribute('href', /signup\.html\?next=/);

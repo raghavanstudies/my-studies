@@ -1085,9 +1085,10 @@ button.pn-logout:hover { color: var(--ink); }
 .auth-facts span { color: var(--muted); font-weight: 700; }
 #google-slot { display: flex; flex-direction: column; gap: 12px; margin-bottom: 6px; max-width: 100%; overflow: hidden; }
 #google-slot[hidden] { display: none; }
-#google-btn { display: flex; justify-content: center; max-width: 100%; overflow: hidden; }
+#google-btn { display: flex; justify-content: center; width: 100%; max-width: 100%; overflow: hidden; }
 #google-btn:empty { display: none; }
 #google-btn iframe { max-width: 100%; }
+#google-signin[hidden] { display: none !important; }
 .auth-card #google-signin.btn.ghost { width: 100%; border: 1px solid var(--line); background: var(--white); color: var(--ink); }
 .auth-or { display: flex; align-items: center; gap: 12px; margin: 2px 0 0; color: var(--muted); font-size: .85rem; font-weight: 700; }
 .auth-or::before, .auth-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }

@@ -512,8 +512,24 @@
       if (resp && resp.credential) sendGoogleCredential(resp.credential);
     };
     if (label) label.addEventListener('click', () => {
+      if (label.hidden) return;
       if (window.google && google.accounts && google.accounts.id) google.accounts.id.prompt();
     });
+    const host = document.getElementById('google-btn');
+    // One control only: the official button once it exists, otherwise this fallback.
+    const useOfficial = () => {
+      const official = host && host.querySelector('iframe, [role="button"]');
+      if (!official) return false;
+      if (label) label.hidden = true;
+      slot.dataset.google = 'gis';
+      return true;
+    };
+    const useFallback = () => {
+      if (slot.dataset.google === 'gis') return;
+      if (host) host.replaceChildren();
+      if (label) label.hidden = false;
+      slot.dataset.google = 'fallback';
+    };
     const s = document.createElement('script');
     s.src = 'https://accounts.google.com/gsi/client';
     s.async = true;
@@ -525,15 +541,23 @@
           auto_select: false,
           cancel_on_tap_outside: true
         });
-        const host = document.getElementById('google-btn');
         if (host) {
-          const width = Math.max(200, Math.min(320, host.clientWidth || 320));
+          const form = document.getElementById('auth-form');
+          const wide = Math.floor((form && form.clientWidth) || slot.clientWidth || 320);
+          const width = Math.max(200, Math.min(400, wide));
           google.accounts.id.renderButton(host, {
-            type: 'standard', theme: 'outline', size: 'large', text: 'signin_with', width: width, shape: 'pill'
+            type: 'standard', theme: 'outline', size: 'large', text: 'signin_with', width: width, shape: 'pill', logo_alignment: 'center'
           });
         }
-      } catch { /* the labelled button still works once the script is ready */ }
+      } catch { /* keep the single fallback */ }
+      if (useOfficial()) return;
+      requestAnimationFrame(() => {
+        if (useOfficial()) return;
+        setTimeout(() => { if (!useOfficial()) useFallback(); }, 400);
+      });
     };
+    s.onerror = () => useFallback();
+    setTimeout(() => { if (!slot.dataset.google) useFallback(); }, 8000);
     document.head.appendChild(s);
   }
 
