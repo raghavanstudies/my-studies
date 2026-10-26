@@ -7,7 +7,8 @@
   if (!dataEl || !document.querySelector('.dash-tiles')) return;
   const D = JSON.parse(dataEl.textContent), S = D.s;
   const $ = id => document.getElementById(id);
-  const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m));
+  // English: "1 week" / "1 day", never "1 weeks" / "1 days"
+  const fmt = (s, o) => { const t = s.replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m)); return lang === 'en' ? t.replace(/\b1 (week|day)s\b/g, '1 $1') : t; };
   const lang = (document.documentElement.lang || 'en').slice(0, 2);
   const locale = { en: 'en-IN', ta: 'ta-IN', hi: 'hi-IN' }[lang] || 'en-IN';
   const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
