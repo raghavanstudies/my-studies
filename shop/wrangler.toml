@@ -12,4 +12,12 @@ not_found_handling = "404-page"
 [[d1_databases]]
 binding = "DB"
 database_name = "peppynose_shop"
-database_id = "00000000-0000-0000-0000-000000000000"   # local only; a real id is created at go-live
+database_id = "11cd4023-e14d-47ad-829e-0bc87f433607"
+
+# Plain settings, not secrets. OTP stays off until a real SMS or email provider
+# is configured. Dev delivery is not the default; see shop/src/otp-delivery.js.
+[vars]
+OTP_SMS_PROVIDER = "off"
+OTP_EMAIL_PROVIDER = "off"
+COOKIE_DOMAIN = ".peppynose.com"
+AUTH_ORIGINS = "https://www.peppynose.com,https://peppynose.com"

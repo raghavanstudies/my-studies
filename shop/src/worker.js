@@ -1,5 +1,7 @@
 // Peppynose own shop — API (Cloudflare Worker + D1). Static pages come from dist/ (see scripts/build.mjs).
 // Rules: the browser never decides a price; every amount is worked out here from the database, in paise.
+import { HttpError, authApi, corsHeaders } from './auth.js';
+
 const enc = new TextEncoder();
 
 export const STATES = ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh',
@@ -17,7 +19,6 @@ const INVOICE_OK = ['paid', 'packed', 'shipped', 'delivered'];
 const MAX_QTY = 10, MAX_LINES = 20;
 
 // ---------- small helpers ----------
-class HttpError extends Error { constructor(status, msg, extra) { super(msg); this.status = status; this.extra = extra; } }
 const SEC = { 'x-content-type-options': 'nosniff', 'referrer-policy': 'no-referrer', 'cache-control': 'no-store' };
 const json = (data, status = 200, headers = {}) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8', ...SEC, ...headers } });
 const now = () => new Date().toISOString();
@@ -358,6 +359,7 @@ async function admin(req, url, env) {
 
 async function api(req, url, env) {
   const p = url.pathname, m = req.method;
+  if (p.startsWith('/api/auth/')) return authApi(req, env);
   if (p.startsWith('/api/admin/')) return admin(req, url, env);
   if (p === '/api/catalogue' && m === 'GET') return json(await catalogue(env));
   if (p === '/api/checkout' && m === 'POST') return checkout(req, env);
@@ -368,15 +370,37 @@ async function api(req, url, env) {
   throw new HttpError(404, 'Not found.');
 }
 
+function withCors(req, env, res) {
+  const headers = new Headers();
+  res.headers.forEach((v, k) => { if (k !== 'set-cookie') headers.set(k, v); });
+  const cookies = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : [];
+  for (const c of cookies) headers.append('set-cookie', c);
+  if (!cookies.length && res.headers.get('set-cookie')) headers.append('set-cookie', res.headers.get('set-cookie'));
+  for (const [k, v] of Object.entries(corsHeaders(req, env))) headers.set(k, v);
+  return new Response(res.body, { status: res.status, headers });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    if (req.method === 'OPTIONS' && url.pathname.startsWith('/api/')) {
+      return withCors(req, env, new Response(null, {
+        status: 204,
+        headers: {
+          'access-control-allow-methods': 'GET, POST, OPTIONS',
+          'access-control-allow-headers': 'content-type, x-csrf-token',
+          'access-control-max-age': '600',
+          ...SEC
+        }
+      }));
+    }
     if (!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(req);
-    try { return await api(req, url, env); }
+    try { return withCors(req, env, await api(req, url, env)); }
     catch (e) {
-      if (e instanceof HttpError) return json({ error: e.message, ...(e.extra || {}) }, e.status);
-      console.error(e);
-      return json({ error: 'Something went wrong. Please try again.' }, 500);
+      const res = e instanceof HttpError
+        ? json({ error: e.message, ...(e.extra || {}) }, e.status)
+        : (console.error(e), json({ error: 'Something went wrong. Please try again.', code: 'server' }, 500));
+      return withCors(req, env, res);
     }
   }
 };

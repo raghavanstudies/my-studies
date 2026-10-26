@@ -11,7 +11,7 @@
   const fmt = (s, o) => { const t = s.replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m)); return lang === 'en' ? t.replace(/\b1 (week|day)s\b/g, '1 $1') : t; };
   const lang = (document.documentElement.lang || 'en').slice(0, 2);
   const locale = { en: 'en-IN', ta: 'ta-IN', hi: 'hi-IN' }[lang] || 'en-IN';
-  const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+  const set = (id, v) => { const e = $(id); if (e) { e._cu = (e._cu || 0) + 1; e.textContent = v; } };   // _cu: a newer value stops a running count-up
   const html = document.documentElement;
   const motionOK = () => document.documentElement.classList.contains('pn-motion') || (!!window.matchMedia && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window);   // same rule as motion.js (which loads later)
 
@@ -29,9 +29,10 @@
   // Numbers count up to their value (only with motion).
   const countUp = (el, to, render) => {
     if (!el) return;
+    const my = el._cu = (el._cu || 0) + 1;
     if (!motionOK() || to < 2) { el.textContent = render(to); return; }
     const t0 = performance.now(), ms = 900;
-    const step = t => { const k = Math.min(1, (t - t0) / ms); el.textContent = render(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(step); };
+    const step = t => { if (el._cu !== my) return; const k = Math.min(1, (t - t0) / ms); el.textContent = render(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(step); };
     el.textContent = render(0); requestAnimationFrame(step);
   };
   let shown = false;
