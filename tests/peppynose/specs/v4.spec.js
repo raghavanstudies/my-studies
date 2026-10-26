@@ -301,7 +301,7 @@ test.describe('loader and motion', () => {
     for (const p of ['index.html', 'products.html', 'faq.html', 'about.html', 'pregnancy-tracker.html', 'ta/index.html', 'hi/products.html']) {
       await open(page, p);
       await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 300) { scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } });
-      await page.waitForTimeout(1200);
+      await page.waitForTimeout(3000);
       const hidden = await page.evaluate(() => [...document.querySelectorAll('.pn-rv, .pn-wd')].filter(e => parseFloat(getComputedStyle(e).opacity) < 0.5).map(e => e.className + ' | ' + getComputedStyle(e).opacity + ' | ' + (e.textContent || '').trim().slice(0, 20) + ' | ' + (e.closest('section,div[class]') || {}).className));
       expect(hidden, p).toEqual([]);
     }

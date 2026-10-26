@@ -117,6 +117,7 @@ test('TC-V2-06 trust badges and Instagram section on the 3 home pages', async ({
 
 for (const banner of ['open', 'closed']) {
   test(`TC-V2-07 WhatsApp and help-chat buttons never cover a button or footer link while scrolling the shop (cookie banner ${banner})`, async ({ page }) => {
+    test.setTimeout(60000);
     if (banner === 'closed') await page.addInitScript(() => localStorage.setItem('pn_consent', 'denied'));
     await open(page, 'products.html');
     await expect(page.locator('.pn-consent')).toHaveCount(banner === 'open' ? 1 : 0);

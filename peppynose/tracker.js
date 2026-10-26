@@ -108,7 +108,15 @@ const PN_TRACKER_IMAGES = { ready: true, path: '/assets/tracker/week', ext: '.we
       if (asked || !coarse || still || !D || typeof D.requestPermission !== 'function') return;
       asked = true; D.requestPermission().then(r => { if (r === 'granted') listen(active && inView); }).catch(() => {});
     };
-    const needsAsk = () => window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function';
+    // Only iPhone and iPad need a tap before motion can be read. Chrome also
+    // has requestPermission, and treating that as iOS leaves the picture flat
+    // until it is tapped.
+    const needsAsk = () => {
+      const D = window.DeviceOrientationEvent;
+      if (!D || typeof D.requestPermission !== 'function') return false;
+      const ua = navigator.userAgent || '';
+      return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    };
     if ('IntersectionObserver' in window) new IntersectionObserver(es => { inView = es[0].isIntersecting; if (!needsAsk() || asked) listen(active && inView); }).observe(box);
 
     // Tap to zoom: the same picture, large, over the page. Tap anywhere, the ✕ button or Escape closes it.
