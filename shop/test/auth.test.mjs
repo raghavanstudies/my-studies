@@ -739,7 +739,7 @@ test('profile requires name and email, and mobile is optional', async () => {
   assert.equal(row.profile_complete, 1);
 });
 
-test('Google sign-in verifies the token, links a verified email, and honours stay logged in', async () => {
+test('Google sign-in verifies the token, does not take over a password email, and honours stay logged in', async () => {
   const { privateKey, jwk } = await makeRsaKey();
   const clientId = 'test-client-id.apps.googleusercontent.com';
   const env = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
@@ -795,22 +795,23 @@ test('Google sign-in verifies the token, links a verified email, and honours sta
   const existing = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
   await createAccount(existing, account({ username: 'linked.user', email: 'linked@example.com', name: 'Linked Amma', mobile: '9789012345' }), '203.0.113.125');
   resetGoogleKeyCache();
-  const linked = await call(existing, '/api/auth/google', {
+  const taken = await call(existing, '/api/auth/google', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.126',
     body: { credential: await signIdToken(privateKey, baseClaims({ sub: '100000000000000000099', email: 'linked@example.com', name: 'From Google' })), stay: true }
   });
-  assert.equal(linked.status, 200);
-  const linkedBody = await linked.json();
-  assert.equal(linkedBody.user.username, 'linked.user');
-  assert.equal(linkedBody.user.profile_complete, true);
-  assert.equal(linkedBody.user.name, 'Linked Amma');
-  const linkedRow = await existing.DB.prepare('SELECT google_sub FROM users WHERE email = ?').bind('linked@example.com').first();
-  assert.equal(linkedRow.google_sub, '100000000000000000099');
+  assert.equal(taken.status, 409);
+  assert.equal((await taken.json()).code, 'email_taken');
+  const untouched = await existing.DB.prepare('SELECT google_sub, username, name FROM users WHERE email = ?').bind('linked@example.com').first();
+  assert.equal(untouched.google_sub, null);
+  assert.equal(untouched.username, 'linked.user');
+  assert.equal(untouched.name, 'Linked Amma');
 
+  await existing.DB.prepare('UPDATE users SET google_sub = ? WHERE email = ?').bind('100000000000000000099', 'linked@example.com').run();
   const clash = await call(existing, '/api/auth/google', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.127',
     body: { credential: await signIdToken(privateKey, baseClaims({ sub: '100000000000000000077', email: 'linked@example.com' })), stay: true }
   });
   assert.equal(clash.status, 401);
   assert.equal((await clash.json()).code, 'google_invalid');
+  assert.equal((await existing.DB.prepare('SELECT google_sub FROM users WHERE email = ?').bind('linked@example.com').first()).google_sub, '100000000000000000099');
 });

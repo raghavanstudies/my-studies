@@ -583,7 +583,11 @@
           method: 'PUT',
           credentials: 'include',
           headers: { 'content-type': 'application/json', 'x-csrf-token': me.csrf },
-          body: JSON.stringify({ name: form.name.value, email: form.email.value, mobile: form.mobile ? form.mobile.value : '' })
+          body: JSON.stringify({
+            name: fieldValue(form, 'name'),
+            email: fieldValue(form, 'email'),
+            mobile: fieldValue(form, 'mobile')
+          })
         });
         const data = await read(res);
         if (!res.ok || !data || !data.user) {
@@ -602,12 +606,23 @@
     });
   }
 
+  // An input named "name" shadows the form's own name property in some browsers.
+  function fieldValue(form, name) {
+    const el = form.elements.namedItem(name);
+    return el && typeof el.value === 'string' ? el.value : '';
+  }
+
+  function setField(form, name, value) {
+    const el = form.elements.namedItem(name);
+    if (el && typeof el.value === 'string' && !el.value) el.value = value;
+  }
+
   function paintDetails(me) {
     const form = document.getElementById('details-form');
     if (!form || !me || !me.user) return;
-    if (me.user.name && !form.name.value) form.name.value = me.user.name;
-    if (me.user.email && !form.email.value) form.email.value = me.user.email;
-    if (me.user.mobile && form.mobile && !form.mobile.value) form.mobile.value = me.user.mobile;
+    if (me.user.name) setField(form, 'name', me.user.name);
+    if (me.user.email) setField(form, 'email', me.user.email);
+    if (me.user.mobile) setField(form, 'mobile', me.user.mobile);
   }
 
   async function start() {

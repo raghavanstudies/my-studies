@@ -492,40 +492,38 @@ async function googleLogin(req, env) {
   let user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE google_sub = ?`).bind(claims.sub).first();
   if (!user) {
     const byEmail = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE email = ? COLLATE NOCASE`).bind(claims.email).first();
-    if (byEmail && byEmail.google_sub && byEmail.google_sub !== claims.sub) {
-      await recordAttempt(env, 'google', 'ip:' + ip);
-      throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
-    }
     if (byEmail) {
-      await env.DB.prepare('UPDATE users SET google_sub = ? WHERE id = ? AND google_sub IS NULL').bind(claims.sub, byEmail.id).run();
-      user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(byEmail.id).first();
-      if (!user || user.google_sub !== claims.sub) {
+      // The same Google account can land here if it was created between the
+      // two lookups. Sign that person in. Do not attach this Google id to a
+      // password account that only typed the same email: the details form
+      // does not prove they own the address. A different Google id already
+      // stored on the row is refused without replacing it.
+      if (byEmail.google_sub === claims.sub) {
+        user = byEmail;
+      } else {
         await recordAttempt(env, 'google', 'ip:' + ip);
-        throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
+        if (byEmail.google_sub) throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
+        throw takenError('email_taken');
       }
     }
   }
   if (!user) {
     const id = 'u_' + randHex(16);
-    const name = validName(claims.name) ? claims.name : (claims.name || null);
+    const name = validName(claims.name) || null;
     try {
       await env.DB.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, google_sub, profile_complete, created_at) VALUES (?, ?, NULL, NULL, ?, NULL, ?, 0, ?)').bind(id, claims.email, name, claims.sub, new Date().toISOString()).run();
+      user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(id).first();
     } catch (e) {
       const mapped = mapUnique(e);
-      if (mapped && mapped.extra && mapped.extra.code === 'google_invalid') throw mapped;
-      if (mapped && mapped.extra && mapped.extra.code === 'email_taken') {
-        const again = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE email = ? COLLATE NOCASE`).bind(claims.email).first();
-        if (again && !again.google_sub) {
-          await env.DB.prepare('UPDATE users SET google_sub = ? WHERE id = ? AND google_sub IS NULL').bind(claims.sub, again.id).run();
-          user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(again.id).first();
-        }
-      }
+      if (!mapped) throw e;
+      // Two clicks for the same Google account can collide on email or sub.
+      // Sign that person in. A collision with someone else's email stays a refusal.
+      user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE google_sub = ?`).bind(claims.sub).first();
       if (!user) {
-        if (mapped) throw mapped;
-        throw e;
+        await recordAttempt(env, 'google', 'ip:' + ip);
+        throw mapped;
       }
     }
-    if (!user) user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(id).first();
   }
   return startSession(req, env, user, wantsStay(body));
 }
