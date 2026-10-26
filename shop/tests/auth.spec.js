@@ -175,7 +175,7 @@ test('Skip login is smaller than Log in, returns to a safe page, and still allow
 
 test('Hindi and Tamil login pages and the header link do not overflow', async ({ page }) => {
   await page.goto('/hi/login.html');
-  await expect(page.locator('h1')).toContainText('स्वागत');
+  await expect(page.locator('h1')).toHaveText('स्वागत है');
   await expect(page.getByLabel('उपयोगकर्ता नाम / मोबाइल नंबर / ईमेल')).toBeVisible();
   await expect(page.locator('header .pn-account')).toHaveText('लॉग इन');
   await expect(page.getByRole('button', { name: 'लॉग इन', exact: true })).toBeVisible();
@@ -194,7 +194,7 @@ test('Hindi and Tamil login pages and the header link do not overflow', async ({
   await page.goto('/ta/login.html');
   await expect(page.getByLabel('பயனர் பெயர் / கைபேசி எண் / மின்னஞ்சல்')).toBeVisible();
   await expect(page.getByRole('button', { name: 'உள்நுழை', exact: true })).toBeVisible();
-  await expect(page.locator('h1')).toContainText('வரவேற்கிறோம்');
+  await expect(page.locator('h1')).toHaveText('வரவேற்கிறோம்');
   await expect(page.locator('#otp-hint')).toHaveCount(0);
   await expect(page.locator('#stay-logged-in')).toBeChecked();
   expect(await noSideScroll(page)).toBeLessThanOrEqual(1);
@@ -210,8 +210,7 @@ test('a first visit to the landing page opens login, and other pages do not', as
   await page.goto('/index.html');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
   expect(decodeURIComponent(new URL(page.url()).searchParams.get('next'))).toBe('/index.html');
-  await expect(page.locator('h1')).toContainText('Welcome to');
-  await expect(page.locator('h1')).toContainText('Peppynose');
+  await expect(page.locator('h1')).toHaveText('Welcome');
   await expect(page.locator('#stay-logged-in')).toBeChecked();
   await expect(page.locator('#google-slot')).toBeVisible();
   await expect(page.locator('#google-signin')).toBeVisible();
@@ -250,7 +249,7 @@ test('a first visit can sign up, must fill details, then stays on the home page'
   const project = testInfo.project.name;
   await page.goto('/');
   await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
-  await expect(page.locator('h1')).toContainText('Welcome to');
+  await expect(page.locator('h1')).toHaveText('Welcome');
   await expect(page.locator('#stay-logged-in')).toBeChecked();
   await expect(page.locator('#google-signin')).toBeVisible();
   await expect(page.locator('#otp-request')).toHaveCount(0);
