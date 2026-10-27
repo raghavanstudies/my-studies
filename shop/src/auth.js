@@ -348,7 +348,7 @@ const pub = row => ({
   profile_complete: Number(row.profile_complete) === 1
 });
 
-const USER_COLS = 'id, email, username, mobile, name, password_hash, google_sub, profile_complete';
+const USER_COLS = 'id, email, username, mobile, name, password_hash, google_sub, profile_complete, email_verified';
 const USER_SQL = {
   email: `SELECT ${USER_COLS} FROM users WHERE email = ? COLLATE NOCASE`,
   mobile: `SELECT ${USER_COLS} FROM users WHERE mobile = ?`,
@@ -380,7 +380,7 @@ async function sessionRow(req, env) {
   const token = readCookie(req, 'pn_session');
   if (!/^[0-9a-f]{64}$/.test(token)) return null;
   const id = await sha256hex(token);
-  const row = await env.DB.prepare(`SELECT s.id, s.csrf, s.expires_at, s.user_id, u.email, u.username, u.mobile, u.name, u.password_hash, u.google_sub, u.profile_complete
+  const row = await env.DB.prepare(`SELECT s.id, s.csrf, s.expires_at, s.user_id, u.email, u.username, u.mobile, u.name, u.password_hash, u.google_sub, u.profile_complete, u.email_verified
     FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.id = ?`).bind(id).first();
   if (!row) return null;
   if (row.expires_at < new Date().toISOString()) {
@@ -490,16 +490,21 @@ async function googleLogin(req, env) {
     throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
   }
   let user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE google_sub = ?`).bind(claims.sub).first();
+  let release = null;
   if (!user) {
     const byEmail = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE email = ? COLLATE NOCASE`).bind(claims.email).first();
     if (byEmail) {
       // The same Google account can land here if it was created between the
-      // two lookups. Sign that person in. Do not attach this Google id to a
-      // password account that only typed the same email: the details form
-      // does not prove they own the address. A different Google id already
-      // stored on the row is refused without replacing it.
+      // two lookups. Sign that person in. Do not attach this Google id to an
+      // account that only typed the same email: the details form does not
+      // prove they own the address. Google does, so a typed (unverified) email
+      // is taken off that account and given to this new one; that account is
+      // sent back to "Your details". An email Google verified for a different
+      // Google id is refused without replacing it.
       if (byEmail.google_sub === claims.sub) {
         user = byEmail;
+      } else if (Number(byEmail.email_verified) !== 1) {
+        release = byEmail.id;
       } else {
         await recordAttempt(env, 'google', 'ip:' + ip);
         if (byEmail.google_sub) throw new HttpError(401, 'Google sign-in failed.', { code: 'google_invalid' });
@@ -510,8 +515,19 @@ async function googleLogin(req, env) {
   if (!user) {
     const id = 'u_' + randHex(16);
     const name = validName(claims.name) || null;
+    const insert = env.DB.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, google_sub, profile_complete, email_verified, created_at) VALUES (?, ?, NULL, NULL, ?, NULL, ?, 0, 1, ?)').bind(id, claims.email, name, claims.sub, new Date().toISOString());
     try {
-      await env.DB.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, google_sub, profile_complete, created_at) VALUES (?, ?, NULL, NULL, ?, NULL, ?, 0, ?)').bind(id, claims.email, name, claims.sub, new Date().toISOString()).run();
+      // One batch, so the email is only released if the new row is written.
+      // If the old row became verified in between, nothing is released and the
+      // insert fails on the unique email below.
+      if (release) {
+        await env.DB.batch([
+          env.DB.prepare('UPDATE users SET email = NULL, email_verified = 0, profile_complete = 0 WHERE id = ? AND email_verified = 0 AND email = ? COLLATE NOCASE').bind(release, claims.email),
+          insert
+        ]);
+      } else {
+        await insert.run();
+      }
       user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(id).first();
     } catch (e) {
       const mapped = mapUnique(e);
@@ -541,8 +557,11 @@ async function updateProfile(req, env) {
     const mobileOwner = await env.DB.prepare('SELECT id FROM users WHERE mobile = ? AND id != ?').bind(profile.mobile, row.user_id).first();
     if (mobileOwner) throw takenError('mobile_taken');
   }
+  // Only an email Google verified for this account stays verified. A typed or
+  // changed email is unverified, so a verified Google sign-in can reclaim it.
+  const keepsVerified = Number(row.email_verified) === 1 && String(row.email || '').toLowerCase() === profile.email;
   try {
-    await env.DB.prepare('UPDATE users SET name = ?, email = ?, mobile = ?, profile_complete = 1 WHERE id = ?').bind(profile.name, profile.email, profile.mobile, row.user_id).run();
+    await env.DB.prepare('UPDATE users SET name = ?, email = ?, mobile = ?, profile_complete = 1, email_verified = ? WHERE id = ?').bind(profile.name, profile.email, profile.mobile, keepsVerified ? 1 : 0, row.user_id).run();
   } catch (e) {
     const mapped = mapUnique(e);
     if (mapped) throw mapped;

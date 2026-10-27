@@ -98,8 +98,11 @@ CREATE TABLE login_attempts (ip TEXT NOT NULL, at TEXT NOT NULL);
 -- Customer accounts (separate from the shop admin password).
 -- password_hash is PBKDF2-SHA256, never the password itself. It is empty for a
 -- Google-only account. email, name and mobile stay empty until "Your details".
+-- email_verified is 1 only for an email Google verified. A typed email is 0 and
+-- a verified Google sign-in for that address can take it over.
 -- This file is for a fresh local database only. A live database uses
--- auth-migration.sql, auth-migration-002.sql and auth-migration-003.sql.
+-- auth-migration.sql, auth-migration-002.sql, auth-migration-003.sql and
+-- auth-migration-004.sql.
 CREATE TABLE users (
   id               TEXT PRIMARY KEY,
   email            TEXT UNIQUE COLLATE NOCASE,
@@ -109,6 +112,7 @@ CREATE TABLE users (
   password_hash    TEXT,
   google_sub       TEXT UNIQUE,
   profile_complete INTEGER NOT NULL DEFAULT 0,
+  email_verified   INTEGER NOT NULL DEFAULT 0,
   created_at       TEXT NOT NULL
 );
 

@@ -311,15 +311,16 @@
     }
   }
 
+  // maxAge null is a cookie the browser drops when it closes.
   function browserCookie(name, value, maxAge) {
     const secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    document.cookie = name + '=' + value + '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax' + (secure ? '; Secure' : '');
+    document.cookie = name + '=' + value + '; Path=/' + (maxAge == null ? '' : '; Max-Age=' + maxAge) + '; SameSite=Lax' + (secure ? '; Secure' : '');
   }
 
-  function rememberFlag(name) {
+  function rememberFlag(name, maxAge = 60 * 60 * 24 * 14) {
     try { sessionStorage.setItem(name, '1'); } catch { /* private mode */ }
     try { localStorage.setItem(name, '1'); } catch { /* private mode */ }
-    browserCookie(name, '1', 60 * 60 * 24 * 14);
+    browserCookie(name, '1', maxAge);
   }
 
   function clearFlag(name) {
@@ -329,7 +330,24 @@
   }
 
   function rememberGuest() { rememberFlag('pn_guest'); }
-  function rememberLogin() { rememberFlag('pn_logged_in'); }
+  // The logged-in hint lasts as long as the session cookie: 30 days with "Stay
+  // logged in", otherwise until the browser closes. A hint that outlived the
+  // session would skip the landing gate and then bounce to login after /me.
+  function rememberLogin(stay) {
+    if (stay) {
+      rememberFlag('pn_logged_in', 60 * 60 * 24 * 30);
+      return;
+    }
+    try { localStorage.removeItem('pn_logged_in'); } catch { /* private mode */ }
+    try { sessionStorage.setItem('pn_logged_in', '1'); } catch { /* private mode */ }
+    browserCookie('pn_logged_in', '1', null);
+  }
+  // After /me or a details save, keep whichever kind of hint this login made.
+  function refreshLogin() {
+    let stay = false;
+    try { stay = localStorage.getItem('pn_logged_in') === '1'; } catch { /* private mode */ }
+    rememberLogin(stay);
+  }
   function clearLogin() { clearFlag('pn_logged_in'); }
 
   function carryNext() {
@@ -364,8 +382,8 @@
     location.replace(path('details.html') + '?next=' + encodeURIComponent(safeHere()));
   }
 
-  function goAfterAuth(user) {
-    rememberLogin();
+  function goAfterAuth(user, stay) {
+    rememberLogin(stay);
     const next = safeNext(new URLSearchParams(location.search).get('next')) || path('index.html');
     if (!user.profile_complete) {
       location.assign(path('details.html') + '?next=' + encodeURIComponent(next));
@@ -461,7 +479,7 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
-        goAfterAuth(data.user);
+        goAfterAuth(data.user, stay);
       } catch {
         if (err) err.textContent = t.network;
       } finally {
@@ -474,6 +492,7 @@
     const err = document.getElementById('err');
     if (err) err.textContent = '';
     const stayEl = document.getElementById('stay-logged-in');
+    const stay = !!(stayEl && stayEl.checked);
     const btn = document.getElementById('google-signin');
     if (btn) btn.disabled = true;
     try {
@@ -481,14 +500,14 @@
         method: 'POST',
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ credential: credential, stay: !!(stayEl && stayEl.checked) })
+        body: JSON.stringify({ credential: credential, stay })
       });
       const data = await read(res);
       if (!res.ok || !data || !data.user) {
         if (err) err.textContent = data ? explain(data) : t.notSetup;
         return;
       }
-      goAfterAuth(data.user);
+      goAfterAuth(data.user, stay);
     } catch {
       if (err) err.textContent = t.network;
     } finally {
@@ -595,7 +614,7 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
-        rememberLogin();
+        refreshLogin();
         const next = safeNext(new URLSearchParams(location.search).get('next')) || path('index.html');
         location.assign(next);
       } catch {
@@ -645,7 +664,7 @@
       if (cfgRes.ok) cfg = await read(cfgRes);
     } catch { me = null; }
     bindGoogle(cfg && cfg.google_client_id);
-    if (meKnown && me && me.user) rememberLogin();
+    if (meKnown && me && me.user) refreshLogin();
     else if (meKnown) clearLogin();
     carryNext();
     if (leaveForGate(meKnown, me)) return;
