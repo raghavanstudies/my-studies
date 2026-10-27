@@ -11,6 +11,9 @@ module.exports = defineConfig({
     baseURL: `http://127.0.0.1:${PORT}`,
     browserName: 'chromium',
     launchOptions: process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
+    // The home pages now open the login page first. These content tests are the
+    // guest view (Skip login). The login gate itself is covered in shop/tests.
+    storageState: require('path').join(__dirname, 'guest-storage.json'),
   },
   projects: [
     { name: 'desktop', use: { viewport: { width: 1280, height: 900 } } },

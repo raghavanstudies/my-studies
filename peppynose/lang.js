@@ -3,6 +3,8 @@
    is replaced by the same page in the saved language, so every internal link leads to that language's version. No automatic redirect by browser language;
    if the browser is Tamil or Hindi and no choice has been made, a small dismissible suggestion is shown once. */
 (() => {
+  // The landing-page login gate already chose the language's login page.
+  if (globalThis.__pnLoginLeaving) return;
   const KEY = 'pn_lang', DISMISS = 'pn_lang_hint_dismissed';
   const cur = (document.documentElement.lang || 'en').slice(0, 2);
   const get = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };

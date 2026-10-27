@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="../styles.css?v=e5c121a100" rel="stylesheet"/><script src="../lang.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;family=Noto+Serif+Devanagari:wght@500;600&amp;family=Noto+Serif+Tamil:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="../styles.css?v=c1620c7d0a" rel="stylesheet"/><script src="../lang.js"></script>
 </head>
 <body>
 <div id="pn-loader" aria-hidden="true"><div class="pl-box"><div class="pl-art"><img class="pl-perch" src="/images/loader/bird-perch.webp" alt="" width="322" height="346"><img class="pl-mom" src="/images/loader/bird-mother.webp" alt="" width="322" height="346"><img class="pl-baby" src="/images/loader/bird-baby.webp" alt="" width="322" height="346"></div><img class="pl-word" src="/images/logo-wordmark.webp" alt="" width="640" height="131"></div></div>
@@ -46,17 +46,15 @@
 
   <main>
     <div class="page-head">
-      <div class="wrap"><span class="eyebrow">खाता</span><h1>एक <em>खाता</em> बनाएँ</h1><p>नाम, उपयोगकर्ता नाम, 10 अंकों का मोबाइल नंबर, ईमेल और कम से कम 10 अक्षरों का पासवर्ड। ईमेल ज़रूरी है। पासवर्ड हम सिर्फ़ हैश के रूप में रखते हैं।</p></div>
+      <div class="wrap"><span class="eyebrow">खाता</span><h1>एक <em>खाता</em> बनाएँ</h1><p>एक उपयोगकर्ता नाम और कम से कम 10 अक्षरों का पासवर्ड चुनें। नाम और ईमेल अगले पेज पर पूछेंगे।</p></div>
     </div>
     <div class="wrap">
       <div class="auth-card">
         <form id="auth-form" class="auth-form" data-mode="signup" novalidate>
-          <label>नाम<input name="name" type="text" autocomplete="name" required minlength="2" maxlength="80"><span class="auth-field-err" data-for="name"></span></label>
           <label>उपयोगकर्ता नाम<input name="username" type="text" autocomplete="username" required minlength="3" maxlength="30" autocapitalize="none" spellcheck="false"><span class="auth-field-err" data-for="username"></span></label>
-          <label>मोबाइल नंबर<input name="mobile" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20"><span class="auth-field-err" data-for="mobile"></span></label>
-          <label>ईमेल<input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120"><span class="auth-field-err" data-for="email"></span></label>
           <label>पासवर्ड<input name="password" type="password" autocomplete="new-password" required minlength="10" maxlength="200"><span class="auth-field-err" data-for="password"></span></label>
           <label>पासवर्ड की पुष्टि<input name="confirm" type="password" autocomplete="new-password" required minlength="10" maxlength="200"><span class="auth-field-err" data-for="confirm"></span></label>
+          <label class="auth-stay"><input id="stay-logged-in" name="stay" type="checkbox" checked> इस डिवाइस पर लॉग इन रखें</label>
           <p id="err" class="auth-err" role="alert"></p>
           <button class="btn amazon" type="submit">खाता बनाएँ</button>
         </form>

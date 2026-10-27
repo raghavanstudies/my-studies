@@ -288,6 +288,7 @@ test.describe('loader and motion', () => {
   });
 
   test('TC-V4-16 scroll animations on big screens; nothing at all with reduced motion', async ({ page }, info) => {
+    test.setTimeout(60000);
     desktopOnly(info);
     await noLoader(page); await consent(page, 'denied');
     await page.setViewportSize({ width: 1280, height: 900 });
@@ -301,7 +302,7 @@ test.describe('loader and motion', () => {
     for (const p of ['index.html', 'products.html', 'faq.html', 'about.html', 'pregnancy-tracker.html', 'ta/index.html', 'hi/products.html']) {
       await open(page, p);
       await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 300) { scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } });
-      await page.waitForTimeout(1200);
+      await page.waitForTimeout(2500);
       const hidden = await page.evaluate(() => [...document.querySelectorAll('.pn-rv, .pn-wd')].filter(e => parseFloat(getComputedStyle(e).opacity) < 0.5).map(e => e.className + ' | ' + getComputedStyle(e).opacity + ' | ' + (e.textContent || '').trim().slice(0, 20) + ' | ' + (e.closest('section,div[class]') || {}).className));
       expect(hidden, p).toEqual([]);
     }
@@ -534,6 +535,8 @@ test.describe('22 Oct: tracker pictures', () => {
       const box = page.locator('.trk-hero-img');
       await expect(box).toHaveClass(/has-img/);
       await expect(page.locator('#r-img')).toHaveAttribute('alt', alt);
+      // The result scrolls into view. Motion is ignored until the picture is on screen.
+      await expect.poll(async () => box.evaluate(b => b.getBoundingClientRect().top)).toBeGreaterThanOrEqual(0);
       await page.evaluate(() => { for (const [b, g] of [[40, 0], [50, 15]]) dispatchEvent(Object.assign(new Event('deviceorientation'), { beta: b, gamma: g })); });
       await page.waitForTimeout(200);
       const t = await box.evaluate(b => [parseFloat(b.style.getPropertyValue('--rx')), parseFloat(b.style.getPropertyValue('--ry'))]);

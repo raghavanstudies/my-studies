@@ -96,17 +96,20 @@ CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE login_attempts (ip TEXT NOT NULL, at TEXT NOT NULL);
 
 -- Customer accounts (separate from the shop admin password).
--- password_hash is PBKDF2-SHA256, never the password itself.
--- email stays required. username and mobile are unique. This file is for a fresh
--- local database only; a live database gets these columns from auth-migration-002.sql.
+-- password_hash is PBKDF2-SHA256, never the password itself. It is empty for a
+-- Google-only account. email, name and mobile stay empty until "Your details".
+-- This file is for a fresh local database only. A live database uses
+-- auth-migration.sql, auth-migration-002.sql and auth-migration-003.sql.
 CREATE TABLE users (
-  id            TEXT PRIMARY KEY,
-  email         TEXT NOT NULL UNIQUE COLLATE NOCASE,
-  username      TEXT NOT NULL UNIQUE COLLATE NOCASE,
-  mobile        TEXT NOT NULL UNIQUE,
-  name          TEXT NOT NULL,
-  password_hash TEXT NOT NULL,
-  created_at    TEXT NOT NULL
+  id               TEXT PRIMARY KEY,
+  email            TEXT UNIQUE COLLATE NOCASE,
+  username         TEXT UNIQUE COLLATE NOCASE,
+  mobile           TEXT UNIQUE,
+  name             TEXT,
+  password_hash    TEXT,
+  google_sub       TEXT UNIQUE,
+  profile_complete INTEGER NOT NULL DEFAULT 0,
+  created_at       TEXT NOT NULL
 );
 
 -- id is the SHA-256 of the cookie value, so a database copy does not reveal live cookies.

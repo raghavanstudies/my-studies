@@ -16,8 +16,11 @@ database_id = "11cd4023-e14d-47ad-829e-0bc87f433607"
 
 # Plain settings, not secrets. OTP stays off until a real SMS or email provider
 # is configured. Dev delivery is not the default; see shop/src/otp-delivery.js.
+# GOOGLE_CLIENT_ID is the public OAuth web client id (it is not a secret). The
+# authorised JavaScript origins are https://www.peppynose.com and https://peppynose.com.
 [vars]
 OTP_SMS_PROVIDER = "off"
 OTP_EMAIL_PROVIDER = "off"
 COOKIE_DOMAIN = ".peppynose.com"
 AUTH_ORIGINS = "https://www.peppynose.com,https://peppynose.com"
+GOOGLE_CLIENT_ID = "638977578641-7sh9ipk6l78netgnuq09g8gbsat94hd8.apps.googleusercontent.com"
