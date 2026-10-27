@@ -134,3 +134,5 @@ body.shop { overflow-x: hidden; }
 
 /* Tamil and Hindi: no capitals or wide letter spacing (they break the script) */
 :lang(ta) .sh-eyebrow, :lang(hi) .sh-eyebrow { text-transform: none; letter-spacing: 0; font-size: .9rem; }
+.sh-form label.sh-check { display: flex; flex-direction: row; align-items: center; gap: 10px; font-weight: 600; }
+.sh-form label.sh-check input { width: 22px; min-width: 22px; height: 22px; min-height: 22px; padding: 0; }

@@ -341,6 +341,50 @@ test('a logged-in visitor sees the landing page, and logout shows login again', 
   await expect(page).toHaveURL(homeUrl);
 });
 
+test('the logged-in hint lasts only as long as the login cookie', async ({ page, context }, testInfo) => {
+  const who = { username: `gate.${testInfo.project.name}` };
+  const hint = async () => ({
+    local: await page.evaluate(() => localStorage.getItem('pn_logged_in')),
+    tab: await page.evaluate(() => sessionStorage.getItem('pn_logged_in')),
+    cookies: Object.fromEntries((await context.cookies()).map(c => [c.name, c.expires]))
+  });
+  const logIn = async stay => {
+    await openPage(page, '/index.html');
+    await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
+    await page.getByLabel('Username / mobile number / email').fill(who.username);
+    await page.getByLabel('Password', { exact: true }).fill(password);
+    await page.locator('#stay-logged-in').setChecked(stay);
+    await page.getByRole('button', { name: 'Log in', exact: true }).click();
+    await expect(page).toHaveURL(homeUrl);
+    await expect(page.locator('h1')).toContainText('little');
+  };
+
+  // Unchecked: no saved copy, and both cookies go when the browser closes.
+  await logIn(false);
+  let seen = await hint();
+  expect(seen.local).toBeNull();
+  expect(seen.tab).toBe('1');
+  expect(seen.cookies.pn_session).toBe(-1);
+  expect(seen.cookies.pn_logged_in).toBe(-1);
+  // Reloading and the /me check keep it a browser-session hint.
+  await page.reload();
+  await expect(page).toHaveURL(homeUrl);
+  seen = await hint();
+  expect(seen.local).toBeNull();
+  expect(seen.cookies.pn_logged_in).toBe(-1);
+  await logOut(page);
+
+  // Checked: kept for 30 days, like the login cookie.
+  await logIn(true);
+  seen = await hint();
+  expect(seen.local).toBe('1');
+  const days = s => (s - Date.now() / 1000) / 86400;
+  expect(days(seen.cookies.pn_session)).toBeGreaterThan(29);
+  expect(days(seen.cookies.pn_logged_in)).toBeGreaterThan(29);
+  await page.reload();
+  expect((await hint()).local).toBe('1');
+});
+
 test('Hindi and Tamil landing pages open their own login page', async ({ page }) => {
   await openPage(page, '/hi/');
   await expect(page).toHaveURL(/\/hi\/login(\.html)?\?next=/);

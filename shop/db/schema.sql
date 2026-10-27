@@ -1,5 +1,7 @@
 -- Peppynose own shop: database schema (Cloudflare D1 / SQLite).
 -- Money is always stored in paise (₹1 = 100). Prices include GST, as shown to customers.
+DROP TABLE IF EXISTS tracker_data;
+DROP TABLE IF EXISTS addresses;
 DROP TABLE IF EXISTS auth_otps;
 DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS users;
@@ -57,9 +59,11 @@ CREATE TABLE orders (
   payment_ref    TEXT,                      -- payment id from the gateway
   finalize_nonce TEXT,                      -- makes "mark as paid + take stock" happen exactly once
   tracking       TEXT,
-  admin_note     TEXT
+  admin_note     TEXT,
+  user_id        TEXT                       -- the customer's account, or NULL for a guest (or a deleted account)
 );
 CREATE INDEX orders_status ON orders(status, created_at);
+CREATE INDEX orders_user ON orders(user_id, created_at);
 
 CREATE TABLE order_items (
   order_id   TEXT NOT NULL REFERENCES orders(id),
@@ -98,8 +102,10 @@ CREATE TABLE login_attempts (ip TEXT NOT NULL, at TEXT NOT NULL);
 -- Customer accounts (separate from the shop admin password).
 -- password_hash is PBKDF2-SHA256, never the password itself. It is empty for a
 -- Google-only account. email, name and mobile stay empty until "Your details".
+-- email_verified is 1 only for an email Google verified. A typed email is 0 and
+-- a verified Google sign-in for that address can take it over.
 -- This file is for a fresh local database only. A live database uses
--- auth-migration.sql, auth-migration-002.sql and auth-migration-003.sql.
+-- auth-migration.sql and auth-migration-002.sql to auth-migration-005.sql.
 CREATE TABLE users (
   id               TEXT PRIMARY KEY,
   email            TEXT UNIQUE COLLATE NOCASE,
@@ -109,6 +115,7 @@ CREATE TABLE users (
   password_hash    TEXT,
   google_sub       TEXT UNIQUE,
   profile_complete INTEGER NOT NULL DEFAULT 0,
+  email_verified   INTEGER NOT NULL DEFAULT 0,
   created_at       TEXT NOT NULL
 );
 
@@ -118,7 +125,8 @@ CREATE TABLE sessions (
   user_id    TEXT NOT NULL REFERENCES users(id),
   csrf       TEXT NOT NULL,
   created_at TEXT NOT NULL,
-  expires_at TEXT NOT NULL
+  expires_at TEXT NOT NULL,
+  device     TEXT NOT NULL DEFAULT ''   -- e.g. "Chrome on Android", shown only to the owner
 );
 CREATE INDEX sessions_user ON sessions(user_id, expires_at);
 
@@ -141,3 +149,21 @@ CREATE TABLE auth_otps (
   created_at  TEXT NOT NULL
 );
 CREATE INDEX auth_otps_lookup ON auth_otps(identifier, created_at);
+
+-- Delivery addresses a customer chose to save at checkout (at most 5, newest used first).
+-- data is JSON: name, phone, email, address1, address2, city, pincode, state.
+CREATE TABLE addresses (
+  id         TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL,
+  data       TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  used_at    TEXT NOT NULL
+);
+CREATE INDEX addresses_user ON addresses(user_id, used_at);
+
+-- The pregnancy tracker (pn_preg, pn_todo, pn_weight) saved for a logged-in account.
+CREATE TABLE tracker_data (
+  user_id    TEXT PRIMARY KEY,
+  data       TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);

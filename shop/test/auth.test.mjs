@@ -16,6 +16,7 @@ const SCHEMA = readFileSync(join(here, '..', 'db', 'schema.sql'), 'utf8');
 const MIGRATION_1 = readFileSync(join(here, '..', 'db', 'auth-migration.sql'), 'utf8');
 const MIGRATION_2 = readFileSync(join(here, '..', 'db', 'auth-migration-002.sql'), 'utf8');
 const MIGRATION_3 = readFileSync(join(here, '..', 'db', 'auth-migration-003.sql'), 'utf8');
+const MIGRATION_4 = readFileSync(join(here, '..', 'db', 'auth-migration-004.sql'), 'utf8');
 const SECRET = 'unit-test-session-secret-not-used-in-production';
 
 function d1(db) {
@@ -686,6 +687,22 @@ test('OTP is off unless dev is set and the request is local', async () => {
   assert.equal((await liveSend.json()).dev_code, undefined);
 });
 
+test('migration 004 only adds email_verified, and existing emails start unverified', () => {
+  assert.equal(/drop\s+table/i.test(MIGRATION_4), false);
+  assert.match(MIGRATION_4, /ALTER TABLE users ADD COLUMN email_verified/);
+  const db = new DatabaseSync(':memory:');
+  db.exec(MIGRATION_1);
+  db.exec(MIGRATION_2);
+  db.exec(MIGRATION_3);
+  db.prepare('INSERT INTO users (id, email, username, mobile, name, password_hash, google_sub, profile_complete, created_at) VALUES (?, ?, ?, NULL, ?, ?, NULL, 1, ?)').run('u1', 'ada@example.com', 'ada', 'Ada', 'hash', '2020-01-01T00:00:00.000Z');
+  db.exec(MIGRATION_4);
+  const row = db.prepare('SELECT email, profile_complete, email_verified FROM users WHERE id = ?').get('u1');
+  assert.equal(row.email, 'ada@example.com');
+  assert.equal(row.profile_complete, 1);
+  assert.equal(row.email_verified, 0);
+  assert.throws(() => db.exec(MIGRATION_4), /duplicate column/);
+});
+
 test('stay logged in sets Max-Age, and an unchecked box is a session cookie', async () => {
   const env = makeEnv();
   const who = account({ username: 'stay.user', email: 'stay@example.com' });
@@ -739,7 +756,7 @@ test('profile requires name and email, and mobile is optional', async () => {
   assert.equal(row.profile_complete, 1);
 });
 
-test('Google sign-in verifies the token, does not take over a password email, and honours stay logged in', async () => {
+test('Google sign-in verifies the token, takes a typed email without linking, and honours stay logged in', async () => {
   const { privateKey, jwk } = await makeRsaKey();
   const clientId = 'test-client-id.apps.googleusercontent.com';
   const env = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
@@ -774,8 +791,9 @@ test('Google sign-in verifies the token, does not take over a password email, an
   assert.equal(createdBody.user.name, 'Ada Lovelace');
   assert.equal(createdBody.user.profile_complete, false);
   assert.doesNotMatch(cookieOf(created), /Max-Age=/);
-  const row = await env.DB.prepare('SELECT google_sub, password_hash, profile_complete FROM users').first();
+  const row = await env.DB.prepare('SELECT google_sub, password_hash, profile_complete, email_verified FROM users').first();
   assert.equal(row.google_sub, '100000000000000000001');
+  assert.equal(row.email_verified, 1);
   assert.equal(row.password_hash, null);
   assert.equal(row.profile_complete, 0);
   const passwordTry = await call(env, '/api/auth/login', {
@@ -795,18 +813,34 @@ test('Google sign-in verifies the token, does not take over a password email, an
   const existing = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
   await createAccount(existing, account({ username: 'linked.user', email: 'linked@example.com', name: 'Linked Amma', mobile: '9789012345' }), '203.0.113.125');
   resetGoogleKeyCache();
-  const taken = await call(existing, '/api/auth/google', {
+  // The typed email goes to the verified Google account. The password account
+  // is not linked or changed otherwise, and must enter a new email.
+  const reclaimed = await call(existing, '/api/auth/google', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.126',
     body: { credential: await signIdToken(privateKey, baseClaims({ sub: '100000000000000000099', email: 'linked@example.com', name: 'From Google' })), stay: true }
   });
-  assert.equal(taken.status, 409);
-  assert.equal((await taken.json()).code, 'email_taken');
-  const untouched = await existing.DB.prepare('SELECT google_sub, username, name FROM users WHERE email = ?').bind('linked@example.com').first();
-  assert.equal(untouched.google_sub, null);
-  assert.equal(untouched.username, 'linked.user');
-  assert.equal(untouched.name, 'Linked Amma');
+  assert.equal(reclaimed.status, 200);
+  const reclaimedBody = await reclaimed.json();
+  assert.equal(reclaimedBody.user.email, 'linked@example.com');
+  assert.equal(reclaimedBody.user.username, '');
+  const owner = await existing.DB.prepare('SELECT google_sub, username, email_verified FROM users WHERE email = ?').bind('linked@example.com').first();
+  assert.equal(owner.google_sub, '100000000000000000099');
+  assert.equal(owner.username, null);
+  assert.equal(owner.email_verified, 1);
+  const released = await existing.DB.prepare('SELECT google_sub, email, name, password_hash, profile_complete FROM users WHERE username = ?').bind('linked.user').first();
+  assert.equal(released.google_sub, null);
+  assert.equal(released.email, null);
+  assert.equal(released.name, 'Linked Amma');
+  assert.ok(released.password_hash);
+  assert.equal(released.profile_complete, 0);
+  const stillLogsIn = await call(existing, '/api/auth/login', {
+    method: 'POST', origin: 'http://localhost', ip: '203.0.113.128',
+    body: { identifier: 'linked.user', password: 'horse-battery-99' }
+  });
+  assert.equal(stillLogsIn.status, 200);
+  assert.equal((await stillLogsIn.json()).user.profile_complete, false);
 
-  await existing.DB.prepare('UPDATE users SET google_sub = ? WHERE email = ?').bind('100000000000000000099', 'linked@example.com').run();
+  // An email Google verified for another Google id is never taken over.
   const clash = await call(existing, '/api/auth/google', {
     method: 'POST', origin: 'http://localhost', ip: '203.0.113.127',
     body: { credential: await signIdToken(privateKey, baseClaims({ sub: '100000000000000000077', email: 'linked@example.com' })), stay: true }
@@ -814,4 +848,44 @@ test('Google sign-in verifies the token, does not take over a password email, an
   assert.equal(clash.status, 401);
   assert.equal((await clash.json()).code, 'google_invalid');
   assert.equal((await existing.DB.prepare('SELECT google_sub FROM users WHERE email = ?').bind('linked@example.com').first()).google_sub, '100000000000000000099');
+});
+
+test('a Google email stays verified only while the details form keeps it unchanged', async () => {
+  const { privateKey, jwk } = await makeRsaKey();
+  const clientId = 'test-client-id.apps.googleusercontent.com';
+  const env = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
+  resetGoogleKeyCache();
+  const google = async (claims, ip) => call(env, '/api/auth/google', {
+    method: 'POST', origin: 'http://localhost', ip,
+    body: { credential: await signIdToken(privateKey, baseClaims(claims)), stay: true }
+  });
+  const first = await google({ sub: '100000000000000000201', email: 'kept@gmail.com' }, '203.0.113.140');
+  assert.equal(first.status, 200);
+  const firstBody = await first.json();
+  const save = email => call(env, '/api/auth/profile', {
+    method: 'PUT', origin: 'http://localhost', cookie: `pn_session=${tokenOf(first)}`,
+    headers: { 'x-csrf-token': firstBody.csrf },
+    body: { name: 'Kept Amma', email, mobile: '' }
+  });
+  assert.equal((await save('KEPT@gmail.com')).status, 200);
+  const verified = sql => env.DB.prepare('SELECT email_verified FROM users WHERE google_sub = ?').bind(sql).first().then(r => r.email_verified);
+  assert.equal(await verified('100000000000000000201'), 1);
+
+  // A different Google id cannot take a verified email.
+  const refused = await google({ sub: '100000000000000000202', email: 'kept@gmail.com' }, '203.0.113.141');
+  assert.equal(refused.status, 401);
+
+  // Typing someone else's address makes it unverified, so its Google owner gets it back.
+  assert.equal((await save('someone@gmail.com')).status, 200);
+  assert.equal(await verified('100000000000000000201'), 0);
+  const owner = await google({ sub: '100000000000000000203', email: 'someone@gmail.com' }, '203.0.113.142');
+  assert.equal(owner.status, 200);
+  assert.equal(await verified('100000000000000000203'), 1);
+  const typed = await env.DB.prepare('SELECT email, profile_complete FROM users WHERE google_sub = ?').bind('100000000000000000201').first();
+  assert.equal(typed.email, null);
+  assert.equal(typed.profile_complete, 0);
+  // The first account still signs in by its Google id and is asked for details again.
+  const back = await google({ sub: '100000000000000000201', email: 'kept@gmail.com' }, '203.0.113.143');
+  assert.equal(back.status, 200);
+  assert.equal((await back.json()).user.profile_complete, false);
 });

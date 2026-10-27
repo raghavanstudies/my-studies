@@ -48,11 +48,27 @@
         mismatch: 'Password and confirm password do not match.'
       },
       out: 'You are not logged in.',
-      hello: u => 'Logged in as ' + u.name + ' (' + u.username + ', ' + u.mobile + ', ' + u.email + ').',
+      hello: u => 'Logged in as ' + (u.name || u.email || u.username) + '.',
       deleted: 'Your account has been deleted.',
       working: 'Please wait…',
       resend: 'Resend code',
-      resendIn: n => 'Resend code (' + n + 's)'
+      resendIn: n => 'Resend code (' + n + 's)',
+      editDetails: 'Edit details',
+      ordersTitle: 'Your orders',
+      ordersNone: 'No orders on this account yet. Orders placed while logged in show here.',
+      ordersError: 'We could not load your orders. Please refresh.',
+      orderView: 'View order',
+      orderItems: n => n === 1 ? '1 item' : n + ' items',
+      status: { pending_payment: 'Waiting for payment', payment_failed: 'Payment failed', paid: 'Paid', paid_review: 'Paid, being checked', packed: 'Packed', shipped: 'Shipped', delivered: 'Delivered', cancelled: 'Cancelled', refunded: 'Refunded' },
+      devicesTitle: 'Where you are logged in',
+      thisDevice: 'This device',
+      since: d => 'since ' + d,
+      logoutDevice: 'Log out',
+      logoutOthers: 'Log out all other devices',
+      devicesDone: 'Other devices are logged out.',
+      deleteConfirm: 'I understand my account will be deleted for good',
+      confirm_needed: 'Please tick the box to confirm.',
+      current_session: 'Use Log out for this device.'
     },
     hi: {
       login: 'लॉग इन', signup: 'साइन अप', logout: 'लॉग आउट', account: 'आपका खाता',
@@ -92,11 +108,27 @@
         mismatch: 'पासवर्ड और पुष्टि वाला पासवर्ड एक जैसे नहीं हैं।'
       },
       out: 'आप लॉग इन नहीं हैं।',
-      hello: u => u.name + ' के रूप में लॉग इन हैं (' + u.username + ', ' + u.mobile + ', ' + u.email + ')।',
+      hello: u => (u.name || u.email || u.username) + ' के रूप में लॉग इन हैं।',
       deleted: 'आपका खाता मिटा दिया गया है।',
       working: 'कृपया इंतज़ार करें…',
       resend: 'कोड फिर भेजें',
-      resendIn: n => 'कोड फिर भेजें (' + n + ' सेकंड)'
+      resendIn: n => 'कोड फिर भेजें (' + n + ' सेकंड)',
+      editDetails: 'जानकारी बदलें',
+      ordersTitle: 'आपके ऑर्डर',
+      ordersNone: 'इस खाते में अभी कोई ऑर्डर नहीं है। लॉग इन रहकर किए गए ऑर्डर यहाँ दिखते हैं।',
+      ordersError: 'आपके ऑर्डर लोड नहीं हो सके। कृपया पेज रिफ़्रेश करें।',
+      orderView: 'ऑर्डर देखें',
+      orderItems: n => n === 1 ? '1 सामान' : n + ' सामान',
+      status: { pending_payment: 'भुगतान बाकी', payment_failed: 'भुगतान नहीं हुआ', paid: 'भुगतान हो गया', paid_review: 'भुगतान हुआ, जाँच जारी', packed: 'पैक हो गया', shipped: 'भेज दिया गया', delivered: 'पहुँच गया', cancelled: 'रद्द', refunded: 'पैसे वापस' },
+      devicesTitle: 'आप कहाँ लॉग इन हैं',
+      thisDevice: 'यह डिवाइस',
+      since: d => d + ' से',
+      logoutDevice: 'लॉग आउट',
+      logoutOthers: 'बाकी सभी डिवाइस से लॉग आउट करें',
+      devicesDone: 'बाकी डिवाइस से लॉग आउट हो गया।',
+      deleteConfirm: 'मैं समझती/समझता हूँ कि मेरा खाता हमेशा के लिए मिट जाएगा',
+      confirm_needed: 'पुष्टि के लिए बॉक्स पर टिक करें।',
+      current_session: 'इस डिवाइस के लिए लॉग आउट बटन का इस्तेमाल करें।'
     },
     ta: {
       login: 'நுழை', signup: 'பதிவு', logout: 'வெளியேறு', account: 'உங்கள் கணக்கு',
@@ -136,11 +168,27 @@
         mismatch: 'கடவுச்சொல்லும் உறுதிப்படுத்தலும் ஒன்றாக இல்லை.'
       },
       out: 'நீங்கள் உள்நுழையவில்லை.',
-      hello: u => u.name + ' ஆக உள்நுழைந்துள்ளீர்கள் (' + u.username + ', ' + u.mobile + ', ' + u.email + ').',
+      hello: u => (u.name || u.email || u.username) + ' ஆக உள்நுழைந்துள்ளீர்கள்.',
       deleted: 'உங்கள் கணக்கு நீக்கப்பட்டது.',
       working: 'காத்திருக்கவும்…',
       resend: 'குறியீட்டை மீண்டும் அனுப்பு',
-      resendIn: n => 'குறியீட்டை மீண்டும் அனுப்பு (' + n + ' வி)'
+      resendIn: n => 'குறியீட்டை மீண்டும் அனுப்பு (' + n + ' வி)',
+      editDetails: 'விவரங்களை மாற்று',
+      ordersTitle: 'உங்கள் ஆர்டர்கள்',
+      ordersNone: 'இந்தக் கணக்கில் இன்னும் ஆர்டர் இல்லை. உள்நுழைந்து செய்த ஆர்டர்கள் இங்கே தெரியும்.',
+      ordersError: 'உங்கள் ஆர்டர்களை ஏற்ற முடியவில்லை. பக்கத்தைப் புதுப்பிக்கவும்.',
+      orderView: 'ஆர்டரைப் பார்',
+      orderItems: n => n === 1 ? '1 பொருள்' : n + ' பொருட்கள்',
+      status: { pending_payment: 'பணம் செலுத்த வேண்டும்', payment_failed: 'பணம் செலுத்துதல் தோல்வி', paid: 'பணம் பெறப்பட்டது', paid_review: 'பணம் பெறப்பட்டது, சரிபார்க்கப்படுகிறது', packed: 'பேக் செய்யப்பட்டது', shipped: 'அனுப்பப்பட்டது', delivered: 'வந்து சேர்ந்தது', cancelled: 'ரத்து செய்யப்பட்டது', refunded: 'பணம் திருப்பி அளிக்கப்பட்டது' },
+      devicesTitle: 'நீங்கள் உள்நுழைந்துள்ள இடங்கள்',
+      thisDevice: 'இந்தச் சாதனம்',
+      since: d => d + ' முதல்',
+      logoutDevice: 'வெளியேறு',
+      logoutOthers: 'மற்ற எல்லாச் சாதனங்களிலிருந்தும் வெளியேறு',
+      devicesDone: 'மற்ற சாதனங்களிலிருந்து வெளியேறிவிட்டீர்கள்.',
+      deleteConfirm: 'என் கணக்கு நிரந்தரமாக நீக்கப்படும் என்பதைப் புரிந்துகொள்கிறேன்',
+      confirm_needed: 'உறுதிப்படுத்தப் பெட்டியில் டிக் செய்யவும்.',
+      current_session: 'இந்தச் சாதனத்துக்கு வெளியேறு பொத்தானைப் பயன்படுத்தவும்.'
     }
   };
   const t = COPY[L];
@@ -267,15 +315,16 @@
       if (who) who.textContent = t.hello(me.user);
       const user = me.user;
       const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value || ''; };
-      set('who-username', user.username);
-      set('who-mobile', user.mobile);
-      set('who-email', user.email);
+      set('who-username', user.username || '—');
+      set('who-mobile', user.mobile || '—');
+      set('who-email', user.email || '—');
       const btn = document.getElementById('logout');
       if (btn && !btn.dataset.bound) {
         btn.dataset.bound = '1';
         btn.addEventListener('click', () => logout(me.csrf));
       }
       const del = document.getElementById('delete-form');
+      if (del && !user.has_password) passwordlessDelete(del);
       if (del && !del.dataset.bound) {
         del.dataset.bound = '1';
         del.addEventListener('submit', async ev => {
@@ -289,7 +338,7 @@
               method: 'POST',
               credentials: 'include',
               headers: { 'content-type': 'application/json', 'x-csrf-token': me.csrf || '' },
-              body: JSON.stringify({ password: del.password.value })
+              body: JSON.stringify(user.has_password ? { password: del.password.value } : { confirm: !!(del.confirm && del.confirm.checked) })
             });
             const data = await read(res);
             if (!res.ok || !data) {
@@ -305,21 +354,147 @@
           }
         });
       }
+      paintAccountExtras(me);
     } else {
       inn.hidden = true;
       out.hidden = false;
     }
   }
 
-  function browserCookie(name, value, maxAge) {
-    const secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    document.cookie = name + '=' + value + '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax' + (secure ? '; Secure' : '');
+  function el(tag, props, text) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(props || {})) {
+      if (k === 'class') node.className = v;
+      else node.setAttribute(k, v);
+    }
+    if (text != null) node.textContent = text;
+    return node;
   }
 
-  function rememberFlag(name) {
+  const LOCALE = { en: 'en-IN', hi: 'hi-IN', ta: 'ta-IN' }[L];
+  const day = iso => { try { return new Date(iso).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short', year: 'numeric' }); } catch { return ''; } };
+  const rupees = p => '₹' + (p / 100).toLocaleString('en-IN', { minimumFractionDigits: p % 100 ? 2 : 0 });
+
+  // A Google-only account has no password: a tick box confirms the delete instead.
+  function passwordlessDelete(form) {
+    if (form.dataset.passwordless) return;
+    form.dataset.passwordless = '1';
+    const pw = form.elements.namedItem('password');
+    const label = pw && pw.closest('label');
+    if (label) label.remove();
+    const tick = el('label', { class: 'auth-stay' });
+    const box = el('input', { type: 'checkbox', name: 'confirm', required: '' });
+    tick.append(box, document.createTextNode(' ' + t.deleteConfirm));
+    form.prepend(tick);
+  }
+
+  async function getJson(p) {
+    const res = await fetch(api(p), { credentials: 'include' });
+    const data = await read(res);
+    if (!res.ok || !data) throw new Error('failed');
+    return data;
+  }
+
+  async function postJson(p, csrf, body) {
+    const res = await fetch(api(p), {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': csrf || '' },
+      body: JSON.stringify(body || {})
+    });
+    return { res, data: await read(res) };
+  }
+
+  // Edit details, orders and devices, added under the facts on the account page.
+  function paintAccountExtras(me) {
+    const inn = document.getElementById('account-in');
+    if (!inn || inn.dataset.extras) return;
+    inn.dataset.extras = '1';
+    const facts = inn.querySelector('.auth-facts');
+    const edit = el('p', { class: 'auth-switch' });
+    edit.append(el('a', { id: 'edit-details', href: path('details.html') + '?next=' + encodeURIComponent(path('account.html')) }, t.editDetails));
+    if (facts) facts.after(edit);
+    const anchor = inn.querySelector('.auth-delete');
+    const orders = el('section', { class: 'auth-section', id: 'my-orders', 'aria-labelledby': 'my-orders-h' });
+    orders.append(el('h2', { id: 'my-orders-h' }, t.ordersTitle), el('p', { class: 'auth-note' }, t.working));
+    const devices = el('section', { class: 'auth-section', id: 'my-devices', 'aria-labelledby': 'my-devices-h' });
+    devices.append(el('h2', { id: 'my-devices-h' }, t.devicesTitle), el('p', { class: 'auth-note' }, t.working));
+    inn.insertBefore(orders, anchor);
+    inn.insertBefore(devices, anchor);
+    paintOrders(orders);
+    paintDevices(devices, me.csrf);
+  }
+
+  async function paintOrders(box) {
+    const note = box.querySelector('.auth-note');
+    let list;
+    try { list = (await getJson('/api/account/orders')).orders || []; } catch { note.textContent = t.ordersError; return; }
+    if (!list.length) { note.textContent = t.ordersNone; return; }
+    note.remove();
+    const ul = el('ul', { class: 'auth-list' });
+    for (const o of list) {
+      const li = el('li');
+      const top = el('div', { class: 'auth-list-top' });
+      top.append(el('b', {}, o.number), el('span', { class: 'auth-badge', 'data-status': o.status }, (t.status && t.status[o.status]) || o.status));
+      const meta = el('div', { class: 'auth-list-meta' }, [day(o.created_at), t.orderItems(o.items), rupees(o.total)].filter(Boolean).join(' · '));
+      // The order page lives on the shop Worker, next to the API.
+      const link = el('a', { href: apiBase() + o.link }, t.orderView);
+      li.append(top, meta, link);
+      ul.append(li);
+    }
+    box.append(ul);
+  }
+
+  async function paintDevices(box, csrf) {
+    const note = box.querySelector('.auth-note');
+    let list;
+    try { list = (await getJson('/api/auth/sessions')).sessions || []; } catch { note.textContent = t.server; return; }
+    note.textContent = '';
+    note.setAttribute('role', 'status');
+    box.querySelectorAll('.auth-list, .auth-others').forEach(n => n.remove());
+    const ul = el('ul', { class: 'auth-list' });
+    for (const s of list) {
+      const li = el('li');
+      const top = el('div', { class: 'auth-list-top' });
+      top.append(el('b', {}, s.device));
+      if (s.current) top.append(el('span', { class: 'auth-badge' }, t.thisDevice));
+      li.append(top, el('div', { class: 'auth-list-meta' }, t.since(day(s.created_at))));
+      if (!s.current) {
+        const out = el('button', { type: 'button', class: 'auth-resend', 'data-session': s.id }, t.logoutDevice);
+        out.addEventListener('click', async () => {
+          out.disabled = true;
+          const r = await postJson('/api/auth/sessions/revoke', csrf, { id: s.id }).catch(() => null);
+          if (!r || !r.res.ok) { out.disabled = false; note.textContent = r && r.data ? explain(r.data) : t.network; return; }
+          paintDevices(box, csrf);
+        });
+        li.append(out);
+      }
+      ul.append(li);
+    }
+    box.append(ul);
+    if (list.some(s => !s.current)) {
+      const all = el('button', { type: 'button', class: 'btn ghost auth-others', id: 'logout-others' }, t.logoutOthers);
+      all.addEventListener('click', async () => {
+        all.disabled = true;
+        const r = await postJson('/api/auth/sessions/revoke', csrf, { id: 'others' }).catch(() => null);
+        if (!r || !r.res.ok) { all.disabled = false; note.textContent = r && r.data ? explain(r.data) : t.network; return; }
+        await paintDevices(box, csrf);
+        box.querySelector('.auth-note').textContent = t.devicesDone;
+      });
+      box.append(all);
+    }
+  }
+
+  // maxAge null is a cookie the browser drops when it closes.
+  function browserCookie(name, value, maxAge) {
+    const secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    document.cookie = name + '=' + value + '; Path=/' + (maxAge == null ? '' : '; Max-Age=' + maxAge) + '; SameSite=Lax' + (secure ? '; Secure' : '');
+  }
+
+  function rememberFlag(name, maxAge = 60 * 60 * 24 * 14) {
     try { sessionStorage.setItem(name, '1'); } catch { /* private mode */ }
     try { localStorage.setItem(name, '1'); } catch { /* private mode */ }
-    browserCookie(name, '1', 60 * 60 * 24 * 14);
+    browserCookie(name, '1', maxAge);
   }
 
   function clearFlag(name) {
@@ -329,7 +504,24 @@
   }
 
   function rememberGuest() { rememberFlag('pn_guest'); }
-  function rememberLogin() { rememberFlag('pn_logged_in'); }
+  // The logged-in hint lasts as long as the session cookie: 30 days with "Stay
+  // logged in", otherwise until the browser closes. A hint that outlived the
+  // session would skip the landing gate and then bounce to login after /me.
+  function rememberLogin(stay) {
+    if (stay) {
+      rememberFlag('pn_logged_in', 60 * 60 * 24 * 30);
+      return;
+    }
+    try { localStorage.removeItem('pn_logged_in'); } catch { /* private mode */ }
+    try { sessionStorage.setItem('pn_logged_in', '1'); } catch { /* private mode */ }
+    browserCookie('pn_logged_in', '1', null);
+  }
+  // After /me or a details save, keep whichever kind of hint this login made.
+  function refreshLogin() {
+    let stay = false;
+    try { stay = localStorage.getItem('pn_logged_in') === '1'; } catch { /* private mode */ }
+    rememberLogin(stay);
+  }
   function clearLogin() { clearFlag('pn_logged_in'); }
 
   function carryNext() {
@@ -364,8 +556,8 @@
     location.replace(path('details.html') + '?next=' + encodeURIComponent(safeHere()));
   }
 
-  function goAfterAuth(user) {
-    rememberLogin();
+  function goAfterAuth(user, stay) {
+    rememberLogin(stay);
     const next = safeNext(new URLSearchParams(location.search).get('next')) || path('index.html');
     if (!user.profile_complete) {
       location.assign(path('details.html') + '?next=' + encodeURIComponent(next));
@@ -461,7 +653,7 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
-        goAfterAuth(data.user);
+        goAfterAuth(data.user, stay);
       } catch {
         if (err) err.textContent = t.network;
       } finally {
@@ -474,6 +666,7 @@
     const err = document.getElementById('err');
     if (err) err.textContent = '';
     const stayEl = document.getElementById('stay-logged-in');
+    const stay = !!(stayEl && stayEl.checked);
     const btn = document.getElementById('google-signin');
     if (btn) btn.disabled = true;
     try {
@@ -481,14 +674,14 @@
         method: 'POST',
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ credential: credential, stay: !!(stayEl && stayEl.checked) })
+        body: JSON.stringify({ credential: credential, stay })
       });
       const data = await read(res);
       if (!res.ok || !data || !data.user) {
         if (err) err.textContent = data ? explain(data) : t.notSetup;
         return;
       }
-      goAfterAuth(data.user);
+      goAfterAuth(data.user, stay);
     } catch {
       if (err) err.textContent = t.network;
     } finally {
@@ -595,7 +788,7 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
-        rememberLogin();
+        refreshLogin();
         const next = safeNext(new URLSearchParams(location.search).get('next')) || path('index.html');
         location.assign(next);
       } catch {
@@ -645,10 +838,13 @@
       if (cfgRes.ok) cfg = await read(cfgRes);
     } catch { me = null; }
     bindGoogle(cfg && cfg.google_client_id);
-    if (meKnown && me && me.user) rememberLogin();
+    if (meKnown && me && me.user) refreshLogin();
     else if (meKnown) clearLogin();
     carryNext();
     if (leaveForGate(meKnown, me)) return;
+    // Other scripts (tracker-sync.js) read the login from here instead of asking again.
+    window.pnAuth = { known: meKnown, me: me || null, api: apiBase() };
+    window.dispatchEvent(new CustomEvent('pn:auth', { detail: window.pnAuth }));
     paintHeader(me);
     paintAccount(me);
     paintDetails(me);

@@ -1,6 +1,7 @@
 // Peppynose own shop — API (Cloudflare Worker + D1). Static pages come from dist/ (see scripts/build.mjs).
 // Rules: the browser never decides a price; every amount is worked out here from the database, in paise.
-import { HttpError, authApi, corsHeaders } from './auth.js';
+import { HttpError, authApi, corsHeaders, sessionUser } from './auth.js';
+import { accountApi, saveAddress } from './account.js';
 
 const enc = new TextEncoder();
 
@@ -122,17 +123,20 @@ async function checkout(req, env) {
   const q = await price(env, b.items);
   const mode = env.PAYMENT_MODE === 'razorpay' ? 'razorpay' : 'mock';
   const lang = ['en', 'ta', 'hi'].includes(b.lang) ? b.lang : 'en';
+  // A logged-in customer's order also shows on their account. Guests need no account.
+  const user = await sessionUser(req, env);
   const row = await env.DB.prepare("UPDATE settings SET value = CAST(value AS INTEGER) + 1 WHERE key = 'next_order_number' RETURNING value").first();
   const number = +row.value - 1, id = 'o_' + randHex(12), token = randHex(24), at = now();
   let gateway = null;
   if (mode === 'razorpay') gateway = await razorpayOrder(env, q.total, number);
   await env.DB.batch([
-    env.DB.prepare(`INSERT INTO orders (id, number, token, status, lang, created_at, customer, state, subtotal, shipping, total, payment_mode, gateway_order)
-      VALUES (?, ?, ?, 'pending_payment', ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(id, number, token, lang, at, JSON.stringify(cust), cust.state, q.subtotal, q.shipping, q.total, mode, gateway),
+    env.DB.prepare(`INSERT INTO orders (id, number, token, status, lang, created_at, customer, state, subtotal, shipping, total, payment_mode, gateway_order, user_id)
+      VALUES (?, ?, ?, 'pending_payment', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(id, number, token, lang, at, JSON.stringify(cust), cust.state, q.subtotal, q.shipping, q.total, mode, gateway, user ? user.user_id : null),
     ...q.lines.map(l => env.DB.prepare('INSERT INTO order_items (order_id, sku, name, label, qty, unit_price, gst_rate, hsn) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
       .bind(id, l.sku, l.name, l.label, l.qty, l.unit_price, l.gst_rate, l.hsn)),
     env.DB.prepare('INSERT INTO order_events (order_id, at, status, note) VALUES (?, ?, ?, ?)').bind(id, at, 'pending_payment', 'Order placed')
   ]);
+  if (user && b.save_address === true) await saveAddress(env, user.user_id, cust);
   return json({ order: id, token, number: 'PN-' + number, total: q.total, pay: mode === 'razorpay' ? { mode, key: env.RAZORPAY_KEY_ID, gateway_order: gateway } : { mode } });
 }
 
@@ -361,6 +365,7 @@ async function api(req, url, env) {
   const p = url.pathname, m = req.method;
   if (p.startsWith('/api/auth/')) return authApi(req, env);
   if (p.startsWith('/api/admin/')) return admin(req, url, env);
+  if (p.startsWith('/api/account/')) return accountApi(req, env, { orderLink });
   if (p === '/api/catalogue' && m === 'GET') return json(await catalogue(env));
   if (p === '/api/checkout' && m === 'POST') return checkout(req, env);
   if (p === '/api/pay/mock' && m === 'POST') return payMock(req, env);
@@ -387,7 +392,8 @@ export default {
       return withCors(req, env, new Response(null, {
         status: 204,
         headers: {
-          'access-control-allow-methods': 'GET, POST, OPTIONS',
+          // PUT is for the profile and tracker. The live pages call this Worker from another origin.
+          'access-control-allow-methods': 'GET, POST, PUT, OPTIONS',
           'access-control-allow-headers': 'content-type, x-csrf-token',
           'access-control-max-age': '600',
           ...SEC
