@@ -27,6 +27,12 @@ const LOGIN_MAX_IP = 8;
 const LOGIN_MAX_ID = 20;
 const SIGNUP_WINDOW_MS = 60 * 60 * 1000;
 const SIGNUP_MAX_IP = 10;
+// The local test server sets AUTH_SIGNUP_MAX_IP higher: every test runs from
+// one address. Unset (the live Worker), the limit is SIGNUP_MAX_IP.
+function signupMaxIp(env) {
+  const n = Number(env && env.AUTH_SIGNUP_MAX_IP);
+  return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : SIGNUP_MAX_IP;
+}
 const OTP_TTL_MS = 5 * 60 * 1000;
 const OTP_MAX_ATTEMPTS = 5;
 const OTP_WINDOW_MS = 15 * 60 * 1000;
@@ -378,7 +384,8 @@ export function deviceLabel(ua) {
 // Each device keeps its own login. The oldest beyond this many are logged out.
 export const MAX_SESSIONS = 10;
 
-async function startSession(req, env, user, stay) {
+// extra is merged into the JSON reply (e.g. { created: true } for a new Google account).
+async function startSession(req, env, user, stay, extra = {}) {
   const token = randHex(32);
   const csrf = randHex(16);
   const at = new Date().toISOString();
@@ -389,7 +396,7 @@ async function startSession(req, env, user, stay) {
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND id NOT IN (SELECT id FROM sessions WHERE user_id = ? ORDER BY created_at DESC, id LIMIT ?)').bind(user.id, user.id, MAX_SESSIONS)
   ]);
   const maxAge = stay ? REMEMBER_SECONDS : null;
-  return json({ ok: true, user: pub(user), csrf }, 200, { 'set-cookie': sessionCookie(req, env, token, maxAge) });
+  return json({ ok: true, user: pub(user), csrf, ...extra }, 200, { 'set-cookie': sessionCookie(req, env, token, maxAge) });
 }
 
 async function sessionRow(req, env) {
@@ -443,7 +450,7 @@ async function signup(req, env) {
   const raw = await readJson(req);
   const body = validateSignup(raw);
   const ip = clientIp(req);
-  if (await tooMany(env, 'signup', 'ip:' + ip, SIGNUP_WINDOW_MS, SIGNUP_MAX_IP)) {
+  if (await tooMany(env, 'signup', 'ip:' + ip, SIGNUP_WINDOW_MS, signupMaxIp(env))) {
     throw new HttpError(429, 'Too many accounts created from this network. Please wait an hour.', { code: 'rate_limited' });
   }
   await recordAttempt(env, 'signup', 'ip:' + ip);
@@ -543,6 +550,7 @@ async function googleLogin(req, env) {
       }
     }
   }
+  let created = false;
   if (!user) {
     const id = 'u_' + randHex(16);
     const name = validName(claims.name) || null;
@@ -560,6 +568,7 @@ async function googleLogin(req, env) {
         await insert.run();
       }
       user = await env.DB.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).bind(id).first();
+      created = true;
     } catch (e) {
       const mapped = mapUnique(e);
       if (!mapped) throw e;
@@ -572,7 +581,8 @@ async function googleLogin(req, env) {
       }
     }
   }
-  return startSession(req, env, user, wantsStay(body));
+  // created tells the page this was a sign-up, for its analytics.
+  return startSession(req, env, user, wantsStay(body), { created });
 }
 
 async function updateProfile(req, env) {

@@ -92,10 +92,17 @@
     };
   }
 
+  // Tells the login page this visit came from the gate, for its analytics
+  // events (auth.js). Only this tab, only until the visitor logs in or skips.
+  function markGate() {
+    try { root.sessionStorage && root.sessionStorage.setItem('pn_gate', '1'); } catch (e) { /* private mode */ }
+  }
+
   function apply() {
     var choice = decide(readState());
     if (!choice.redirect) return;
     root.__pnLoginLeaving = true;
+    markGate();
     root.location.replace(choice.redirect);
   }
 
@@ -106,6 +113,7 @@
     isLanding: isLanding,
     isAuthPath: isAuthPath,
     readState: readState,
+    markGate: markGate,
     apply: apply
   };
   root.pnLoginGate = api;
