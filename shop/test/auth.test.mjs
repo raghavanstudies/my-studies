@@ -790,6 +790,7 @@ test('Google sign-in verifies the token, takes a typed email without linking, an
   assert.equal(createdBody.user.email, 'ada.google@gmail.com');
   assert.equal(createdBody.user.name, 'Ada Lovelace');
   assert.equal(createdBody.user.profile_complete, false);
+  assert.equal(createdBody.created, true);
   assert.doesNotMatch(cookieOf(created), /Max-Age=/);
   const row = await env.DB.prepare('SELECT google_sub, password_hash, profile_complete, email_verified FROM users').first();
   assert.equal(row.google_sub, '100000000000000000001');
@@ -808,6 +809,7 @@ test('Google sign-in verifies the token, takes a typed email without linking, an
   });
   assert.equal(again.status, 200);
   assert.match(cookieOf(again), new RegExp('Max-Age=' + REMEMBER_SECONDS));
+  assert.equal((await again.json()).created, false);
   assert.equal(await env.DB.prepare('SELECT COUNT(*) AS n FROM users').first().then(r => r.n), 1);
 
   const existing = makeEnv({ GOOGLE_CLIENT_ID: clientId, GOOGLE_JWKS_FETCH: jwksFetch(jwk) });
@@ -888,4 +890,26 @@ test('a Google email stays verified only while the details form keeps it unchang
   const back = await google({ sub: '100000000000000000201', email: 'kept@gmail.com' }, '203.0.113.143');
   assert.equal(back.status, 200);
   assert.equal((await back.json()).user.profile_complete, false);
+});
+
+test('sign-ups per network stay limited to 10 unless the test server sets AUTH_SIGNUP_MAX_IP', async () => {
+  const tryAll = async (env, n) => {
+    const codes = [];
+    for (let i = 0; i < n; i++) {
+      const who = account();
+      const r = await call(env, '/api/auth/signup', { method: 'POST', origin: 'http://localhost', ip: '203.0.113.200', body: { username: who.username, password: who.password, confirm: who.confirm } });
+      codes.push(r.status);
+    }
+    return codes;
+  };
+  const live = await tryAll(makeEnv(), 11);
+  assert.deepEqual(live.slice(0, 10), Array(10).fill(200));
+  assert.equal(live[10], 429);
+  assert.equal((await tryAll(makeEnv({ AUTH_SIGNUP_MAX_IP: '2' }), 3))[2], 429);
+  // A value that is not a sane whole number keeps the live limit.
+  for (const bad of ['0', '-5', 'lots', '5000', '2.5']) {
+    const codes = await tryAll(makeEnv({ AUTH_SIGNUP_MAX_IP: bad }), 11);
+    assert.equal(codes[10], 429, bad);
+    assert.equal(codes[9], 200, bad);
+  }
 });

@@ -503,6 +503,13 @@
     browserCookie(name, '', 0);
   }
 
+  // Analytics for the login page (analytics.js; sent only after cookie consent).
+  // from_gate: the landing-page login gate sent this visitor here.
+  // No name, email, mobile or username is ever sent.
+  const fromGate = () => { try { return sessionStorage.getItem('pn_gate') === '1'; } catch { return false; } };
+  const endGate = () => { try { sessionStorage.removeItem('pn_gate'); } catch { /* private mode */ } };
+  const track = (name, params) => { if (window.pnTrack) window.pnTrack(name, Object.assign({ from_gate: fromGate() }, params || {})); };
+
   function rememberGuest() { rememberFlag('pn_guest'); }
   // The logged-in hint lasts as long as the session cookie: 30 days with "Stay
   // logged in", otherwise until the browser closes. A hint that outlived the
@@ -593,6 +600,7 @@
     const choice = window.pnLoginGate.decide(state);
     if (!choice.redirect) return false;
     globalThis.__pnLoginLeaving = true;
+    if (window.pnLoginGate.markGate) window.pnLoginGate.markGate();
     location.replace(choice.redirect);
     return true;
   }
@@ -618,6 +626,8 @@
     if (!btn || btn.dataset.bound) return;
     btn.dataset.bound = '1';
     btn.addEventListener('click', () => {
+      track('login_skip');
+      endGate();
       rememberGuest();
       location.assign(guestTarget());
     });
@@ -653,6 +663,8 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
+        track(mode === 'signup' ? 'signup_success' : 'login_success', { method: 'password' });
+        if (data.user.profile_complete) endGate();
         goAfterAuth(data.user, stay);
       } catch {
         if (err) err.textContent = t.network;
@@ -681,6 +693,8 @@
         if (err) err.textContent = data ? explain(data) : t.notSetup;
         return;
       }
+      track(data.created ? 'signup_success' : 'login_success', { method: 'google' });
+      if (data.user.profile_complete) endGate();
       goAfterAuth(data.user, stay);
     } catch {
       if (err) err.textContent = t.network;
@@ -788,6 +802,8 @@
           if (err) err.textContent = data ? explain(data) : t.notSetup;
           return;
         }
+        track('details_saved', { first_time: !me.user.profile_complete });
+        endGate();
         refreshLogin();
         const next = safeNext(new URLSearchParams(location.search).get('next')) || path('index.html');
         location.assign(next);
@@ -842,6 +858,7 @@
     else if (meKnown) clearLogin();
     carryNext();
     if (leaveForGate(meKnown, me)) return;
+    if (pageKind()) track('login_page_view', { page: pageKind(), logged_in: !!(me && me.user) });
     // Other scripts (tracker-sync.js) read the login from here instead of asking again.
     window.pnAuth = { known: meKnown, me: me || null, api: apiBase() };
     window.dispatchEvent(new CustomEvent('pn:auth', { detail: window.pnAuth }));

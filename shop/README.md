@@ -66,6 +66,21 @@ npm run dev          # http://localhost:8787/login.html
 ```
 `npm run dev` creates `shop/.dev.vars` if it is missing (`SESSION_SECRET`, `ORDER_SECRET`, `ADMIN_PASSWORD`). That file is gitignored. Do not commit it. Do not set `AUTH_TEST_FAST` in it: that weakens password hashing and is only for the unit tests.
 
+### Login analytics (is the login page costing visitors?)
+`peppynose/auth.js` sends these events through `pnTrack` (`peppynose/analytics.js`), so they reach Google Analytics only after the visitor taps "Accept" on the cookie banner. No name, email, mobile or username is sent.
+
+| Event | When | Extra fields |
+|---|---|---|
+| `login_page_view` | login, sign-up or "Your details" page opens | `page` (login / signup / details), `logged_in` |
+| `login_skip` | "Skip login" tapped | |
+| `login_success` | password or Google login works | `method` (password / google) |
+| `signup_success` | new account made | `method` |
+| `details_saved` | "Your details" saved | `first_time` |
+
+Every event also has `from_gate`: true when the landing-page login gate sent the visitor there. In Google Analytics, compare `login_page_view` (from_gate = true) with `login_skip` + `login_success` + `signup_success`: the gap is visitors who left at the login page.
+
+The local test server sets `AUTH_SIGNUP_MAX_IP=100` because every test signs up from one address. Do not set it on the live Worker; unset, the limit is 10 sign-ups per network per hour.
+
 ### What you must do before it works on www.peppynose.com
 Nothing here is deployed by this change. The www CNAME stays on GitHub Pages. Do not put real secrets in the repo.
 

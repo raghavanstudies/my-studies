@@ -385,6 +385,79 @@ test('the logged-in hint lasts only as long as the login cookie', async ({ page,
   expect((await hint()).local).toBe('1');
 });
 
+// Keeps every pnTrack event in sessionStorage, so events sent just before a
+// page change can still be read by the test.
+async function recordEvents(page) {
+  await page.addInitScript(() => {
+    let real;
+    Object.defineProperty(window, 'pnTrack', {
+      configurable: true,
+      get: () => real && ((name, params) => {
+        const list = JSON.parse(sessionStorage.getItem('test_events') || '[]');
+        list.push({ name, ...(params || {}) });
+        sessionStorage.setItem('test_events', JSON.stringify(list));
+        return real(name, params);
+      }),
+      set: fn => { real = fn; }
+    });
+  });
+}
+const events = page => page.evaluate(() => JSON.parse(sessionStorage.getItem('test_events') || '[]'));
+
+test('the login funnel is measured: gate view, skip, login and sign-up, with no personal data', async ({ page, browser }, testInfo) => {
+  await recordEvents(page);
+  await openPage(page, '/');
+  await expect(page).toHaveURL(/\/login(\.html)?\?next=/);
+  await expect.poll(async () => (await events(page)).find(e => e.name === 'login_page_view')).toMatchObject({ page: 'login', from_gate: true, logged_in: false });
+  await page.getByRole('button', { name: 'Skip login' }).click();
+  await expect(page).toHaveURL(homeUrl);
+  expect((await events(page)).find(e => e.name === 'login_skip')).toMatchObject({ from_gate: true });
+
+  // A login page opened directly is not from the gate.
+  const ctx = await browser.newContext();
+  const direct = await ctx.newPage();
+  await recordEvents(direct);
+  await direct.goto('/login.html');
+  await expect.poll(async () => (await events(direct)).find(e => e.name === 'login_page_view')).toMatchObject({ from_gate: false });
+  await ctx.close();
+
+  // Gate → sign up → details: each step is counted once.
+  const fresh = await browser.newContext();
+  const p2 = await fresh.newPage();
+  await recordEvents(p2);
+  await openPage(p2, '/');
+  await expect(p2).toHaveURL(/\/login(\.html)?\?next=/);
+  await p2.locator('.auth-switch a').click();
+  const username = `funnel.${testInfo.project.name}`;
+  await p2.getByLabel('Username', { exact: true }).fill(username);
+  await p2.getByLabel('Password', { exact: true }).fill(password);
+  await p2.getByLabel('Confirm password', { exact: true }).fill(password);
+  await p2.getByRole('button', { name: 'Create account', exact: true }).click();
+  await expect(p2).toHaveURL(/\/details(\.html)?/);
+  await p2.locator('#details-form input[name="name"]').fill('Funnel Amma');
+  await p2.locator('#details-form input[name="email"]').fill(`funnel.${testInfo.project.name}@example.com`);
+  await p2.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(p2).toHaveURL(homeUrl);
+  const seen = await events(p2);
+  expect(seen.find(e => e.name === 'signup_success')).toMatchObject({ method: 'password', from_gate: true });
+  expect(seen.find(e => e.name === 'details_saved')).toMatchObject({ first_time: true, from_gate: true });
+  expect(seen.filter(e => e.name === 'login_page_view').map(e => e.page)).toEqual(['login', 'signup', 'details']);
+  // Nothing personal in any event.
+  const text = JSON.stringify(seen);
+  for (const secret of [username, password, 'Funnel Amma', '@example.com']) expect(text).not.toContain(secret);
+
+  // A later login is counted as a login, no longer from the gate.
+  await fresh.clearCookies();
+  await p2.evaluate(() => { localStorage.clear(); sessionStorage.removeItem('test_events'); });
+  await p2.goto('/login.html');
+  await p2.getByLabel('Username / mobile number / email').fill(username);
+  await p2.getByLabel('Password', { exact: true }).fill(password);
+  await p2.getByRole('button', { name: 'Log in', exact: true }).click();
+  await expect(p2).toHaveURL(homeUrl);
+  expect((await events(p2)).find(e => e.name === 'login_success')).toMatchObject({ method: 'password', from_gate: false });
+  await fresh.close();
+});
+
 test('Hindi and Tamil landing pages open their own login page', async ({ page }) => {
   await openPage(page, '/hi/');
   await expect(page).toHaveURL(/\/hi\/login(\.html)?\?next=/);
