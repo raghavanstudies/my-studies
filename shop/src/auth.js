@@ -238,7 +238,7 @@ function takenError(code) {
   return new HttpError(409, message, { code, fields: { [field]: code } });
 }
 
-async function readJson(req) {
+export async function readJson(req) {
   const type = req.headers.get('content-type') || '';
   if (!type.startsWith('application/json')) throw new HttpError(415, 'Send JSON.', { code: 'bad_json' });
   const text = await req.text();
@@ -363,14 +363,30 @@ function findUser(env, id) {
   return env.DB.prepare(USER_SQL[id.kind]).bind(id.value).first();
 }
 
+// A short, readable name for the device, from the User-Agent. Only shown to
+// the account owner in "Where you are logged in". Never used for security.
+export function deviceLabel(ua) {
+  const s = String(ua || '');
+  const browser = /Edg\//.test(s) ? 'Edge' : /OPR\/|Opera/.test(s) ? 'Opera' : /SamsungBrowser/.test(s) ? 'Samsung Internet'
+    : /Firefox\//.test(s) ? 'Firefox' : /Chrome\//.test(s) ? 'Chrome' : /Safari\//.test(s) ? 'Safari' : '';
+  const os = /Android/.test(s) ? 'Android' : /iPhone|iPad|iPod/.test(s) ? 'iPhone / iPad' : /Windows/.test(s) ? 'Windows'
+    : /Mac OS X|Macintosh/.test(s) ? 'Mac' : /CrOS/.test(s) ? 'Chromebook' : /Linux/.test(s) ? 'Linux' : '';
+  if (browser && os) return browser + ' on ' + os;
+  return browser || os || 'Unknown device';
+}
+
+// Each device keeps its own login. The oldest beyond this many are logged out.
+export const MAX_SESSIONS = 10;
+
 async function startSession(req, env, user, stay) {
   const token = randHex(32);
   const csrf = randHex(16);
   const at = new Date().toISOString();
   const exp = new Date(Date.now() + REMEMBER_SECONDS * 1000).toISOString();
   await env.DB.batch([
-    env.DB.prepare('DELETE FROM sessions WHERE user_id = ? OR expires_at < ?').bind(user.id, at),
-    env.DB.prepare('INSERT INTO sessions (id, user_id, csrf, created_at, expires_at) VALUES (?, ?, ?, ?, ?)').bind(await sha256hex(token), user.id, csrf, at, exp)
+    env.DB.prepare('DELETE FROM sessions WHERE expires_at < ?').bind(at),
+    env.DB.prepare('INSERT INTO sessions (id, user_id, csrf, created_at, expires_at, device) VALUES (?, ?, ?, ?, ?, ?)').bind(await sha256hex(token), user.id, csrf, at, exp, deviceLabel(req.headers.get('user-agent'))),
+    env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND id NOT IN (SELECT id FROM sessions WHERE user_id = ? ORDER BY created_at DESC, id LIMIT ?)').bind(user.id, user.id, MAX_SESSIONS)
   ]);
   const maxAge = stay ? REMEMBER_SECONDS : null;
   return json({ ok: true, user: pub(user), csrf }, 200, { 'set-cookie': sessionCookie(req, env, token, maxAge) });
@@ -390,7 +406,22 @@ async function sessionRow(req, env) {
   return row;
 }
 
-function assertCsrf(req, row) {
+// The logged-in account for this request, or null. Other API files use this.
+export function sessionUser(req, env) {
+  return sessionRow(req, env);
+}
+
+// Like sessionUser, but a missing login is a 401, and a change needs the CSRF token.
+export async function requireUser(req, env, { csrf = false } = {}) {
+  assertBrowserOrigin(req, env);
+  assertConfig(env);
+  const row = await sessionRow(req, env);
+  if (!row) throw new HttpError(401, 'Please log in.', { code: 'bad_login' });
+  if (csrf) assertCsrf(req, row);
+  return row;
+}
+
+export function assertCsrf(req, row) {
   const sent = req.headers.get('x-csrf-token') || '';
   const a = enc.encode(sent);
   const b = enc.encode(row.csrf);
@@ -671,7 +702,37 @@ async function me(req, env) {
   assertConfig(env);
   const row = await sessionRow(req, env);
   if (!row) return json({ user: null });
-  return json({ user: pub(row), csrf: row.csrf });
+  // uid lets the tracker tell whose copy is in this browser. has_password
+  // decides how the account page confirms a delete.
+  return json({ user: { ...pub(row), uid: row.user_id, has_password: !!row.password_hash }, csrf: row.csrf });
+}
+
+// A public id for a session: the start of its stored hash. It cannot be used
+// as a cookie, and it is only shown to the account's owner.
+const sessionKey = id => String(id).slice(0, 16);
+
+async function listSessions(req, env) {
+  const row = await requireUser(req, env);
+  const { results } = await env.DB.prepare('SELECT id, device, created_at FROM sessions WHERE user_id = ? AND expires_at >= ? ORDER BY created_at DESC')
+    .bind(row.user_id, new Date().toISOString()).all();
+  return json({
+    sessions: (results || []).map(s => ({ id: sessionKey(s.id), device: s.device || 'Unknown device', created_at: s.created_at, current: s.id === row.id }))
+  });
+}
+
+// body.id is one session from listSessions, or "others" for every other device.
+async function revokeSessions(req, env) {
+  const row = await requireUser(req, env, { csrf: true });
+  const body = await readJson(req);
+  const id = typeof body.id === 'string' ? body.id : '';
+  if (id === 'others') {
+    const r = await env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND id != ?').bind(row.user_id, row.id).run();
+    return json({ ok: true, removed: r.meta.changes || 0 });
+  }
+  if (!/^[0-9a-f]{16}$/.test(id)) throw new HttpError(400, 'Bad request.', { code: 'bad_json' });
+  if (id === sessionKey(row.id)) throw new HttpError(400, 'Use Log out for this device.', { code: 'current_session' });
+  const r = await env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND substr(id, 1, 16) = ?').bind(row.user_id, id).run();
+  return json({ ok: true, removed: r.meta.changes || 0 });
 }
 
 async function logout(req, env) {
@@ -692,11 +753,21 @@ async function deleteAccount(req, env) {
   if (!row) throw new HttpError(401, 'Please log in.', { code: 'bad_login' });
   assertCsrf(req, row);
   const body = await readJson(req);
-  const password = typeof body.password === 'string' ? body.password : '';
-  if (password.length < 1 || password.length > 200 || !(await verifyPassword(password, row.password_hash, secret))) {
-    throw new HttpError(401, BAD_LOGIN, { code: 'bad_login' });
+  if (row.password_hash) {
+    const password = typeof body.password === 'string' ? body.password : '';
+    if (password.length < 1 || password.length > 200 || !(await verifyPassword(password, row.password_hash, secret))) {
+      throw new HttpError(401, BAD_LOGIN, { code: 'bad_login' });
+    }
+  } else if (body.confirm !== true) {
+    // A Google-only account has no password to type. The session and CSRF
+    // token already prove it is this person; the tick box makes it deliberate.
+    throw new HttpError(400, 'Please tick the box to confirm.', { code: 'confirm_needed' });
   }
+  // Orders stay for the GST records, without the link to this account.
   await env.DB.batch([
+    env.DB.prepare('UPDATE orders SET user_id = NULL WHERE user_id = ?').bind(row.user_id),
+    env.DB.prepare('DELETE FROM addresses WHERE user_id = ?').bind(row.user_id),
+    env.DB.prepare('DELETE FROM tracker_data WHERE user_id = ?').bind(row.user_id),
     env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(row.user_id),
     env.DB.prepare('DELETE FROM users WHERE id = ?').bind(row.user_id)
   ]);
@@ -731,6 +802,8 @@ export async function authApi(req, env) {
     if (path === '/api/auth/logout' && method === 'POST') return await logout(req, env);
     if (path === '/api/auth/delete' && method === 'POST') return await deleteAccount(req, env);
     if (path === '/api/auth/me' && method === 'GET') return await me(req, env);
+    if (path === '/api/auth/sessions' && method === 'GET') return await listSessions(req, env);
+    if (path === '/api/auth/sessions/revoke' && method === 'POST') return await revokeSessions(req, env);
     throw new HttpError(404, 'Not found.', { code: 'not_found' });
   } catch (e) {
     if (e instanceof HttpError) return json({ error: e.message, ...(e.extra || {}) }, e.status);

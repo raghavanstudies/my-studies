@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Peppynose: add ?v=<content hash> to styles.css, tracker.js, weight.js and dash.js links in every page, so phones fetch the new
+"""Peppynose: add ?v=<content hash> to styles.css, tracker.js, weight.js, dash.js and tracker-sync.js links in every page, so phones fetch the new
 file as soon as it changes (instead of mixing an old cached file with a new page). Safe to run again; run it LAST:
   ... && python3 -I tools/peppynose/dashboard/apply_dashboard.py peppynose && python3 -I tools/peppynose/cachebust.py peppynose"""
 import sys, os, re, hashlib, glob
 REPO = os.path.abspath(sys.argv[1])
-FILES = ['styles.css', 'tracker.js', 'weight.js', 'dash.js']
+FILES = ['styles.css', 'tracker.js', 'weight.js', 'dash.js', 'tracker-sync.js']
 V = {f: hashlib.sha256(open(os.path.join(REPO, f), 'rb').read()).hexdigest()[:10] for f in FILES}
 pat = re.compile(r'((?:href|src)="(?:\.\./|/)*(' + '|'.join(re.escape(f) for f in FILES) + r'))(?:\?v=[0-9a-f]+)?"')
 n = 0

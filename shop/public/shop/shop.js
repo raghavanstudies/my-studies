@@ -147,9 +147,38 @@
       });
       if (first) first.focus();
     };
+    // Logged in: fill in the account's details and offer its saved addresses.
+    const meP = api('/api/auth/me').catch(() => ({}));
+    let saveBox = null;
+    const fill = a => { ['name', 'phone', 'email', 'address1', 'address2', 'city', 'pincode', 'state'].forEach(k => { if (co.elements[k] && a[k] != null) co.elements[k].value = a[k]; }); };
+    async function account() {
+      const me = await meP;
+      if (!me || !me.user) return;
+      const u = me.user, f = co.elements;
+      if (!f.name.value && u.name) f.name.value = u.name;
+      if (!f.email.value && u.email) f.email.value = u.email;
+      if (!f.phone.value && u.mobile) f.phone.value = u.mobile;
+      const box = document.createElement('label'); box.className = 'sh-check';
+      saveBox = document.createElement('input'); saveBox.type = 'checkbox'; saveBox.name = 'save_address'; saveBox.checked = true;
+      box.append(saveBox, document.createTextNode(' ' + t('save_address')));
+      $('summary').before(box);
+      const list = await api('/api/account/addresses').then(r => r.addresses || []).catch(() => []);
+      if (!list.length) return;
+      const pick = document.createElement('select'); pick.name = 'saved'; pick.id = 'saved-address';
+      list.forEach((a, i) => pick.add(new Option([a.name, a.address1, a.city + ' ' + a.pincode].filter(Boolean).join(', '), String(i))));
+      pick.add(new Option(t('new_address'), 'new'));
+      const label = document.createElement('label'); label.append(document.createTextNode(t('saved_address')), pick);
+      co.prepend(label);
+      pick.addEventListener('change', () => {
+        if (pick.value === 'new') { ['address1', 'address2', 'city', 'pincode', 'state'].forEach(k => { co.elements[k].value = ''; }); co.elements.address1.focus(); }
+        else fill(list[+pick.value]);
+      });
+      fill(list[0]);
+    }
     cat().then(c => {
       const sel = co.elements.state;
       c.states.forEach(s => sel.add(new Option(s, s)));
+      account();
       const lines = cartLines(c);
       if (!lines.length) { co.innerHTML = empty(); return; }
       sum.innerHTML = `<h2>${esc(t('order_title'))}</h2><ul class="sh-mini">${lines.map(l => `<li><span>${esc(n(l.p.name))} — ${esc(n(l.v.label))} × ${l.qty}</span><b>${rupees(l.v.price * l.qty)}</b></li>`).join('')}</ul>${totalRows(c, totals(c, lines))}<p class="sh-hint"><a href="cart.html">${esc(t('change_cart'))}</a></p>`;
@@ -160,7 +189,7 @@
       const f = co.elements, customer = {};
       ['name', 'phone', 'email', 'address1', 'address2', 'city', 'pincode', 'state'].forEach(k => { customer[k] = f[k].value; });
       try {
-        const r = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ items: read(), customer, lang: L }) });
+        const r = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ items: read(), customer, lang: L, save_address: !!(saveBox && saveBox.checked) }) });
         location.href = `pay.html#o=${r.order}&t=${r.token}`;
       } catch (x) {
         err.textContent = msg(x); showErrs(x.data && x.data.fields); btn.disabled = false;

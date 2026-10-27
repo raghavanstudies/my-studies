@@ -123,7 +123,10 @@
   "origin": "Country of origin",
   "marketed_by": "Marketed by",
   "country_India": "India",
-  "country_China": "China"
+  "country_China": "China",
+  "saved_address": "Saved address",
+  "new_address": "A new address",
+  "save_address": "Save this address to my account"
  },
  "ta": {
   "lang_name": "தமிழ்",
@@ -248,7 +251,10 @@
   "origin": "பிறப்பிட நாடு",
   "marketed_by": "சந்தைப்படுத்துபவர்",
   "country_India": "இந்தியா",
-  "country_China": "சீனா"
+  "country_China": "சீனா",
+  "saved_address": "சேமித்த முகவரி",
+  "new_address": "புதிய முகவரி",
+  "save_address": "இந்த முகவரியை என் கணக்கில் சேமி"
  },
  "hi": {
   "lang_name": "हिन्दी",
@@ -373,6 +379,9 @@
   "origin": "मूल देश",
   "marketed_by": "विपणनकर्ता",
   "country_India": "भारत",
-  "country_China": "चीन"
+  "country_China": "चीन",
+  "saved_address": "सेव किया पता",
+  "new_address": "नया पता",
+  "save_address": "यह पता मेरे खाते में सेव करें"
  }
 }
