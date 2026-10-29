@@ -95,28 +95,25 @@ async function sendTwilio(env, mobile, code) {
   });
 }
 
-async function sendResend(env, email, code) {
+// The email senders take a whole message, so order emails (src/mail.js) use them too.
+async function sendResend(env, m) {
   return postJson('https://api.resend.com/emails', {
     method: 'POST',
     headers: { authorization: 'Bearer ' + env.RESEND_API_KEY, 'content-type': 'application/json' },
-    body: JSON.stringify({
-      from: env.OTP_EMAIL_FROM,
-      to: [email],
-      subject: 'Your Peppynose login code',
-      text: emailText(code)
-    })
+    body: JSON.stringify({ from: m.from, to: [m.to], subject: m.subject, text: m.text, ...(m.replyTo ? { reply_to: m.replyTo } : {}) })
   });
 }
 
-async function sendMailChannels(env, email, code) {
+async function sendMailChannels(env, m) {
   return postJson('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      personalizations: [{ to: [{ email }] }],
-      from: { email: env.OTP_EMAIL_FROM, name: 'Peppynose' },
-      subject: 'Your Peppynose login code',
-      content: [{ type: 'text/plain', value: emailText(code) }]
+      personalizations: [{ to: [{ email: m.to }] }],
+      from: { email: m.from, name: 'Peppynose' },
+      ...(m.replyTo ? { reply_to: { email: m.replyTo } } : {}),
+      subject: m.subject,
+      content: [{ type: 'text/plain', value: m.text }]
     })
   });
 }
@@ -133,7 +130,7 @@ async function sha256Hex(data) {
 }
 
 // SES SendEmail, query API, signature version 4. Used only when AWS secrets are set.
-async function sendSes(env, email, code) {
+async function sendSes(env, m) {
   const region = env.AWS_SES_REGION.trim();
   const service = 'ses';
   const host = `email.${region}.amazonaws.com`;
@@ -143,10 +140,13 @@ async function sendSes(env, email, code) {
   const body = new URLSearchParams({
     Action: 'SendEmail',
     Version: '2010-12-01',
-    Source: env.OTP_EMAIL_FROM,
-    'Destination.ToAddresses.member.1': email,
-    'Message.Subject.Data': 'Your Peppynose login code',
-    'Message.Body.Text.Data': emailText(code)
+    Source: m.from,
+    'Destination.ToAddresses.member.1': m.to,
+    ...(m.replyTo ? { 'ReplyToAddresses.member.1': m.replyTo } : {}),
+    'Message.Subject.Data': m.subject,
+    'Message.Subject.Charset': 'UTF-8',
+    'Message.Body.Text.Data': m.text,
+    'Message.Body.Text.Charset': 'UTF-8'
   }).toString();
   const enc = new TextEncoder();
   const payloadHash = await sha256Hex(enc.encode(body));
@@ -185,8 +185,14 @@ export async function sendOtp({ channel, to, code, env }) {
   if (provider === 'dev') return { ok: true, dev: true };
   if (provider === 'msg91') return sendMsg91(env, to, code);
   if (provider === 'twilio') return sendTwilio(env, to, code);
-  if (provider === 'resend') return sendResend(env, to, code);
-  if (provider === 'mailchannels') return sendMailChannels(env, to, code);
-  if (provider === 'ses') return sendSes(env, to, code);
+  if (channel === 'email') return sendEmail(env, provider, { from: env.OTP_EMAIL_FROM, to, subject: 'Your Peppynose login code', text: emailText(code) });
+  return { ok: false, reason: 'unknown_provider' };
+}
+
+// One plain-text email through resend, mailchannels or ses. m = { from, to, subject, text, replyTo? }.
+export async function sendEmail(env, provider, m) {
+  if (provider === 'resend') return sendResend(env, m);
+  if (provider === 'mailchannels') return sendMailChannels(env, m);
+  if (provider === 'ses') return sendSes(env, m);
   return { ok: false, reason: 'unknown_provider' };
 }
